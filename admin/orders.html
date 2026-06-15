@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заказы — ADIA Cake Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/admin.css">
+    <style>
+        /* ── Filter tabs ─────────────────────────────────────── */
+        .ao-tabs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .ao-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1.5px solid var(--a-border);
+            background: var(--a-white);
+            color: var(--a-text-med);
+            transition: border-color .15s, background .15s, color .15s;
+            user-select: none;
+        }
+        .ao-tab:hover { border-color: var(--a-accent); color: var(--a-accent); }
+        .ao-tab.active {
+            background: var(--a-accent);
+            border-color: var(--a-accent);
+            color: #fff;
+        }
+        .ao-tab-count {
+            background: rgba(0,0,0,.12);
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 1px 7px;
+            min-width: 20px;
+            text-align: center;
+        }
+        .ao-tab.active .ao-tab-count { background: rgba(255,255,255,.25); }
+
+        /* ── Cards container ─────────────────────────────────── */
+        .ao-cards { display: flex; flex-direction: column; gap: 12px; }
+
+        /* ── Single order card ───────────────────────────────── */
+        .ao-card {
+            background: var(--a-white);
+            border: 1.5px solid var(--a-border);
+            border-radius: var(--a-r-lg);
+            overflow: hidden;
+            transition: border-color .15s;
+        }
+        .ao-card:hover { border-color: #d0c9c0; }
+        .ao-card--open { border-color: var(--a-accent) !important; }
+
+        .ao-card-head {
+            display: grid;
+            grid-template-columns: 60px 1fr auto auto;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            cursor: pointer;
+            user-select: none;
+        }
+        @media (max-width: 640px) {
+            .ao-card-head { grid-template-columns: 48px 1fr; grid-template-rows: auto auto; gap: 10px; }
+            .ao-card-head .ao-card-meta  { grid-column: 1 / -1; }
+            .ao-card-head .ao-card-right { grid-column: 1 / -1; justify-content: flex-start; }
+        }
+
+        .ao-card-num {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--a-text-dark);
+        }
+        .ao-card-info { min-width: 0; }
+        .ao-card-name {
+            font-weight: 700;
+            font-size: 15px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .ao-card-meta {
+            font-size: 12px;
+            color: var(--a-text-light);
+            margin-top: 2px;
+        }
+        .ao-card-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .ao-card-amount {
+            font-weight: 800;
+            font-size: 15px;
+            white-space: nowrap;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+        .ao-amount-orig {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--a-text-light);
+            text-decoration: line-through;
+        }
+        .ao-chevron {
+            color: var(--a-text-light);
+            transition: transform .2s;
+            flex-shrink: 0;
+        }
+        .ao-card--open .ao-chevron { transform: rotate(180deg); }
+
+        /* ── Status badge ────────────────────────────────────── */
+        .ao-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+            letter-spacing: 0.2px;
+        }
+        .ao-s-new        { background: #fff3cd; color: #856404; }
+        .ao-s-confirmed  { background: #d1ecf1; color: #0c5460; }
+        .ao-s-preparing  { background: #e2d9f3; color: #4a2c8e; }
+        .ao-s-ready      { background: #d4edda; color: #155724; }
+        .ao-s-completed  { background: #e2e3e5; color: #383d41; }
+        .ao-s-cancelled  { background: #f8d7da; color: #721c24; }
+        .ao-s-awaiting   { background: #ffeeba; color: #7a5800; font-style: italic; }
+
+        /* ── Item row highlight colors ─────────────────────────── */
+        .ao-row-unavail { background: rgba(248,215,218,.3); }
+        .ao-row-partial { background: rgba(255,243,205,.4); }
+
+        /* ── Status select ───────────────────────────────────── */
+        .ao-status-wrap { position: relative; display: inline-flex; }
+        .ao-status-select {
+            appearance: none;
+            -webkit-appearance: none;
+            border: 1.5px solid var(--a-border);
+            border-radius: 8px;
+            padding: 5px 28px 5px 10px;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            background: var(--a-white);
+            color: var(--a-text-dark);
+            outline: none;
+            transition: border-color .15s;
+        }
+        .ao-status-select:hover { border-color: var(--a-accent); }
+        .ao-status-select:focus { border-color: var(--a-accent); box-shadow: 0 0 0 3px rgba(var(--a-accent-rgb),.12); }
+        .ao-status-arrow {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--a-text-light);
+        }
+
+        /* ── Card body (expanded) ────────────────────────────── */
+        .ao-card-body {
+            display: none;
+            border-top: 1px solid var(--a-border);
+            padding: 20px;
+        }
+        .ao-card--open .ao-card-body { display: block; }
+
+        .ao-body-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 16px;
+        }
+        .ao-body-field { font-size: 13px; }
+        .ao-body-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--a-text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 3px;
+        }
+
+        /* ── Items table ─────────────────────────────────────── */
+        .ao-items-loading {
+            text-align: center;
+            color: var(--a-text-light);
+            padding: 16px 0;
+            font-size: 13px;
+        }
+        .ao-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+        .ao-items-table th {
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--a-text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--a-border);
+        }
+        .ao-items-table td {
+            padding: 8px 8px;
+            border-bottom: 1px solid var(--a-bg);
+            vertical-align: middle;
+        }
+        .ao-items-table tr:last-child td { border-bottom: none; }
+        .ao-items-table .num { text-align: right; white-space: nowrap; }
+        .ao-items-table .ctr { text-align: center; }
+
+        .ao-items-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .ao-ib-pending      { background: #e9ecef; color: #495057; }
+        .ao-ib-confirmed    { background: #d4edda; color: #155724; }
+        .ao-ib-partial      { background: #fff3cd; color: #856404; }
+        .ao-ib-unavailable  { background: #f8d7da; color: #721c24; }
+
+        .ao-items-comment {
+            font-size: 12px;
+            color: var(--a-text-med);
+            font-style: italic;
+        }
+
+        /* ── Confirmed qty input ─────────────────────────────── */
+        .ao-qty-input {
+            width: 58px;
+            padding: 4px 6px;
+            border: 1.5px solid var(--a-border);
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
+            text-align: center;
+            outline: none;
+            color: var(--a-text-dark);
+            background: var(--a-white);
+            transition: border-color .15s;
+            -moz-appearance: textfield;
+        }
+        .ao-qty-input::-webkit-outer-spin-button,
+        .ao-qty-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+        .ao-qty-input:focus { border-color: var(--a-accent); box-shadow: 0 0 0 3px rgba(var(--a-accent-rgb),.1); }
+        .ao-qty-wrap { display: inline-flex; align-items: center; gap: 4px; }
+        .ao-qty-unit { font-size: 12px; color: var(--a-text-light); font-weight: 600; }
+
+        /* ── Weight product toggle ───────────────────────────── */
+        .ao-weight-toggle-wrap { display: inline-flex; align-items: center; }
+        .ao-weight-toggle {
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1.5px solid var(--a-border);
+            background: var(--a-surface);
+            color: var(--a-text-light);
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .15s, border-color .15s, color .15s;
+            white-space: nowrap;
+        }
+        .ao-weight-toggle.active {
+            background: #ECFDF5;
+            border-color: #10B981;
+            color: #059669;
+        }
+        .ao-weight-toggle:not(.active):hover { border-color: #EF4444; color: #EF4444; }
+
+        /* ── Items footer (total + save) ─────────────────────── */
+        .ao-ie-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid var(--a-border);
+        }
+        .ao-ie-total-line {
+            font-size: 13px;
+            color: var(--a-text-med);
+        }
+        .ao-ie-total-line strong {
+            color: var(--a-text-dark);
+            font-size: 15px;
+            margin-left: 4px;
+        }
+        .ao-save-btn {
+            padding: 8px 20px;
+            background: var(--a-accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: opacity .15s;
+        }
+        .ao-save-btn:hover    { opacity: .88; }
+        .ao-save-btn:disabled { opacity: .5; cursor: default; }
+
+        /* ── Empty / search bar ──────────────────────────────── */
+        .ao-search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+        .ao-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--a-text-light);
+        }
+        .ao-empty-ico { font-size: 36px; margin-bottom: 12px; }
+        .ao-empty-text { font-size: 15px; font-weight: 600; }
+        .ao-empty-sub { font-size: 13px; margin-top: 4px; }
+
+        /* ── Cancel reason modal ──────────────────────────────── */
+        .cr-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.45);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .cr-overlay.open { display: flex; }
+        .cr-modal {
+            background: var(--a-white);
+            border-radius: var(--a-r-lg);
+            padding: 28px 28px 24px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.2);
+        }
+        .cr-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--a-text-dark);
+            margin-bottom: 6px;
+        }
+        .cr-sub {
+            font-size: 13px;
+            color: var(--a-text-light);
+            margin-bottom: 16px;
+        }
+        .cr-textarea {
+            width: 100%;
+            border: 1.5px solid var(--a-border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            outline: none;
+            color: var(--a-text-dark);
+            transition: border-color .15s;
+        }
+        .cr-textarea:focus { border-color: var(--a-danger); }
+        .cr-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            justify-content: flex-end;
+        }
+        .cr-confirm {
+            background: var(--a-danger);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 9px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: opacity .15s;
+        }
+        .cr-confirm:hover { opacity: .88; }
+
+        /* ── Mobile ────────────────────────────────────────────── */
+        @media (max-width: 640px) {
+          /* Filter tabs: horizontal scroll strip */
+          .ao-tabs {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+            gap: 6px;
+          }
+          .ao-tabs::-webkit-scrollbar { display: none; }
+          .ao-tab { flex-shrink: 0; }
+        }
+
+        @media (max-width: 600px) {
+          /* Items table → stacked rows */
+          .ao-items-table thead { display: none; }
+
+          .ao-items-table tbody tr {
+            display: block;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--a-border);
+          }
+          .ao-items-table tbody tr:last-child { border-bottom: none; }
+
+          .ao-items-table td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+            border: none;
+            font-size: 13px;
+          }
+
+          /* Label each td using data-label */
+          .ao-items-table td[data-label]::before {
+            content: attr(data-label);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--a-text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            flex-shrink: 0;
+            margin-right: 8px;
+          }
+
+          /* Product name: full row */
+          .ao-items-table td:first-child {
+            font-weight: 700;
+            font-size: 14px;
+            padding-bottom: 6px;
+          }
+
+          /* Larger qty input for touch */
+          .ao-qty-input[type="number"] {
+            width: 72px;
+            height: 40px;
+            font-size: 16px;
+          }
+
+          /* Larger weight toggle */
+          .ao-weight-toggle {
+            padding: 8px 18px;
+            font-size: 14px;
+            min-height: 40px;
+          }
+
+          /* Items footer: stack vertically */
+          .ao-ie-footer {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+          }
+
+          /* Save button full width */
+          .ao-save-btn {
+            width: 100%;
+            padding: 13px;
+            font-size: 14px;
+            text-align: center;
+          }
+
+          /* Card body padding */
+          .ao-card-body { padding: 14px; }
+        }
+
+        @media (max-width: 480px) {
+          /* Search bar stacks */
+          .ao-search-bar { flex-direction: column; align-items: stretch; }
+
+          /* Card head: simpler layout */
+          .ao-card-head { padding: 12px 14px; gap: 8px; }
+
+          .ao-card-num { font-size: 15px; }
+          .ao-card-name { font-size: 14px; }
+
+          /* Status select: full width in right area */
+          .ao-status-select { font-size: 13px; }
+
+          /* Cancel modal: full width */
+          .cr-modal { padding: 20px 16px 18px; }
+          .cr-actions { flex-direction: column-reverse; }
+          .cr-confirm, .cr-back { width: 100%; padding: 13px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-layout">
+
+    <!-- ======= SIDEBAR ======= -->
+    <aside class="a-sidebar">
+        <div class="a-sidebar-logo">
+            <div class="a-sidebar-logo-icon">🍰</div>
+            <div>
+                <div class="a-sidebar-logo-text">ADIA Cake</div>
+                <div class="a-sidebar-logo-sub">Admin</div>
+            </div>
+        </div>
+
+        <nav class="a-sidebar-nav">
+            <div class="a-nav-section">
+                <div class="a-nav-label">Управление</div>
+                <a href="index.html" class="a-nav-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                        <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+                    </svg>
+                    Главная
+                </a>
+                <a href="products.html" class="a-nav-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/><path d="M8 7V5a2 2 0 0 0-4 0v2"/>
+                    </svg>
+                    Товары
+                </a>
+                <a href="branch-products.html" class="a-nav-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Витрина по филиалам
+                </a>
+                <a href="categories.html" class="a-nav-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    Категории
+                </a>
+                <a href="orders.html" class="a-nav-link active">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                    </svg>
+                    Заказы
+                </a>
+                <a href="staff.html" class="a-nav-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    Сотрудники
+                </a>
+            </div>
+
+            <div class="a-nav-section">
+                <div class="a-nav-label">Сайт</div>
+                <a href="../index.html" class="a-nav-link" target="_blank">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                    Открыть витрину
+                </a>
+                <a href="../catalog.html" class="a-nav-link" target="_blank">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    Каталог
+                </a>
+            </div>
+        </nav>
+
+        <div class="a-sidebar-footer">
+            <button class="a-logout-btn" id="logoutBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Выйти
+            </button>
+        </div>
+    </aside>
+
+    <!-- ======= MAIN ======= -->
+    <div class="a-main">
+
+        <div class="a-topbar">
+            <div class="a-topbar-title">Заказы</div>
+            <div class="a-topbar-user">
+                <span id="realtimeIndicator" class="rt-dot rt-dot--wait" title="Подключение…"></span>
+                <span>Привет, <strong id="adminUser">admin</strong></span>
+                <div class="a-topbar-avatar">A</div>
+            </div>
+        </div>
+
+        <div class="a-content">
+
+            <!-- Stats -->
+            <div class="a-stats" id="statsRow"></div>
+
+            <!-- Page header -->
+            <div class="a-page-header">
+                <div>
+                    <div class="a-page-title">Заказы</div>
+                    <div class="a-page-sub">Отображается: <strong id="ordersCount">—</strong></div>
+                </div>
+            </div>
+
+            <!-- Search -->
+            <div class="ao-search-bar">
+                <div class="a-search-wrap" style="flex:1">
+                    <svg class="a-search-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input class="a-search" type="search" id="searchInput" placeholder="Поиск по имени или телефону...">
+                </div>
+            </div>
+
+            <!-- Filter tabs -->
+            <div class="ao-tabs" id="orderTabs"></div>
+
+            <!-- Cards -->
+            <div class="ao-cards" id="orderCards"></div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ======= TOASTS ======= -->
+<div class="a-toast-container" id="toastContainer"></div>
+
+<script type="module" src="../js/admin/orders-list.js"></script>
+
+</body>
+</html>

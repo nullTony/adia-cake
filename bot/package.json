@@ -1,0 +1,12 @@
+{
+  "name": "adia-cake-bot",
+  "version": "1.0.0",
+  "description": "Telegram verification bot for ADIA Cake storefront",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "node-telegram-bot-api": "^0.67.0"
+  }
+}

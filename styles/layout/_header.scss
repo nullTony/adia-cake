@@ -1,0 +1,261 @@
+// ================================
+//  HEADER, NAV, MOBILE MENU
+// ================================
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: rgba(254, 252, 248, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  transition: box-shadow var(--ease);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+  gap: 20px;
+}
+
+// ---- Logo ----
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--caramel), var(--coffee));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.logo-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-dark);
+  line-height: 1;
+
+  small {
+    display: block;
+    font-family: 'Nunito', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+}
+
+// ---- Desktop nav ----
+
+.h-nav {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+
+  a {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-med);
+    transition: color var(--ease);
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--caramel-dark);
+      border-radius: 2px;
+      transition: width var(--ease);
+    }
+
+    &:hover {
+      color: var(--text-dark);
+
+      &::after {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// ---- Header actions ----
+
+.h-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.h-icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--beige);
+  color: var(--text-dark);
+  transition: var(--ease);
+  position: relative;
+
+  &:hover {
+    background: var(--caramel);
+    transform: scale(1.05);
+  }
+
+  svg {
+    width: 17px;
+    height: 17px;
+  }
+}
+
+.cart-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 17px;
+  height: 17px;
+  background: var(--powder);
+  color: var(--text-dark);
+  font-size: 10px;
+  font-weight: 800;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.h-cta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: var(--text-dark);
+  color: var(--white);
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 700;
+  transition: var(--ease);
+
+  &:hover {
+    background: var(--coffee-dark);
+    transform: translateY(-1px);
+  }
+}
+
+// ---- Burger button ----
+
+.burger {
+  display: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--beige);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  transition: var(--ease);
+
+  &:hover {
+    background: var(--caramel);
+  }
+
+  span {
+    display: block;
+    width: 17px;
+    height: 2px;
+    background: var(--text-dark);
+    border-radius: 2px;
+    transition: var(--ease);
+  }
+
+  &.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  &.open span:nth-child(2) { opacity: 0; }
+  &.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+}
+
+// ---- Mobile menu ----
+
+.mob-menu {
+  display: none;
+  position: fixed;
+  top: 72px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--milk);
+  z-index: 199;
+  flex-direction: column;
+  padding: 24px 20px 32px;
+  transform: translateX(100%);
+  transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+
+  &.open {
+    transform: translateX(0);
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    padding: 14px 18px;
+    border-radius: var(--r-md);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-dark);
+    transition: var(--ease);
+    gap: 10px;
+
+    &:hover {
+      background: var(--beige);
+      color: var(--coffee-dark);
+    }
+  }
+}
+
+.mob-menu-foot {
+  margin-top: auto;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+// ---- Breakpoints ----
+
+@media (max-width: 1024px) {
+  .h-nav,
+  .h-cta {
+    display: none;
+  }
+
+  .burger {
+    display: flex;
+  }
+
+  .mob-menu {
+    display: flex;
+  }
+}

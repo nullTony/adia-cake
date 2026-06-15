@@ -1,0 +1,284 @@
+// ================================
+//  AUTH MODAL + PHONE INPUT COMPONENT
+//  Telegram verification flow
+// ================================
+
+// ---- Auth modal backdrop ----
+
+.auth-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 24, 16, 0.45);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--ease);
+
+  &.open {
+    opacity: 1;
+    pointer-events: all;
+
+    .auth-modal { transform: translateY(0); }
+  }
+}
+
+// ---- Modal card ----
+
+.auth-modal {
+  background: var(--white);
+  border-radius: var(--r-xl);
+  width: 100%;
+  max-width: 440px;
+  padding: 40px 36px 36px;
+  box-shadow: var(--shadow-l);
+  position: relative;
+  transform: translateY(16px);
+  transition: transform var(--ease);
+}
+
+.auth-modal__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--beige);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--text-med);
+  transition: background var(--ease);
+
+  &:hover { background: var(--caramel); }
+}
+
+.auth-modal__title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.auth-modal__sub {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+// ---- Step management ----
+
+.auth-step         { display: flex; flex-direction: column; gap: 16px; }
+.auth-step--hidden { display: none; }
+
+// ---- Form fields ----
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label { font-size: 13px; font-weight: 700; color: var(--text-med); }
+}
+
+.auth-input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--r-md);
+  border: 1.5px solid var(--border);
+  background: var(--cream);
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  color: var(--text-dark);
+  outline: none;
+  transition: border-color var(--ease);
+
+  &:focus { border-color: var(--coffee); }
+  &.error { border-color: #ee0055; }
+}
+
+.auth-error {
+  font-size: 12px;
+  color: #ee0055;
+  font-weight: 600;
+  min-height: 16px;
+}
+
+// ---- Buttons ----
+
+.auth-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--r-md);
+  background: #D4920A;
+  color: var(--white);
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--ease), transform var(--ease);
+
+  &:hover  { background: #B87C08; }
+  &:active { transform: scale(0.98); }
+  &:disabled { opacity: 0.55; cursor: not-allowed; }
+}
+
+.auth-tg-btn {
+  width: 100%;
+  padding: 13px;
+  border-radius: var(--r-md);
+  background: #2AABEE;
+  color: var(--white);
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background var(--ease);
+
+  &:hover { background: #229ED9; }
+}
+
+.auth-link {
+  background: none;
+  border: none;
+  color: var(--coffee);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.auth-tg-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.auth-name-wrap  { display: flex; flex-direction: column; gap: 4px; }
+.auth-success-icon { text-align: center; font-size: 52px; margin-bottom: 8px; }
+
+// ================================================================
+//  PHONE INPUT COMPONENT
+//  Country selector + national number field
+// ================================================================
+
+.pi-card {
+  display: flex;
+  flex-direction: column;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--cream);
+  overflow: visible;
+  position: relative;
+  transition: border-color var(--ease);
+
+  &:focus-within { border-color: #D4920A; }
+  &.error         { border-color: #ee0055; }
+}
+
+.pi-country-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 14px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  color: var(--text-dark);
+  width: 100%;
+  text-align: left;
+}
+
+.pi-flag    { font-size: 20px; line-height: 1; flex-shrink: 0; }
+.pi-cname   { font-size: 14px; font-weight: 600; color: var(--text-dark); flex: 1; }
+.pi-chevron { color: var(--text-muted); flex-shrink: 0; }
+.pi-sep     { width: 100%; height: 1px; background: var(--border); flex-shrink: 0; }
+
+.pi-num-row { display: flex; align-items: center; padding: 13px 14px; }
+.pi-plus  { font-size: 14px; font-weight: 700; color: var(--text-med); flex-shrink: 0; }
+.pi-dial  { font-size: 14px; font-weight: 700; color: var(--text-med); flex-shrink: 0; margin-right: 2px; border: none; background: transparent; outline: none; width: 36px; }
+.pi-vsep  { width: 1px; height: 18px; background: var(--border); margin: 0 10px; flex-shrink: 0; }
+
+.pi-national {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  color: var(--text-dark);
+  outline: none;
+  min-width: 0;
+}
+
+// ---- Country dropdown ----
+
+.pi-dd {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-m);
+  z-index: 3000;
+  display: none;
+  flex-direction: column;
+  max-height: 260px;
+  overflow: hidden;
+
+  &--open { display: flex; }
+}
+
+.pi-search-wrap { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+
+.pi-search {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: var(--r-sm);
+  border: 1.5px solid var(--border);
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  background: var(--cream);
+  outline: none;
+}
+
+.pi-list { overflow-y: auto; flex: 1; }
+
+.pi-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background var(--ease);
+
+  &:hover   { background: var(--beige); }
+  &--sel    { background: var(--cream); }
+}
+
+.pi-iflag { font-size: 18px; flex-shrink: 0; }
+.pi-iname { flex: 1; color: var(--text-dark); font-weight: 600; }
+.pi-idial { color: var(--text-muted); font-size: 12px; }

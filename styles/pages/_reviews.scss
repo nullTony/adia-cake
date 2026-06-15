@@ -1,0 +1,100 @@
+// ================================
+//  TESTIMONIALS / REVIEWS SECTION
+// ================================
+
+.testimonials {
+  background: var(--cream);
+}
+
+.tes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.tes-card {
+  background: var(--white);
+  border-radius: var(--r-lg);
+  padding: 26px 22px;
+  border: 1px solid var(--border);
+  transition: var(--ease);
+
+  &:hover {
+    box-shadow: var(--shadow-m);
+    transform: translateY(-4px);
+  }
+}
+
+.tes-stars {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 14px;
+
+  span {
+    color: #f5a623;
+    font-size: 15px;
+  }
+}
+
+.tes-text {
+  font-size: 15px;
+  color: var(--text-med);
+  line-height: 1.72;
+  margin-bottom: 18px;
+  font-style: italic;
+  position: relative;
+
+  &::before {
+    content: '\201C';
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    color: var(--caramel);
+    line-height: 0;
+    vertical-align: -22px;
+    margin-right: 3px;
+  }
+}
+
+.tes-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tes-ava {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--white);
+  flex-shrink: 0;
+}
+
+.tes-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text-dark);
+}
+
+.tes-date {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+// ---- Breakpoints ----
+
+@media (max-width: 900px) {
+  .tes-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .tes-grid {
+    grid-template-columns: 1fr;
+  }
+}

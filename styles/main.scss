@@ -1,0 +1,39 @@
+// ================================
+//  ADIA CAKE — Main SCSS Entry Point
+//  Compile: sass styles/main.scss styles/main.css --style=expanded
+//  DO NOT edit main.css directly — it is generated output
+// ================================
+
+// 1. Base — design tokens, reset
+@use 'base/variables';
+@use 'base/reset';
+
+// 2. Layout — structural shells
+@use 'layout/container';
+@use 'layout/header';
+@use 'layout/footer';
+@use 'layout/mobile-nav';
+
+// 3. Components — reusable UI pieces
+@use 'components/buttons';
+@use 'components/product-card';
+@use 'components/category-card';
+@use 'components/side-panels';
+@use 'components/auth';
+@use 'components/checkout';
+@use 'components/quick-view';
+@use 'components/notifications';
+@use 'components/profile';
+@use 'components/orders';
+
+// 4. Pages — section-specific styles
+@use 'pages/hero';
+@use 'pages/catalog';
+@use 'pages/catalog-page';
+@use 'pages/services';
+@use 'pages/reviews';
+@use 'pages/branches';
+@use 'pages/cta';
+
+// 5. Utilities — animations, helpers
+@use 'utilities/animations';

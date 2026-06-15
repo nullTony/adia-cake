@@ -1,0 +1,186 @@
+// ================================
+//  FOOTER
+// ================================
+
+.footer {
+  background: var(--text-dark);
+}
+
+.footer-main {
+  padding: 64px 0 40px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+}
+
+// ---- Footer logo ----
+
+.f-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.f-logo-ico {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--caramel), var(--coffee));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.f-logo-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--white);
+}
+
+.f-desc {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.72;
+  margin-bottom: 22px;
+  max-width: 270px;
+}
+
+// ---- Social icons ----
+
+.f-socials {
+  display: flex;
+  gap: 9px;
+}
+
+.f-social {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: var(--ease);
+
+  &:hover {
+    background: var(--caramel);
+  }
+}
+
+// ---- Footer columns ----
+
+.f-col-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: 18px;
+}
+
+.f-links {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+
+  a {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.45);
+    transition: color var(--ease);
+
+    &:hover {
+      color: var(--caramel);
+    }
+  }
+}
+
+// ---- Contact block ----
+
+.f-contact {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-bottom: 11px;
+}
+
+.f-c-ico {
+  font-size: 15px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.f-c-text {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.55;
+
+  a {
+    color: rgba(255, 255, 255, 0.45);
+    transition: color var(--ease);
+
+    &:hover {
+      color: var(--caramel);
+    }
+  }
+}
+
+// ---- Bottom bar ----
+
+.footer-bottom {
+  padding: 18px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.f-copy {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.f-legal {
+  display: flex;
+  gap: 20px;
+
+  a {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.28);
+    transition: color var(--ease);
+
+    &:hover {
+      color: rgba(255, 255, 255, 0.6);
+    }
+  }
+}
+
+// ---- Breakpoints ----
+
+@media (max-width: 1024px) {
+  .footer-main {
+    grid-template-columns: 1fr 1fr;
+
+    & > div:first-child {
+      grid-column: span 2;
+    }
+  }
+}
+
+@media (max-width: 540px) {
+  .footer-main {
+    grid-template-columns: 1fr;
+
+    & > div:first-child {
+      grid-column: auto;
+    }
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+}

@@ -1,0 +1,256 @@
+// ================================
+//  HERO SECTION
+// ================================
+
+.hero {
+  position: relative;
+  min-height: calc(100vh - 72px);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--cream) 0%, var(--beige) 55%, #edd5bc 100%);
+}
+
+// ---- Background blobs ----
+
+.hero-blob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hero-blob-1 {
+  width: 700px;
+  height: 700px;
+  top: -250px;
+  right: -150px;
+  background: radial-gradient(circle, rgba(232, 201, 154, 0.35) 0%, transparent 70%);
+}
+
+.hero-blob-2 {
+  width: 450px;
+  height: 450px;
+  bottom: -120px;
+  left: -80px;
+  background: radial-gradient(circle, rgba(196, 149, 106, 0.18) 0%, transparent 70%);
+}
+
+// ---- Layout ----
+
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  padding: 64px 0;
+}
+
+// ---- Live badge ----
+
+.hero-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--coffee-dark);
+  margin-bottom: 26px;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  background: #4caf50;
+  border-radius: 50%;
+  animation: blink 2s ease-in-out infinite;
+}
+
+// ---- Text ----
+
+.hero-h1 {
+  font-size: clamp(40px, 6.5vw, 76px);
+  font-weight: 500;
+  color: var(--text-dark);
+  margin-bottom: 22px;
+
+  em {
+    font-style: italic;
+    color: var(--coffee-dark);
+  }
+}
+
+.hero-p {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--text-med);
+  margin-bottom: 36px;
+  max-width: 480px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+// ---- Trust strip ----
+
+.hero-trust {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-med);
+}
+
+.trust-ico {
+  width: 28px;
+  height: 28px;
+  background: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  box-shadow: var(--shadow-s);
+}
+
+// ---- Visual / image ----
+
+.hero-visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-img-wrap {
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-l);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.hero-img-ph {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #e8d0b0 0%, #d4a574 35%, #c4956a 65%, #a67c52 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 100px;
+}
+
+// ---- Floating cards ----
+
+.f-card {
+  position: absolute;
+  background: var(--white);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-m);
+  padding: 14px 18px;
+}
+
+.f-card-rating {
+  bottom: 90px;
+  left: -44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: float1 4s ease-in-out infinite;
+}
+
+.f-card-reviews {
+  top: 60px;
+  right: -24px;
+  animation: float2 5s ease-in-out infinite 1s;
+}
+
+.f-card-count {
+  bottom: 220px;
+  right: -28px;
+  animation: float1 3.6s ease-in-out infinite 0.5s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.f-card {
+  .f-ico  { font-size: 28px; }
+  .f-lbl  { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+  .f-val  { font-size: 16px; font-weight: 800; color: var(--text-dark); }
+  .stars  { color: #f5a623; font-size: 13px; }
+}
+
+// ---- Breakpoints ----
+
+@media (max-width: 1024px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 40px;
+  }
+
+  .hero-visual { order: -1; }
+
+  .hero-p {
+    max-width: 100%;
+    margin: 0 auto 36px;
+  }
+
+  .hero-actions { justify-content: center; }
+  .hero-trust   { justify-content: center; }
+
+  .hero-img-wrap  { max-width: 360px; }
+  .f-card-rating  { left: 0; }
+  .f-card-reviews { right: -10px; }
+  .f-card-count   { right: 0; }
+}
+
+@media (max-width: 540px) {
+  .hero {
+    min-height: auto;
+    padding: 40px 0 0;
+  }
+
+  .hero-inner {
+    padding: 0;
+    gap: 32px;
+  }
+
+  .hero-img-wrap {
+    max-width: 290px;
+    border-radius: var(--r-lg);
+  }
+
+  .f-card { display: none; }
+
+  .f-card-rating {
+    display: flex;
+    left: -4px;
+    bottom: 16px;
+    padding: 10px 14px;
+  }
+}

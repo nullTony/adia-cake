@@ -1,0 +1,70 @@
+// ================================
+//  CONTAINER, SECTION WRAPPER, SECTION HEADER
+// ================================
+
+.container {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.section {
+  padding: 88px 0;
+
+  @media (max-width: 768px) {
+    padding: 60px 0;
+  }
+}
+
+// ---- Shared section header ----
+
+.sec-header {
+  text-align: center;
+  margin-bottom: 52px;
+}
+
+.sec-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--coffee);
+  background: var(--beige);
+  padding: 6px 16px;
+  border-radius: 100px;
+  margin-bottom: 16px;
+}
+
+.sec-title {
+  font-size: clamp(30px, 5vw, 52px);
+  font-weight: 500;
+  color: var(--text-dark);
+  margin-bottom: 14px;
+}
+
+.sec-sub {
+  font-size: 16px;
+  color: var(--text-med);
+  max-width: 540px;
+  margin: 0 auto;
+  line-height: 1.75;
+}
+
+// ---- Utility ----
+
+.sep {
+  height: 1px;
+  background: var(--border);
+}
+
+.anim {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+
+  &.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

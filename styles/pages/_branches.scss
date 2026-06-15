@@ -1,0 +1,242 @@
+// ================================
+//  BRANCHES SECTION
+// ================================
+
+.branches {
+  background: var(--white);
+}
+
+.br-layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+// ---- Left panel ----
+
+.br-left {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 520px;
+}
+
+// ---- Search ----
+
+.br-search-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.br-search-ico {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.br-search {
+  width: 100%;
+  padding: 12px 16px 12px 40px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text-dark);
+  background: var(--cream);
+  transition: var(--ease);
+  outline: none;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+
+  &:focus {
+    border-color: var(--caramel);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(196, 149, 106, 0.12);
+  }
+}
+
+// ---- Branch list ----
+
+.br-list {
+  flex: 1;
+  overflow-y: auto;
+  border-radius: var(--r-lg);
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+
+  &::-webkit-scrollbar         { width: 4px; }
+  &::-webkit-scrollbar-track   { background: transparent; }
+  &::-webkit-scrollbar-thumb   { background: var(--border); border-radius: 4px; }
+}
+
+.br-empty {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 16px;
+}
+
+// ---- Branch card ----
+
+.br-card {
+  padding: 16px 18px;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  transition: background var(--ease), border-color var(--ease);
+  user-select: none;
+
+  & + & {
+    border-top: 1px solid var(--border);
+  }
+
+  &:hover {
+    background: var(--cream);
+    border-left-color: var(--caramel);
+  }
+
+  &.active {
+    background: var(--beige);
+    border-left-color: var(--coffee-dark);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--caramel);
+    outline-offset: -2px;
+  }
+}
+
+.br-card-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 4px;
+}
+
+.br-card-addr {
+  font-size: 13px;
+  color: var(--text-med);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.br-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.br-card-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.br-card-ico {
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.br-card-route {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--coffee);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+
+  &:hover {
+    text-decoration: underline;
+    color: var(--coffee-dark);
+  }
+}
+
+// ---- Map panel ----
+
+.br-map-wrap {
+  position: sticky;
+  top: 84px;
+  height: 520px;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-m);
+  background: var(--cream);
+}
+
+.br-map-container {
+  width: 100%;
+  height: 100%;
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border: none;
+  }
+}
+
+.br-map-no-url {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: linear-gradient(145deg, var(--beige) 0%, var(--caramel) 100%);
+  text-align: center;
+  padding: 40px;
+}
+
+.br-map-no-ico {
+  font-size: 64px;
+  line-height: 1;
+}
+
+.br-map-no-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  color: var(--text-dark);
+  line-height: 1.4;
+}
+
+// ---- Breakpoints ----
+
+@media (max-width: 1024px) {
+  .br-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .br-left {
+    max-height: none;
+  }
+
+  .br-map-wrap {
+    height: 340px;
+    position: static;
+  }
+}
+
+@media (max-width: 600px) {
+  .br-map-wrap {
+    height: 260px;
+  }
+}

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="formPageTitle">Товар — ADIA Cake Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/admin.css">
+</head>
+<body>
+
+<div class="admin-layout">
+
+    <!-- ======= SIDEBAR ======= -->
+    <aside class="a-sidebar">
+        <div class="a-sidebar-logo">
+            <div class="a-sidebar-logo-icon">🍰</div>
+            <div>
+                <div class="a-sidebar-logo-text">ADIA Cake</div>
+                <div class="a-sidebar-logo-sub">Admin</div>
+            </div>
+        </div>
+
+        <nav class="a-sidebar-nav">
+            <div class="a-nav-section">
+                <div class="a-nav-label">Управление</div>
+                <a href="index.html" class="a-nav-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                        <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+                    </svg>
+                    Главная
+                </a>
+                <a href="products.html" class="a-nav-link active">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/><path d="M8 7V5a2 2 0 0 0-4 0v2"/>
+                    </svg>
+                    Товары
+                </a>
+                <a href="branch-products.html" class="a-nav-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    Витрина по филиалам
+                </a>
+                <a href="categories.html" class="a-nav-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    Категории
+                </a>
+                <a href="orders.html" class="a-nav-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                    </svg>
+                    Заказы
+                </a>
+                <a href="staff.html" class="a-nav-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    Сотрудники
+                </a>
+            </div>
+
+            <div class="a-nav-section">
+                <div class="a-nav-label">Сайт</div>
+                <a href="../index.html" class="a-nav-link" target="_blank">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                    Открыть витрину
+                </a>
+                <a href="../catalog.html" class="a-nav-link" target="_blank">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    Каталог
+                </a>
+            </div>
+        </nav>
+
+        <div class="a-sidebar-footer">
+            <button class="a-logout-btn" id="logoutBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Выйти
+            </button>
+        </div>
+    </aside>
+
+    <!-- ======= MAIN ======= -->
+    <div class="a-main">
+
+        <div class="a-topbar">
+            <div style="display:flex;align-items:center;gap:12px">
+                <a href="products.html" class="a-btn a-btn-ghost a-btn-sm" style="gap:6px">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    Назад
+                </a>
+                <div class="a-topbar-title" id="formTitle">Добавить товар</div>
+            </div>
+            <div class="a-topbar-user">
+                <span>Привет, <strong id="adminUser">admin</strong></span>
+                <div class="a-topbar-avatar">A</div>
+            </div>
+        </div>
+
+        <div class="a-content">
+
+            <!-- Error banner -->
+            <div id="formError" style="display:none;background:var(--a-danger-light);color:var(--a-danger);border-radius:var(--a-r);padding:12px 16px;margin-bottom:20px;font-size:13px"></div>
+
+            <form id="productForm" novalidate>
+                <div style="display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start">
+
+                    <!-- Left column: main info -->
+                    <div>
+
+                        <!-- Basic info -->
+                        <div class="a-card" style="padding:28px;margin-bottom:20px">
+                            <div style="font-size:15px;font-weight:700;margin-bottom:20px;color:var(--a-text)">Основная информация</div>
+
+                            <div class="a-form-grid">
+                                <div class="a-form-group a-form-full">
+                                    <label class="a-label" for="fTitle" style="display:flex;justify-content:space-between">
+                                        <span>Название <span style="color:var(--a-danger)">*</span></span>
+                                        <span id="titleCharCount" style="font-size:11px;font-weight:400;color:var(--a-text-light)">0/25</span>
+                                    </label>
+                                    <input class="a-input" type="text" id="fTitle" placeholder="Медовик классический" maxlength="25">
+                                    <div class="a-input-hint">Максимум 25 символов</div>
+                                    <div class="a-input-error" id="errTitle">Укажите название товара</div>
+                                </div>
+
+                                <div class="a-form-group a-form-full">
+                                    <label class="a-label" for="fDesc">Описание <span class="a-label-opt">(необязательно)</span></label>
+                                    <textarea class="a-textarea" id="fDesc" placeholder="Нежные медовые коржи, сливочный крем..." rows="3"></textarea>
+                                </div>
+
+                                <div class="a-form-group">
+                                    <label class="a-label" for="fPrice">Цена, сум <span style="color:var(--a-danger)">*</span></label>
+                                    <input class="a-input" type="number" id="fPrice" placeholder="85000" min="0" step="1000">
+                                    <div class="a-input-error" id="errPrice">Укажите корректную цену</div>
+                                </div>
+
+                                <div class="a-form-group">
+                                    <label class="a-label" for="fSortOrder">Порядок сортировки</label>
+                                    <input class="a-input" type="number" id="fSortOrder" placeholder="0" min="0" step="1" value="0">
+                                    <div class="a-input-hint">Меньше = выше в списке</div>
+                                </div>
+
+                                <div class="a-form-group a-form-full">
+                                    <label class="a-label" for="fCategory">Категория <span style="color:var(--a-danger)">*</span></label>
+                                    <select class="a-form-select" id="fCategory">
+                                        <option value="">Загрузка категорий…</option>
+                                    </select>
+                                    <div class="a-input-error" id="errCategory">Выберите категорию</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image -->
+                        <div class="a-card" style="padding:28px;margin-bottom:20px">
+                            <div style="font-size:15px;font-weight:700;margin-bottom:20px;color:var(--a-text)">Фото</div>
+
+                            <!-- ImgBB upload -->
+                            <div class="a-form-group" style="margin-bottom:16px">
+                                <label class="a-label">Загрузить через ImgBB</label>
+                                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                                    <button type="button" class="a-btn a-btn-outline a-btn-sm" id="uploadPhotoBtn" disabled>
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px">
+                                            <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+                                            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+                                        </svg>
+                                        Выбрать фото
+                                    </button>
+                                    <span style="font-size:12px;color:var(--a-text-light)" id="uploadStatus"></span>
+                                </div>
+                                <input type="file" id="fPhotoFile" accept="image/*" style="display:none">
+                            </div>
+
+                            <!-- URL input (always visible as fallback) -->
+                            <div class="a-form-group">
+                                <label class="a-label" for="fPhotoUrl">URL фото <span class="a-label-opt">(вставьте ссылку или загрузите выше)</span></label>
+                                <input class="a-input" type="url" id="fPhotoUrl" placeholder="https://i.ibb.co/...">
+                            </div>
+
+                            <!-- Preview -->
+                            <div class="a-img-preview-wrap">
+                                <img class="a-img-preview" id="imgPreview" src="" alt="" style="display:none">
+                                <div class="a-img-placeholder" id="imgPlaceholder">
+                                    <div class="a-img-placeholder-ico">🖼️</div>
+                                    <div>Выберите фото или вставьте URL</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form actions -->
+                        <div class="a-form-actions">
+                            <button type="submit" class="a-btn a-btn-primary" id="saveBtn">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                                Сохранить
+                            </button>
+                            <button type="button" class="a-btn a-btn-outline" id="cancelBtn">Отмена</button>
+                        </div>
+
+                    </div>
+
+                    <!-- Right column: status toggles -->
+                    <div>
+                        <div class="a-card" style="padding:28px">
+                            <div style="font-size:15px;font-weight:700;margin-bottom:20px;color:var(--a-text)">Статус и отображение</div>
+
+                            <!-- Unit type -->
+                            <div style="margin-bottom:20px">
+                                <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--a-text)">Тип продажи</div>
+                                <div style="display:flex;gap:10px">
+                                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;font-weight:600">
+                                        <input type="radio" name="fUnitType" id="fUnitPiece" value="piece" checked style="accent-color:var(--a-accent)">
+                                        Штучный
+                                    </label>
+                                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;font-weight:600">
+                                        <input type="radio" name="fUnitType" id="fUnitWeight" value="weight" style="accent-color:var(--a-accent)">
+                                        По весу (кг)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Weight fields (hidden until "По весу" selected) -->
+                            <div id="weightFields" hidden>
+                                <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--a-text)">Параметры веса</div>
+                                <div class="a-form-grid">
+                                    <div class="a-form-group">
+                                        <label class="a-label" for="fWeightMin">Мин. вес, г <span style="color:var(--a-danger)">*</span></label>
+                                        <input class="a-input" type="number" id="fWeightMin" placeholder="250" min="1" step="1">
+                                    </div>
+                                    <div class="a-form-group">
+                                        <label class="a-label" for="fWeightMax">Макс. вес, г <span style="color:var(--a-danger)">*</span></label>
+                                        <input class="a-input" type="number" id="fWeightMax" placeholder="2000" min="1" step="1">
+                                    </div>
+                                    <div class="a-form-group">
+                                        <label class="a-label" for="fWeightStep">Шаг, г <span style="color:var(--a-danger)">*</span></label>
+                                        <input class="a-input" type="number" id="fWeightStep" placeholder="250" min="1" step="1">
+                                    </div>
+                                    <div class="a-form-group">
+                                        <div style="font-size:12px;color:var(--a-text-light);margin-top:22px">Цена = поле «Цена за 1 кг» выше</div>
+                                    </div>
+                                </div>
+                                <!-- Live preview -->
+                                <div id="weightPreview" style="margin-top:12px;padding:12px 14px;background:var(--a-bg);border-radius:8px;font-size:13px;color:var(--a-text-dark);display:none">
+                                    <div style="font-weight:700;margin-bottom:6px">Предпросмотр вариантов:</div>
+                                    <div id="weightPreviewBtns" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px"></div>
+                                    <div id="weightPreviewPrice" style="color:var(--a-text-light)"></div>
+                                </div>
+                                <div class="a-input-error" id="errWeight" style="margin-top:8px">Проверьте параметры: мин < макс, шаг ≤ (макс − мин), все поля заполнены</div>
+                            </div>
+
+                            <div class="a-toggle-group" style="margin-top:24px">
+                                <div class="a-toggle-row">
+                                    <div class="a-toggle-info">
+                                        <div class="a-toggle-label">Показывать в каталоге</div>
+                                        <div class="a-toggle-desc">Выключите чтобы скрыть товар — он останется в системе</div>
+                                    </div>
+                                    <label class="a-toggle">
+                                        <input type="checkbox" id="fIsActive" checked>
+                                        <span class="a-toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- ======= TOASTS ======= -->
+<div class="a-toast-container" id="toastContainer"></div>
+
+<script type="module" src="../js/admin/product-form.js"></script>
+
+</body>
+</html>

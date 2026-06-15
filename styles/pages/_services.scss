@@ -1,0 +1,80 @@
+// ================================
+//  SERVICES SECTION
+// ================================
+
+.services {
+  background: var(--text-dark);
+
+  .sec-tag   { background: rgba(232, 201, 154, 0.18); color: var(--caramel); }
+  .sec-title { color: var(--white); }
+  .sec-sub   { color: rgba(255, 255, 255, 0.55); }
+}
+
+.srv-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.srv-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--r-lg);
+  padding: 32px 26px;
+  transition: var(--ease);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--caramel);
+    transform: translateY(-4px);
+  }
+}
+
+.srv-ico {
+  font-size: 40px;
+  margin-bottom: 18px;
+}
+
+.srv-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 23px;
+  font-weight: 500;
+  color: var(--white);
+  margin-bottom: 10px;
+}
+
+.srv-desc {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.7;
+  margin-bottom: 18px;
+}
+
+.srv-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--caramel);
+  transition: var(--ease);
+
+  &:hover {
+    gap: 9px;
+    color: var(--caramel-dark);
+  }
+}
+
+// ---- Breakpoints ----
+
+@media (max-width: 900px) {
+  .srv-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .srv-grid {
+    grid-template-columns: 1fr;
+  }
+}

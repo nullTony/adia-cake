@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Витрина по филиалам — ADIA Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/admin.css">
+    <style>
+        /* ── Header row ─────────────────────────────────────────── */
+        .bp-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .bp-branch-sel {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .bp-branch-sel label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--a-text-light);
+            white-space: nowrap;
+        }
+        .bp-branch-sel select {
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--a-text);
+            border: 1.5px solid var(--a-border);
+            border-radius: var(--a-r);
+            padding: 8px 36px 8px 14px;
+            background: var(--a-bg);
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+        }
+        .bp-manager-branch {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--a-text);
+            background: var(--a-accent-light);
+            color: var(--a-accent-dark);
+            padding: 8px 16px;
+            border-radius: var(--a-r);
+        }
+        .bp-counters {
+            margin-left: auto;
+            display: flex;
+            gap: 20px;
+        }
+        .bp-counter {
+            font-size: 13px;
+            color: var(--a-text-light);
+            font-weight: 600;
+        }
+        .bp-counter strong {
+            color: var(--a-text);
+            font-size: 15px;
+            font-weight: 800;
+        }
+        .bp-date {
+            font-size: 13px;
+            color: var(--a-text-light);
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        /* ── Table ──────────────────────────────────────────────── */
+        .bp-table-wrap {
+            background: var(--a-white);
+            border-radius: var(--a-r-lg);
+            overflow: hidden;
+            box-shadow: var(--a-shadow);
+            border: 1px solid var(--a-border);
+            margin-bottom: 16px;
+        }
+        .bp-table { width: 100%; border-collapse: collapse; }
+        .bp-table th {
+            background: var(--a-bg);
+            padding: 12px 16px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--a-text-light);
+            text-align: left;
+            border-bottom: 1px solid var(--a-border);
+        }
+        .bp-table th.bp-check-head { text-align: center; }
+        .bp-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--a-border);
+            vertical-align: middle;
+        }
+        .bp-table tr:last-child td { border-bottom: none; }
+        .bp-table tr:hover td { background: var(--a-bg); }
+        .bp-check-cell { text-align: center; }
+
+        /* ── Product cell ───────────────────────────────────────── */
+        .bp-prod-cell { display: flex; align-items: center; gap: 12px; }
+        .bp-prod-img {
+            width: 44px; height: 44px;
+            border-radius: 8px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .bp-prod-img-ph {
+            width: 44px; height: 44px;
+            border-radius: 8px;
+            background: var(--a-bg);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+        .bp-prod-name { font-size: 14px; font-weight: 700; color: var(--a-text); }
+        .bp-prod-price { font-size: 12px; color: var(--a-text-light); margin-top: 2px; font-weight: 600; }
+
+        /* ── Toggle switch ──────────────────────────────────────── */
+        .bp-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px; height: 24px;
+            cursor: pointer;
+        }
+        .bp-switch input { opacity: 0; width: 0; height: 0; }
+        .bp-slider {
+            position: absolute;
+            inset: 0;
+            background: var(--a-border);
+            border-radius: 24px;
+            cursor: pointer;
+            transition: background .2s;
+        }
+        .bp-slider::before {
+            content: '';
+            position: absolute;
+            width: 18px; height: 18px;
+            left: 3px; bottom: 3px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform .2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,.2);
+        }
+        .bp-switch input:checked + .bp-slider { background: var(--a-accent-dark); }
+        .bp-switch input:checked + .bp-slider--pop { background: #f59e0b; }
+        .bp-switch input:checked + .bp-slider::before,
+        .bp-switch input:checked + .bp-slider--pop::before { transform: translateX(16px); }
+        .bp-switch--disabled { opacity: .35; cursor: not-allowed; }
+        .bp-switch--disabled .bp-slider { cursor: not-allowed; }
+
+        /* ── Save bar ───────────────────────────────────────────── */
+        .bp-save-bar {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            padding: 16px 20px;
+            background: var(--a-white);
+            border: 1px solid var(--a-border);
+            border-radius: var(--a-r-lg);
+            box-shadow: var(--a-shadow);
+            position: sticky;
+            bottom: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .2s;
+        }
+        .bp-save-bar--visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .bp-save-hint {
+            font-size: 13px;
+            color: var(--a-text-light);
+            font-weight: 600;
+        }
+
+        /* ── Empty / loading ────────────────────────────────────── */
+        .bp-empty {
+            padding: 56px 24px;
+            text-align: center;
+            color: var(--a-text-light);
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .bp-loading { padding: 56px 24px; text-align: center; color: var(--a-text-light); }
+    </style>
+</head>
+<body class="a-body">
+
+<div class="a-layout">
+
+    <!-- ====== SIDEBAR ====== -->
+    <aside class="a-sidebar">
+        <div class="a-sidebar-logo">
+            <div class="a-sidebar-logo-icon">🍰</div>
+            <div>
+                <div class="a-sidebar-logo-text">ADIA Cake</div>
+                <div class="a-sidebar-logo-sub">Admin</div>
+            </div>
+        </div>
+        <nav class="a-sidebar-nav">
+            <div class="a-nav-section">
+                <div class="a-nav-label">Управление</div>
+                <a href="index.html" class="a-nav-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                        <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+                    </svg>
+                    Главная
+                </a>
+                <a href="products.html" class="a-nav-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/><path d="M8 7V5a2 2 0 0 0-4 0v2"/>
+                    </svg>
+                    Товары
+                </a>
+                <a href="branch-products.html" class="a-nav-link active">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    Витрина по филиалам
+                </a>
+                <a href="categories.html" class="a-nav-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    Категории
+                </a>
+                <a href="orders.html" class="a-nav-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                    </svg>
+                    Заказы
+                </a>
+                <a href="staff.html" class="a-nav-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    Сотрудники
+                </a>
+            </div>
+            <div class="a-nav-section">
+                <div class="a-nav-label">Сайт</div>
+                <a href="../index.html" class="a-nav-link" target="_blank">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                    Открыть витрину
+                </a>
+                <a href="../catalog.html" class="a-nav-link" target="_blank">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    Каталог
+                </a>
+            </div>
+        </nav>
+        <div class="a-sidebar-footer">
+            <button class="a-logout-btn" id="logoutBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Выйти
+            </button>
+        </div>
+    </aside>
+
+    <!-- ====== MAIN ====== -->
+    <div class="a-main">
+
+        <div class="a-topbar">
+            <div class="a-topbar-title">Витрина по филиалам</div>
+            <div class="a-topbar-user">
+                <span>Привет, <strong id="adminUser">admin</strong></span>
+                <div class="a-topbar-avatar">A</div>
+            </div>
+        </div>
+
+        <div class="a-content">
+
+            <div class="a-page-header">
+                <div>
+                    <div class="a-page-title">Витрина по филиалам</div>
+                    <div class="a-page-sub">Управляйте ассортиментом каждого филиала</div>
+                </div>
+                <div class="bp-date" id="bpDate"></div>
+            </div>
+
+            <!-- Branch selector + counters -->
+            <div class="bp-header">
+                <div class="bp-branch-sel" id="bpBranchRow">
+                    <label for="bpBranch">Филиал:</label>
+                    <select id="bpBranch">
+                        <option value="">— Выберите филиал —</option>
+                    </select>
+                </div>
+                <div class="bp-manager-branch" id="bpManagerBranch" hidden></div>
+                <div class="bp-counters">
+                    <div class="bp-counter">Доступно сегодня: <strong id="bpAvailCount">—</strong></div>
+                    <div class="bp-counter">Топ позиций: <strong id="bpPopularCount">—</strong></div>
+                </div>
+            </div>
+
+            <!-- Search -->
+            <div class="a-search-wrap" style="margin-bottom:16px">
+                <svg class="a-search-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input class="a-search" type="search" id="bpSearch" placeholder="Поиск товара…">
+            </div>
+
+            <!-- Product table -->
+            <div class="bp-table-wrap" id="bpTableWrap">
+                <div class="bp-empty">Выберите филиал, чтобы увидеть ассортимент</div>
+            </div>
+
+            <!-- Sticky save bar -->
+            <div class="bp-save-bar" id="bpSaveBar">
+                <span class="bp-save-hint">Есть несохранённые изменения</span>
+                <button class="a-btn a-btn-accent" id="bpSaveBtn">Сохранить изменения</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="a-toast" id="bpToast"></div>
+
+<script type="module" src="../js/admin/branch-products.js"></script>
+
+</body>
+</html>

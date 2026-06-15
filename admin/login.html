@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход — ADIA Cake Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/admin.css">
+</head>
+<body>
+
+<div class="login-page">
+    <div class="login-card">
+
+        <div class="login-logo">
+            <div class="login-logo-icon">🍰</div>
+            <div class="login-logo-name">ADIA Cake</div>
+            <div class="login-logo-sub">Admin Panel</div>
+        </div>
+
+        <div class="login-title">Добро пожаловать</div>
+        <div class="login-sub">Войдите в панель управления</div>
+
+        <div class="login-error" id="loginError">
+            Неверный номер или пароль
+        </div>
+
+        <form id="loginForm" autocomplete="on">
+            <div class="a-form-group" style="margin-bottom:16px">
+                <label class="a-label" for="phoneField">Номер телефона</label>
+                <input
+                    class="a-input"
+                    type="tel"
+                    id="phoneField"
+                    name="phone"
+                    autocomplete="tel"
+                    placeholder="+998 90 000 00 00"
+                    required
+                >
+            </div>
+            <div class="a-form-group" style="margin-bottom:24px">
+                <label class="a-label" for="passField">Пароль</label>
+                <input
+                    class="a-input"
+                    type="password"
+                    id="passField"
+                    name="password"
+                    autocomplete="current-password"
+                    placeholder="••••••••"
+                    required
+                >
+            </div>
+            <button type="submit" class="a-btn a-btn-primary" id="loginBtn" style="width:100%;justify-content:center;padding:12px">
+                Войти
+            </button>
+        </form>
+
+    </div>
+</div>
+
+<script type="module">
+import { login, isAuthenticated }              from '../js/admin/auth.js';
+import { initPhoneInput, handlePhoneInput, getPhoneValue } from '../js/utils/phone-input.js';
+
+if (isAuthenticated()) {
+    window.location.href = 'index.html';
+}
+
+const _phoneEl = document.getElementById('phoneField');
+initPhoneInput(_phoneEl, null);
+handlePhoneInput(_phoneEl);
+
+document.getElementById('loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const phone   = getPhoneValue(document.getElementById('phoneField'));
+    const pass    = document.getElementById('passField').value;
+    const errEl   = document.getElementById('loginError');
+    const btn     = document.getElementById('loginBtn');
+
+    errEl.classList.remove('visible');
+    btn.disabled    = true;
+    btn.textContent = 'Вход…';
+
+    try {
+        await login(phone, pass);
+        // Redirect to Telegram binding page if chat_id not yet linked
+        const session = JSON.parse(localStorage.getItem('adia_staff') || '{}');
+        window.location.href = session.telegram_chat_id ? 'index.html' : 'telegram-bind.html';
+    } catch (err) {
+        errEl.textContent = err.message || 'Неверный номер или пароль';
+        errEl.classList.add('visible');
+        document.getElementById('passField').value = '';
+        document.getElementById('passField').focus();
+    } finally {
+        btn.disabled    = false;
+        btn.textContent = 'Войти';
+    }
+});
+</script>
+
+</body>
+</html>

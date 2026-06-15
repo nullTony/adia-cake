@@ -1,0 +1,59 @@
+// ================================
+//  MOBILE BOTTOM NAVIGATION
+//  Fixed bottom bar, shown on screens ≤ 768px
+// ================================
+
+.mobile-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  display: none;
+  grid-template-columns: repeat(4, 1fr);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-shadow: 0 -4px 20px rgba(44, 24, 16, 0.08);
+
+  @media (max-width: 768px) {
+    display: grid;
+  }
+}
+
+.mobile-nav__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 10px 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-light);
+  cursor: pointer;
+  position: relative;
+  transition: color var(--ease);
+
+  &.active,
+  &:hover { color: var(--coffee-dark); }
+
+  svg { width: 22px; height: 22px; }
+}
+
+.mobile-nav__badge {
+  position: absolute;
+  top: 6px;
+  right: calc(50% - 18px);
+  background: var(--coffee-dark);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  min-width: 17px;
+  height: 17px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}

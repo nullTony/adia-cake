@@ -1,0 +1,29 @@
+// ================================
+//  ADIA CAKE — Main SCSS Entry Point
+//  Compile: sass styles/main.scss styles/main.css --style=compressed
+// ================================
+
+// 1. Base — variables, reset
+@use 'base/variables';
+@use 'base/reset';
+
+// 2. Layout — structural shells
+@use 'layout/container';
+@use 'layout/header';
+@use 'layout/footer';
+
+// 3. Components — reusable UI pieces
+@use 'components/buttons';
+@use 'components/product-card';
+@use 'components/category-card';
+
+// 4. Pages — section-specific styles
+@use 'pages/hero';
+@use 'pages/catalog';
+@use 'pages/services';
+@use 'pages/reviews';
+@use 'pages/branches';
+@use 'pages/cta';
+
+// 5. Utilities — animations, helpers
+@use 'utilities/animations';

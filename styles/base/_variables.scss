@@ -1,0 +1,40 @@
+// ================================
+//  CSS CUSTOM PROPERTIES
+// ================================
+
+:root {
+  // Colors — palette
+  --milk:         #FEFCF8;
+  --cream:        #FFF8F0;
+  --beige:        #F5E6D3;
+  --beige-dark:   #EDD5BC;
+  --caramel:      #E8C99A;
+  --caramel-dark: #D4A574;
+  --coffee:       #C4956A;
+  --coffee-dark:  #A67C52;
+  --powder:       #E8B4B8;
+  --powder-light: #F7E0E2;
+
+  // Colors — text
+  --text-dark:  #2C1810;
+  --text-med:   #6B4C3B;
+  --text-light: #9C7B6A;
+  --text-muted: #BFA094;
+  --white:      #FFFFFF;
+  --border:     rgba(196, 149, 106, 0.2);
+
+  // Shadows
+  --shadow-s: 0 4px 20px rgba(44, 24, 16, 0.07);
+  --shadow-m: 0 8px 32px rgba(44, 24, 16, 0.11);
+  --shadow-l: 0 16px 48px rgba(44, 24, 16, 0.15);
+
+  // Border radii
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 24px;
+  --r-xl: 32px;
+
+  // Transitions & layout
+  --ease:  0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --max-w: 1240px;
+}

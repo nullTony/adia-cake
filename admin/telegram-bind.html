@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Привязать Telegram — ADIA Cake Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/admin.css">
+  <style>
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--a-bg); }
+
+    .tb-card {
+      background: var(--a-white);
+      border: 1px solid var(--a-border);
+      border-radius: 16px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.06);
+      text-align: center;
+    }
+
+    .tb-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--a-text-dark);
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .tb-icon  { font-size: 36px; margin-bottom: 12px; }
+    .tb-title { font-size: 20px; font-weight: 800; color: var(--a-text-dark); margin-bottom: 8px; }
+    .tb-desc  { font-size: 14px; color: var(--a-text-med); line-height: 1.55; margin-bottom: 20px; }
+
+    .tb-phone {
+      display: inline-block;
+      background: var(--a-bg);
+      border: 1px solid var(--a-border);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--a-text-dark);
+      margin-bottom: 24px;
+    }
+
+    .tb-open-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px;
+      background: #229ED9;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity .15s;
+      margin-bottom: 18px;
+    }
+    .tb-open-btn:hover { opacity: .88; }
+    .tb-open-btn:disabled { opacity: .5; cursor: default; }
+
+    .tb-status {
+      font-size: 13px;
+      color: var(--a-text-light);
+      min-height: 22px;
+      margin-bottom: 20px;
+      transition: color .2s;
+    }
+    .tb-status.waiting { color: var(--a-accent); }
+    .tb-status.success { color: #059669; font-weight: 700; }
+    .tb-status.error   { color: var(--a-danger); }
+
+    .tb-divider { border: none; border-top: 1px solid var(--a-border); margin: 4px 0 16px; }
+
+    .tb-skip {
+      font-size: 13px;
+      color: var(--a-text-light);
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .tb-skip:hover { color: var(--a-text-med); }
+
+    .tb-skip-hint {
+      font-size: 12px;
+      color: var(--a-text-light);
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="tb-card">
+    <div class="tb-logo">🍰 ADIA Cake Admin</div>
+
+    <div class="tb-icon">📱</div>
+    <div class="tb-title">Привяжите Telegram</div>
+    <div class="tb-desc">
+      Для получения уведомлений о заказах необходимо привязать Telegram аккаунт.
+    </div>
+
+    <div class="tb-phone" id="tbPhone">—</div>
+
+    <button class="tb-open-btn" id="tbOpenBtn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.014 9.488c-.148.66-.543.822-1.1.513l-3.044-2.243-1.47 1.413c-.163.163-.3.3-.614.3l.218-3.112 5.65-5.103c.245-.218-.054-.339-.38-.121L6.4 14.49l-3.018-.942c-.657-.206-.67-.657.137-.973l11.78-4.542c.549-.199 1.028.134.848.971z"/>
+      </svg>
+      Открыть Telegram бот
+    </button>
+
+    <div class="tb-status" id="tbStatus"></div>
+
+    <hr class="tb-divider">
+
+    <button class="tb-skip" id="tbSkip">Пропустить →</button>
+    <div class="tb-skip-hint">Можно привязать позже в панели управления</div>
+  </div>
+
+  <script type="module" src="../js/admin/telegram-bind.js"></script>
+</body>
+</html>

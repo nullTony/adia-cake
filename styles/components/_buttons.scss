@@ -1,0 +1,99 @@
+// ================================
+//  BUTTONS
+// ================================
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: 100px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'Nunito', sans-serif;
+  transition: var(--ease);
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+  text-decoration: none;
+
+  // ---- Variants ----
+
+  &-dark {
+    background: var(--text-dark);
+    color: var(--white);
+
+    &:hover {
+      background: var(--coffee-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(44, 24, 16, 0.22);
+    }
+  }
+
+  &-outline {
+    background: transparent;
+    color: var(--text-dark);
+    border: 1.5px solid rgba(44, 24, 16, 0.28);
+
+    &:hover {
+      background: var(--beige);
+      border-color: var(--caramel-dark);
+      transform: translateY(-2px);
+    }
+  }
+
+  &-caramel {
+    background: var(--caramel);
+    color: var(--text-dark);
+
+    &:hover {
+      background: var(--caramel-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(196, 149, 106, 0.35);
+    }
+  }
+
+  &-white {
+    background: var(--white);
+    color: var(--text-dark);
+
+    &:hover {
+      background: var(--cream);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(44, 24, 16, 0.12);
+    }
+  }
+
+  &-ghost {
+    background: transparent;
+    color: var(--text-med);
+
+    &:hover { background: var(--beige); }
+  }
+
+  // ---- Sizes ----
+
+  &-lg {
+    padding: 18px 36px;
+    font-size: 16px;
+  }
+
+  &-sm {
+    padding: 9px 18px;
+    font-size: 13px;
+  }
+
+  &:active { transform: scale(0.97); }
+}
+
+// Standalone outline variant used on dark backgrounds
+.btn-outline-dark {
+  background: transparent;
+  color: var(--text-dark);
+  border: 1.5px solid rgba(44, 24, 16, 0.35);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+  }
+}
