@@ -12,14 +12,17 @@
   --caramel-dark: #D4A574;
   --coffee:       #C4956A;
   --coffee-dark:  #A67C52;
-  --powder:       #E8B4B8;
-  --powder-light: #F7E0E2;
+  --powder:         #E8B4B8;
+  --powder-light:   #F7E0E2;
+  --powder-active:  #e8506a;
+  --green:          #10B981;
+  --star:           #F59E0B;
 
-  // Colors — text
+  // Colors — text (improved contrast for AA accessibility)
   --text-dark:  #2C1810;
   --text-med:   #6B4C3B;
-  --text-light: #9C7B6A;
-  --text-muted: #BFA094;
+  --text-light: #7A5C4B;
+  --text-muted: #8B6F5F;
   --white:      #FFFFFF;
   --border:     rgba(196, 149, 106, 0.2);
 

@@ -44,8 +44,8 @@
   position: absolute;
   top: 16px;
   right: 16px;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: var(--beige);
   border: none;
@@ -121,7 +121,7 @@
   width: 100%;
   padding: 14px;
   border-radius: var(--r-md);
-  background: #D4920A;
+  background: var(--caramel-dark);
   color: var(--white);
   border: none;
   font-family: 'Nunito', sans-serif;
@@ -130,7 +130,7 @@
   cursor: pointer;
   transition: background var(--ease), transform var(--ease);
 
-  &:hover  { background: #B87C08; }
+  &:hover  { background: var(--coffee-dark); }
   &:active { transform: scale(0.98); }
   &:disabled { opacity: 0.55; cursor: not-allowed; }
 }

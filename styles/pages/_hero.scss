@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   overflow: hidden;
-  background: linear-gradient(135deg, var(--cream) 0%, var(--beige) 55%, #edd5bc 100%);
+  background: linear-gradient(135deg, var(--cream) 0%, var(--beige) 55%, var(--beige-dark) 100%);
 }
 
 // ---- Background blobs ----
@@ -61,7 +61,7 @@
   font-size: 13px;
   font-weight: 700;
   color: var(--coffee-dark);
-  margin-bottom: 26px;
+  margin-bottom: 24px;
 }
 
 .live-dot {
@@ -76,7 +76,7 @@
 
 .hero-h1 {
   font-size: clamp(40px, 6.5vw, 76px);
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-dark);
   margin-bottom: 22px;
 
@@ -156,7 +156,7 @@
 .hero-img-ph {
   width: 100%;
   height: 100%;
-  background: linear-gradient(145deg, #e8d0b0 0%, #d4a574 35%, #c4956a 65%, #a67c52 100%);
+  background: linear-gradient(145deg, var(--caramel) 0%, var(--caramel-dark) 35%, var(--coffee) 65%, var(--coffee-dark) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -201,10 +201,17 @@
   .f-ico  { font-size: 28px; }
   .f-lbl  { font-size: 11px; color: var(--text-muted); font-weight: 600; }
   .f-val  { font-size: 16px; font-weight: 800; color: var(--text-dark); }
-  .stars  { color: #f5a623; font-size: 13px; }
+  .stars  { color: var(--star); font-size: 13px; }
 }
 
 // ---- Breakpoints ----
+
+@media (max-width: 768px) {
+  .hero-live-badge {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
 
 @media (max-width: 1024px) {
   .hero-inner {

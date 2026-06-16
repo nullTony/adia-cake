@@ -31,14 +31,14 @@
 }
 
 .srv-ico {
-  font-size: 40px;
+  font-size: 48px;
   margin-bottom: 18px;
 }
 
 .srv-title {
   font-family: 'Cormorant Garamond', serif;
   font-size: 23px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--white);
   margin-bottom: 10px;
 }
@@ -58,10 +58,17 @@
   font-weight: 700;
   color: var(--caramel);
   transition: var(--ease);
+  min-height: 44px;
+  align-items: center;
 
   &:hover {
     gap: 9px;
     color: var(--caramel-dark);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
 
@@ -70,6 +77,24 @@
 @media (max-width: 900px) {
   .srv-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .srv-card {
+    padding: 24px 20px;
+  }
+
+  .srv-ico {
+    font-size: 32px;
+  }
+
+  .srv-title {
+    font-size: 20px;
+  }
+
+  .srv-desc {
+    font-size: 13px;
   }
 }
 
