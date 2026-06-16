@@ -240,6 +240,12 @@
   .btn {
     width: 100%;
     justify-content: center;
+    // .mob-menu a sets color:var(--text-dark) and wins by specificity — override explicitly
+    color: var(--white);
+  }
+
+  .btn-dark {
+    color: var(--white);
   }
 }
 
@@ -257,5 +263,29 @@
 
   .mob-menu {
     display: flex;
+  }
+
+  // Touch devices: :hover stays active until the next tap — looks broken.
+  // Neutralise it on menu links; keep only :active for tap feedback.
+  .mob-menu a:hover {
+    background: transparent;
+    color: var(--text-dark);
+  }
+
+  .mob-menu a:active {
+    background: var(--beige);
+    color: var(--coffee-dark);
+  }
+
+  // Footer button: remove translateY lift and shadow on touch
+  .mob-menu-foot .btn:hover {
+    transform: none;
+    box-shadow: none;
+    background: var(--text-dark); // keep dark, just no lift
+  }
+
+  .mob-menu-foot .btn:active {
+    transform: scale(0.97);
+    opacity: 0.88;
   }
 }

@@ -232,7 +232,7 @@
 @media (max-width: 540px) {
   .hero {
     min-height: auto;
-    padding: 40px 0 0;
+    padding: 0;
   }
 
   .hero-inner {
@@ -240,17 +240,63 @@
     gap: 32px;
   }
 
+  // Fix 2: Hero image full-bleed on mobile
+  // Strategy: bleed at .hero-visual (the grid cell), not the inner wrapper.
+  // The wrapper negative-margin approach is clipped by .hero { overflow:hidden }.
+  // Moving the offset to the grid cell escapes the container padding correctly.
+  .hero-visual {
+    margin-left: -20px;        // offset container padding
+    margin-right: -20px;
+    width: calc(100% + 40px);  // restore full viewport width
+  }
+
   .hero-img-wrap {
-    max-width: 290px;
-    border-radius: var(--r-lg);
+    max-width: none;
+    width: 100%;
+    height: 280px;
+    aspect-ratio: unset;
+    // Square top (connects to header area), rounded bottom
+    border-radius: 0 0 16px 16px;
+    box-shadow: none;
+
+    img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      object-position: center;
+    }
   }
 
   .f-card { display: none; }
 
   .f-card-rating {
     display: flex;
-    left: -4px;
+    left: 12px;
     bottom: 16px;
     padding: 10px 14px;
+  }
+
+  // Fix 3: Hero trust row → 2-column grid
+  .hero-trust {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding-bottom: 8px;
+  }
+
+  .trust-item {
+    background: var(--white);
+    border-radius: var(--r-sm);
+    padding: 10px 12px;
+    gap: 8px;
+    font-size: 12px;
+    box-shadow: var(--shadow-s);
+  }
+
+  .trust-ico {
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
+    flex-shrink: 0;
   }
 }

@@ -256,3 +256,39 @@
   line-height: 1.6;
   margin-bottom: 12px;
 }
+
+// ---- Mobile responsive ----
+
+// Checkout — padding & safe area
+@media (max-width: 600px) {
+  .checkout-head {
+    padding: 16px 16px 12px;
+  }
+
+  .checkout-body {
+    padding: 16px 16px 20px;
+  }
+
+  // Submit button full width
+  .co-submit {
+    width: 100%;
+    padding: 14px;
+    font-size: 15px;
+    border-radius: var(--r-md);
+    justify-content: center;
+    padding-bottom: max(14px, env(safe-area-inset-bottom));
+  }
+
+  // Radio delivery options
+  .co-radio-group {
+    gap: 8px;
+  }
+
+  .co-radio-opt {
+    flex: 1;
+    padding: 12px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--r-sm);
+    text-align: center;
+  }
+}

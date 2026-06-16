@@ -1,0 +1,252 @@
+/* ======================================================================
+   MOBILE MENU (mm-* selectors)
+   ====================================================================== */
+
+/* ── Mobile menu backdrop ─────────────────────────────────────────────── */
+.mob-menu-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 24, 16, 0.45);
+  z-index: 198;
+
+  &.open {
+    display: block;
+  }
+}
+
+/* ── Remove old padding from .mob-menu — new design uses per-item padding */
+@media (max-width: 1024px) {
+  .mob-menu {
+    padding: 0;
+  }
+}
+
+/* ── Mobile menu inner layout (mm-*) ─────────────────────────────────── */
+
+.mm-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.mm-logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mm-logo-ico {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.mm-logo-txt {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.mm-close-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: var(--beige);
+  font-size: 16px;
+  color: var(--text-med);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background var(--ease);
+
+  &:active {
+    background: var(--caramel);
+  }
+}
+
+/* ── Branch row ────────────────────────────────────────────────────────── */
+.mm-branch-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 20px;
+  background: var(--cream);
+  border: none;
+  border-bottom: 1px solid var(--border);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+  cursor: pointer;
+  text-align: left;
+  flex-shrink: 0;
+
+  &:active {
+    background: var(--beige);
+  }
+}
+
+.mm-branch-ico {
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.mm-branch-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mm-branch-arr {
+  font-size: 9px;
+  color: var(--text-light);
+  flex-shrink: 0;
+}
+
+/* ── Nav links ────────────────────────────────────────────────────────── */
+.mm-nav {
+  flex-shrink: 0;
+  padding: 6px 0;
+}
+
+.mm-nav-link {
+  display: flex;
+  align-items: center;
+  padding: 13px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-dark);
+  text-decoration: none;
+
+  &:active {
+    background: var(--beige);
+    color: var(--coffee-dark);
+  }
+}
+
+/* ── Divider ───────────────────────────────────────────────────────────── */
+.mm-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+  flex-shrink: 0;
+}
+
+/* ── Generic action item ───────────────────────────────────────────────── */
+.mm-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 20px;
+  background: none;
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-dark);
+  cursor: pointer;
+  text-align: left;
+  text-decoration: none;
+  flex-shrink: 0;
+
+  &:active {
+    background: var(--beige);
+  }
+
+  &--danger {
+    color: #C0392B;
+  }
+
+  &--login {
+    color: var(--coffee-dark);
+  }
+
+  &--fav {
+    color: var(--text-dark);
+  }
+}
+
+/* ── Profile info block ────────────────────────────────────────────────── */
+.mm-profile-info {
+  padding: 12px 20px 8px;
+  flex-shrink: 0;
+}
+
+.mm-profile-name {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-dark);
+}
+
+.mm-profile-phone {
+  font-size: 13px;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+/* ── Override .mob-menu a (specificity 0,1,1) for the new inner elements */
+.mob-menu {
+  .mm-nav-link,
+  .mm-item {
+    padding: 14px 20px;
+    font-size: 15px;
+    color: var(--text-dark);
+    border-radius: 0;
+  }
+
+  .mm-nav-link {
+    font-size: 16px;
+  }
+
+  .mm-item--danger {
+    color: #C0392B;
+  }
+
+  .mm-item--login {
+    color: var(--coffee-dark);
+  }
+
+  .mm-nav-link:hover,
+  .mm-item:hover {
+    background: transparent; /* neutralise touch-sticky hover */
+  }
+
+  .mm-nav-link:active,
+  .mm-item:active {
+    background: var(--beige);
+    color: var(--coffee-dark);
+  }
+
+  .mm-item--danger:active {
+    background: #fdf2f2;
+    color: #C0392B;
+  }
+}
+
+/* ── Notification / fav badges ────────────────────────────────────────── */
+.mm-badge,
+.mm-notif {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--coffee-dark);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 800;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 10px;
+  padding: 0 5px;
+  margin-left: auto;
+}

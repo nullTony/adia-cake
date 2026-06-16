@@ -170,6 +170,8 @@ function isAuthenticated() {
 - Supabase RLS policies
 
 ## Rules for Claude
+
+### Code Style & Structure
 - Vanilla JS only (no frameworks unless asked)
 - Preserve RLS compatibility
 - Never expose passwords or admin credentials
@@ -177,3 +179,12 @@ function isAuthenticated() {
 - No MockAPI (fully removed — Supabase only)
 - Match existing code style
 - Comments only where logic is non-obvious
+
+### Git & Version Control
+**Important:** Commit and push to GitHub regularly to preserve work status and prevent data loss.
+- After completing each feature or fix → create a Git commit
+- Use clear, descriptive commit messages (e.g., "Add mobile grid layout for today showcase")
+- Include "why" in commit message, not just "what"
+- Push to GitHub after each logical chunk of work
+- Never force-push unless explicitly asked
+- Commit messages should be atomic (one logical change per commit)

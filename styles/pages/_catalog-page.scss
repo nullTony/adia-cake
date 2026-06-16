@@ -252,4 +252,111 @@
 }
 
 .cat-empty-ico { font-size: 48px; margin-bottom: 12px; }
+
+.cat-empty p {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+// ---- Mobile responsive ----
+
+@media (max-width: 900px) {
+  .cat-sidebar {
+    position: static;
+    padding: 0 0 4px;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .cat-filter-title {
+    display: none;
+  }
+
+  .cat-filter-group {
+    margin-bottom: 10px;
+  }
+
+  // Category buttons become horizontal scroll strip
+  #catFilterGroup {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 6px;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .cat-cat-btn {
+    flex-shrink: 0;
+    width: auto;
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    margin-bottom: 0;
+
+    &.active {
+      background: var(--text-dark);
+      border-color: var(--text-dark);
+      color: var(--white);
+    }
+  }
+
+  // Price slider inline
+  .cat-price-display {
+    font-size: 13px;
+  }
+
+  .cat-price-labels span:first-child {
+    display: none;
+  }
+
+  .cat-reset-btn {
+    font-size: 13px;
+    margin-top: 6px;
+    width: 100%;
+  }
+
+  // Toolbar: count text only, no branch select
+  .cat-toolbar {
+    margin-bottom: 12px;
+  }
+}
+
+// Catalog products: 2 columns on small mobile
+@media (max-width: 540px) {
+  .cat-main .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  // Hide description to save vertical space
+  .cat-main .pc-desc {
+    display: none;
+  }
+
+  .cat-main .pc-body {
+    padding: 12px 12px 14px;
+  }
+
+  .cat-main .pc-name {
+    font-size: 16px;
+  }
+
+  .cat-main .pc-price {
+    font-size: 15px;
+  }
+
+  .cat-main .pc-add {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+  }
+}
 .cat-empty p   { font-size: 15px; font-weight: 600; }

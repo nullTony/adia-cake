@@ -1,0 +1,382 @@
+/* ======================================================================
+   BRANCH SELECTOR MODAL + HEADER INDICATOR
+   ====================================================================== */
+
+/* ── Header branch button ──────────────────────────────────────────────── */
+
+.h-branch-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-med);
+  background: var(--beige);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: border-color var(--ease), background var(--ease), color var(--ease);
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  &:hover {
+    border-color: var(--coffee);
+    background: var(--beige-dark);
+    color: var(--text-dark);
+  }
+
+  .bi-icon {
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .bi-name {
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .bi-placeholder {
+    color: var(--text-light);
+  }
+
+  .bi-chevron {
+    font-size: 8px;
+    color: var(--text-light);
+    margin-left: 2px;
+  }
+
+  @media (max-width: 640px) {
+    padding: 8px 10px;
+
+    .bi-name,
+    .bi-placeholder {
+      display: none;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .bi-name {
+      max-width: 80px;
+    }
+  }
+}
+
+// Simplified mobile header: hide branch on tablets and below
+@media (max-width: 768px) {
+  .h-branch-btn,
+  #favBtn,
+  #profileBtn {
+    display: none !important;
+  }
+}
+
+// Branch selector — slide up from bottom
+@media (max-width: 600px) {
+  .bs-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .bs-modal {
+    max-width: 100%;
+    max-height: 92vh;
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+    padding: 28px 20px 32px;
+  }
+}
+
+/* ── Branch selector overlay ───────────────────────────────────────────── */
+
+.bs-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(44, 24, 16, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+
+  &.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @media (max-width: 600px) {
+    align-items: flex-end;
+    padding: 0;
+  }
+}
+
+/* ── Modal card ────────────────────────────────────────────────────────── */
+
+.bs-modal {
+  position: relative; /* anchors .bs-close-btn */
+  background: var(--white);
+  border-radius: var(--r-xl);
+  width: 100%;
+  max-width: 460px;
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 36px 28px 28px;
+  box-shadow: var(--shadow-l);
+  scrollbar-width: thin;
+
+  @media (max-width: 600px) {
+    max-width: 100%;
+    max-height: 92vh;
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+    padding: 28px 20px 32px;
+  }
+}
+
+.bs-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--beige);
+  color: var(--text-med);
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--ease), color var(--ease);
+  z-index: 1;
+
+  &:hover {
+    background: var(--caramel);
+    color: var(--text-dark);
+  }
+
+  &:active {
+    transform: scale(0.94);
+  }
+}
+
+/* ── Header ────────────────────────────────────────────────────────────── */
+
+.bs-head {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.bs-icon {
+  font-size: 38px;
+  margin-bottom: 12px;
+  line-height: 1;
+}
+
+.bs-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0 0 8px;
+  line-height: 1.2;
+}
+
+.bs-subtitle {
+  font-size: 14px;
+  color: var(--text-light);
+  margin: 0;
+}
+
+/* ── Branch list ───────────────────────────────────────────────────────── */
+
+.bs-branches {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: opacity 0.2s ease;
+}
+
+.bs-branch-card {
+  width: 100%;
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 16px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color var(--ease), background var(--ease), transform 0.15s ease;
+
+  &:hover {
+    border-color: var(--coffee);
+    background: var(--beige);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &--selected {
+    border-color: var(--coffee-dark);
+    background: var(--beige);
+  }
+}
+
+.bs-branch-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.bs-branch-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  line-height: 1;
+}
+
+.bs-branch-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bs-branch-name {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-dark);
+}
+
+.bs-branch-addr {
+  font-size: 13px;
+  color: var(--text-med);
+}
+
+.bs-branch-hours {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.bs-branch-check {
+  font-size: 16px;
+  color: var(--coffee-dark);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.bs-loading,
+.bs-empty {
+  text-align: center;
+  padding: 40px 16px;
+  color: var(--text-light);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── Switch notice ─────────────────────────────────────────────────────── */
+
+.bs-switch-notice {
+  margin-top: 16px;
+  background: #FFFBF0;
+  border: 1.5px solid var(--caramel);
+  border-radius: var(--r-md);
+  padding: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  animation: bs-slide-in 0.2s ease;
+}
+
+@keyframes bs-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bsn-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  line-height: 1;
+}
+
+.bsn-body {
+  flex: 1;
+}
+
+.bsn-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text-dark);
+  margin-bottom: 2px;
+}
+
+.bsn-sub {
+  font-size: 13px;
+  color: var(--text-med);
+  margin-bottom: 8px;
+}
+
+.bsn-text {
+  font-size: 12px;
+  color: var(--text-light);
+  margin: 0 0 14px;
+  line-height: 1.55;
+}
+
+.bsn-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bsn-confirm {
+  background: var(--coffee-dark);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--ease);
+  font-family: 'Nunito', sans-serif;
+
+  &:hover {
+    background: var(--text-dark);
+  }
+}
+
+.bsn-cancel {
+  background: transparent;
+  color: var(--text-med);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--ease), color var(--ease);
+  font-family: 'Nunito', sans-serif;
+
+  &:hover {
+    border-color: var(--coffee);
+    color: var(--text-dark);
+  }
+}

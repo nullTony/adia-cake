@@ -354,3 +354,52 @@
 
   &:hover { background: var(--powder-light); color: var(--powder); }
 }
+
+// ---- Mobile responsive ----
+
+// Cart panel — better padding + touch targets
+@media (max-width: 480px) {
+  .side-panel {
+    width: 100vw;
+  }
+
+  .panel-body {
+    padding: 12px 16px;
+    gap: 8px;
+  }
+
+  .panel-footer {
+    padding: 12px 16px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+
+  .cart-item {
+    padding: 10px 0;
+    gap: 10px;
+  }
+
+  // Larger qty buttons (44px touch target)
+  .ci-qty-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+
+  .ci-qty-val {
+    min-width: 28px;
+    font-size: 15px;
+  }
+
+  .ci-remove {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+}
+
+// Safe area for sticky footer elements
+@media (max-width: 768px) {
+  .panel-footer {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+}

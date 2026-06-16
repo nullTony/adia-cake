@@ -296,3 +296,47 @@
 
   &:hover { background: #fdf0ee; }
 }
+
+// ---- Mobile responsive ----
+
+// My orders modal — slide up from bottom
+@media (max-width: 600px) {
+  .mo-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .mo-panel {
+    max-width: 100%;
+    max-height: 92vh;
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+    // Override the scale animation — pure translateY on mobile
+    transform: translateY(48px);
+  }
+
+  .mo-overlay.open .mo-panel {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .mo-head {
+    padding: 16px 16px 12px;
+  }
+
+  .mo-body {
+    padding: 0 16px 24px;
+  }
+
+  // Client action buttons: full width stacked
+  .mo-client-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mo-accept-btn,
+  .mo-cancel-btn {
+    width: 100%;
+    padding: 13px;
+    font-size: 14px;
+  }
+}

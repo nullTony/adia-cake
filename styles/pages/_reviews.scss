@@ -85,6 +85,33 @@
   color: var(--text-muted);
 }
 
+// ---- Dots indicator ----
+
+.tc-dots {
+  display: none; // only shown on mobile by JS
+  justify-content: center;
+  gap: 7px;
+  margin-top: 18px;
+
+  &.visible {
+    display: flex;
+  }
+}
+
+.tc-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.25s, transform 0.25s;
+  cursor: pointer;
+
+  &.active {
+    background: var(--brown);
+    transform: scale(1.25);
+  }
+}
+
 // ---- Breakpoints ----
 
 @media (max-width: 900px) {
@@ -96,5 +123,35 @@
 @media (max-width: 560px) {
   .tes-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+// Testimonials mobile carousel
+@media (max-width: 768px) {
+  .tes-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0;
+    // remove grid gap — each card is full width
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .tes-card {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    // disable lift-on-hover in carousel — it conflicts with swipe
+    transform: none !important;
+    box-shadow: none;
+
+    &:hover {
+      transform: none !important;
+      box-shadow: none;
+    }
   }
 }
