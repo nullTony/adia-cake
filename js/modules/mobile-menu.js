@@ -72,7 +72,7 @@ function _render() {
     <div class="mm-divider"></div>
 
     <button type="button" class="mm-item mm-item--fav" id="mmFavBtn">
-      <i class="ti ti-heart"></i>
+      <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" aria-hidden="true"><path d="M11 19.5 C5.5 15.5,1.5 12,1.5 7.5 C1.5 4.5,4 2,7 2 C9 2,10.5 3.5,11 5.5 C11.5 3.5,13 2,15 2 C18 2,20.5 4.5,20.5 7.5 C20.5 12,16.5 15.5,11 19.5 Z"/></svg>
       Избранное
       ${favCnt > 0 ? `<span class="mm-badge">${favCnt}</span>` : ''}
     </button>
