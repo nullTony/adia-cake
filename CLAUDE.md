@@ -255,11 +255,11 @@ Compiled to `main.css` and `admin.css`. Use SCSS variables for consistency.
 - Match existing code style
 - Comments only where logic is non-obvious
 
-### Icon Replacement Rules
-When replacing icons (e.g., inline SVGs, emoji → Tabler Icons):
-- **Size matters:** Header nav icons should be 22-24px (user, heart, cart). Benefit cards 28px. Footer contact icons 18px. Service section large icons 48px.
-- **Color contrast:** Light icons (white/cream) on dark backgrounds (header, footer dark sections). Dark icons on light backgrounds (forms, modals). Use CSS `color` property to control icon color via `currentColor`.
-- **Content vs. UI:** Keep emoji for brand/content (🍰 logo, 🎂🎉🛵 service icons, ★ star ratings, ✅❌⚠️ status indicators). Replace SVG for UI controls (buttons, links, inputs).
+### Icon Design Rules
+- **Header nav icons:** Custom hand-drawn SVG (not library) — thin strokes (1.5px), 22x22 viewBox, stroke-linecap/linejoin round, currentColor. Examples: heart, user, cart, grid. These match ADIA's warm, soft aesthetic (no harsh geometric lines)
+- **Utility icons (footer, admin, benefit cards):** Tabler Icons webfont (lightweight, consistent). Social icons white (22px), contact icons 18px, admin buttons 16px
+- **Brand/content:** Keep emoji (🍰 logo, 🎂🎉🛵 services, ★ ratings, ✅❌⚠️ status indicators) — these are content, not UI chrome
+- **Principle:** Custom SVG for prominent UI (header buttons), library icons for utility/repetitive UI, emoji for content/branding
 
 ### Git & Version Control
 **Important:** Commit and push to GitHub regularly to preserve work status and prevent data loss.

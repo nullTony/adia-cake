@@ -258,8 +258,8 @@ h3 {
   transform: scale(1.05);
 }
 .h-icon-btn svg {
-  width: 17px;
-  height: 17px;
+  width: 22px;
+  height: 22px;
 }
 
 .cart-badge {
@@ -5075,10 +5075,6 @@ h3 {
   line-height: 1;
   display: inline-flex;
   align-items: center;
-}
-
-.h-icon-btn .ti {
-  font-size: 24px;
 }
 
 .f-social .ti {
