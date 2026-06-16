@@ -5069,4 +5069,26 @@ h3 {
   background: var(--border);
 }
 
+/* Tabler Icons sizing & color */
+.ti {
+  font-size: 20px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+}
+
+.h-icon-btn .ti {
+  font-size: 24px;
+}
+
+.f-social .ti {
+  color: var(--white);
+  font-size: 22px;
+}
+
+.f-c-ico {
+  font-size: 18px;
+  margin-right: 12px;
+}
+
 /*# sourceMappingURL=main.css.map */

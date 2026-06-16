@@ -83,10 +83,7 @@ export function initPhoneInput(mountEl, hiddenInput, opts = {}) {
       <button type="button" class="pi-country-btn">
         <span class="pi-flag">${selected.flag}</span>
         <span class="pi-cname">${selected.name}</span>
-        <svg class="pi-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="6 9 12 15 18 9"/>
-        </svg>
+        <i class="pi-chevron ti ti-chevron-down"></i>
       </button>
       <div class="pi-sep"></div>
       <div class="pi-num-row">

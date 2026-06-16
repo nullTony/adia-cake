@@ -255,6 +255,12 @@ Compiled to `main.css` and `admin.css`. Use SCSS variables for consistency.
 - Match existing code style
 - Comments only where logic is non-obvious
 
+### Icon Replacement Rules
+When replacing icons (e.g., inline SVGs, emoji → Tabler Icons):
+- **Size matters:** Header nav icons should be 22-24px (user, heart, cart). Benefit cards 28px. Footer contact icons 18px. Service section large icons 48px.
+- **Color contrast:** Light icons (white/cream) on dark backgrounds (header, footer dark sections). Dark icons on light backgrounds (forms, modals). Use CSS `color` property to control icon color via `currentColor`.
+- **Content vs. UI:** Keep emoji for brand/content (🍰 logo, 🎂🎉🛵 service icons, ★ star ratings, ✅❌⚠️ status indicators). Replace SVG for UI controls (buttons, links, inputs).
+
 ### Git & Version Control
 **Important:** Commit and push to GitHub regularly to preserve work status and prevent data loss.
 - After completing each feature or fix → create a Git commit

@@ -1100,3 +1100,16 @@ input, select, textarea { font-family: inherit; font-size: 14px; }
   15%  { background: #FFF3CD; }
   100% { background: transparent; }
 }
+
+/* Tabler Icons sizing for admin */
+.a-btn-icon .ti {
+  font-size: 16px;
+}
+
+.a-nav-link .ti {
+  font-size: 18px;
+}
+
+.a-search-ico {
+  font-size: 16px;
+}

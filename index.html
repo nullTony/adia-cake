@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
@@ -36,34 +37,23 @@
 
             <div class="h-actions">
                 <button class="h-branch-btn" id="branchIndicator" aria-label="Выбрать филиал">
-                    <span class="bi-icon">📍</span>
+                    <i class="bi-icon ti ti-map-pin"></i>
                     <span class="bi-placeholder">Выберите филиал</span>
                     <span class="bi-chevron">▼</span>
                 </button>
                 <button class="h-icon-btn" aria-label="Избранное" id="favBtn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                    </svg>
+                    <i class="ti ti-heart"></i>
                     <span class="cart-badge" id="favCount" style="display:none">0</span>
                 </button>
                 <button class="h-icon-btn" aria-label="Войти" id="profileBtn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                        <circle cx="12" cy="7" r="4"/>
-                    </svg>
+                    <i class="ti ti-user"></i>
                 </button>  
                 <button class="h-icon-btn" aria-label="Корзина" id="cartBtn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                    </svg>
+                    <i class="ti ti-shopping-cart"></i>
                     <span class="cart-badge" id="cartCount">0</span>
                 </button>
                 <a href="catalog.html" class="h-cta">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-                        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
-                    </svg>
+                    <i class="ti ti-layout-grid"></i>
                     Каталог
                 </a>
                 <button class="burger" id="burgerBtn" aria-label="Меню">
@@ -166,10 +156,7 @@
             <!-- Fresh daily -->
             <div class="benefit-card anim">
                 <div class="b-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
-                        <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
-                    </svg>
+                    <i class="ti ti-leaf"></i>
                 </div>
                 <h3 class="b-title">Каждый день свежее</h3>
                 <p class="b-text">Витрина обновляется ежедневно. Никаких вчерашних позиций — только свежеприготовленное.</p>
@@ -178,11 +165,7 @@
             <!-- Beautiful presentation -->
             <div class="benefit-card anim">
                 <div class="b-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
-                        <path d="M5 3v4"/><path d="M19 17v4"/>
-                        <path d="M3 5h4"/><path d="M17 19h4"/>
-                    </svg>
+                    <i class="ti ti-sparkles"></i>
                 </div>
                 <h3 class="b-title">Красивая подача</h3>
                 <p class="b-text">Каждый десерт — маленькое произведение искусства. Эстетика и качество ингредиентов — наш стандарт.</p>
@@ -191,12 +174,7 @@
             <!-- City delivery -->
             <div class="benefit-card anim">
                 <div class="b-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="18.5" cy="17.5" r="3.5"/>
-                        <circle cx="5.5" cy="17.5" r="3.5"/>
-                        <circle cx="15" cy="5" r="1"/>
-                        <path d="M12 17.5V14l-3-3 4-3 2 3h2"/>
-                    </svg>
+                    <i class="ti ti-bike"></i>
                 </div>
                 <h3 class="b-title">Доставка по городу</h3>
                 <p class="b-text">Доставляем свежие десерты прямо к вашей двери. Быстро, аккуратно и в красивой упаковке.</p>
@@ -205,10 +183,7 @@
             <!-- 4 branches -->
             <div class="benefit-card anim">
                 <div class="b-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-                        <circle cx="12" cy="10" r="3"/>
-                    </svg>
+                    <i class="ti ti-map-pin"></i>
                 </div>
                 <h3 class="b-title">4 удобных филиала</h3>
                 <p class="b-text">Ближайшая точка всегда рядом — удобно зайти самому или заказать самовывоз.</p>
@@ -296,7 +271,7 @@
     <div class="container">
         <div class="today-top">
             <div>
-                <div class="today-tag">📅 Сегодня</div>
+                <div class="today-tag"><i class="ti ti-calendar-event"></i> Сегодня</div>
                 <h2 class="sec-title" style="margin-bottom:0">Сегодня<br>на витрине</h2>
             </div>
             <div class="today-right">
@@ -507,10 +482,10 @@
                 </div>
                 <p class="f-desc">Премиальная кондитерская в Ташкенте. Свежие десерты, торты на заказ и выпечка — каждый день новая витрина.</p>
                 <div class="f-socials">
-                    <a href="#" class="f-social" aria-label="Instagram">📸</a>
-                    <a href="#" class="f-social" aria-label="Telegram">✈️</a>
-                    <a href="#" class="f-social" aria-label="TikTok">🎵</a>
-                    <a href="#" class="f-social" aria-label="WhatsApp">💬</a>
+                    <a href="#" class="f-social" aria-label="Instagram"><i class="ti ti-brand-instagram"></i></a>
+                    <a href="#" class="f-social" aria-label="Telegram"><i class="ti ti-brand-telegram"></i></a>
+                    <a href="#" class="f-social" aria-label="TikTok"><i class="ti ti-brand-tiktok"></i></a>
+                    <a href="#" class="f-social" aria-label="WhatsApp"><i class="ti ti-brand-whatsapp"></i></a>
                 </div>
             </div>
 
@@ -539,22 +514,22 @@
             <div>
                 <div class="f-col-title">Контакты</div>
                 <div class="f-contact">
-                    <span class="f-c-ico">📞</span>
+                    <i class="f-c-ico ti ti-phone"></i>
                     <div class="f-c-text">
                         <a href="tel:+998711234567">+998 71 123 45 67</a><br>
                         <a href="tel:+998712345678">+998 71 234 56 78</a>
                     </div>
                 </div>
                 <div class="f-contact">
-                    <span class="f-c-ico">📧</span>
+                    <i class="f-c-ico ti ti-mail"></i>
                     <div class="f-c-text"><a href="mailto:hello@adiacake.uz">hello@adiacake.uz</a></div>
                 </div>
                 <div class="f-contact">
-                    <span class="f-c-ico">🕐</span>
+                    <i class="f-c-ico ti ti-clock"></i>
                     <div class="f-c-text">Пн–Вс: 08:00 — 22:00</div>
                 </div>
                 <div class="f-contact">
-                    <span class="f-c-ico">📍</span>
+                    <i class="f-c-ico ti ti-map-pin"></i>
                     <div class="f-c-text">4 филиала в Ташкенте</div>
                 </div>
             </div>

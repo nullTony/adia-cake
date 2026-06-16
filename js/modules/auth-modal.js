@@ -51,9 +51,7 @@ function injectModal() {
         <div id="authTgNewUser">
           <p class="auth-modal__sub">Откройте нашего бота и поделитесь номером телефона для подтверждения</p>
           <button type="button" class="auth-btn auth-tg-btn" id="authTgBtn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0">
-              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/>
-            </svg>
+            <i class="ti ti-brand-telegram" style="font-size:20px;flex-shrink:0"></i>
             Открыть Telegram-бота
           </button>
         </div>

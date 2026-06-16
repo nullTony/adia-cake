@@ -172,14 +172,10 @@ function buildCardHtml(order) {
           <select class="ao-status-select" data-id="${esc(order.id)}">
             ${statusOptions}
           </select>
-          <svg class="ao-status-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"/>
-          </svg>
+          <i class="ao-status-arrow ti ti-chevron-down"></i>
         </div>
         ${statusBadge(order.status)}
-        <svg class="ao-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="6 9 12 15 18 9"/>
-        </svg>
+        <i class="ao-chevron ti ti-chevron-down"></i>
       </div>
     </div>
     <div class="ao-card-body">

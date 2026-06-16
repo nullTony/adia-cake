@@ -121,21 +121,13 @@ function renderTable() {
         <td>
           <div class="a-actions">
             <a href="product-form.html?id=${p.id}" class="a-btn a-btn-outline a-btn-sm a-btn-icon" title="Редактировать">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-              </svg>
+              <i class="ti ti-pencil"></i>
             </a>
             <button class="a-btn a-btn-outline a-btn-sm a-btn-icon"
                     data-delete="${p.id}" data-title="${p.title}"
                     title="Удалить"
                     style="color:var(--a-danger);border-color:var(--a-danger-light)">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 6 5 6 21 6"/>
-                <path d="M19 6l-1 14H6L5 6"/>
-                <path d="M10 11v6"/><path d="M14 11v6"/>
-                <path d="M9 6V4h6v2"/>
-              </svg>
+              <i class="ti ti-trash"></i>
             </button>
           </div>
         </td>
