@@ -20,6 +20,7 @@ import { initBranchSelector }         from './modules/branch-selector.js';
 import { initClientNotifications, stopNotifications } from './services/notification-service.js';
 import { initNotifications, stopToastNotifications }  from './notifications.js';
 import { initTesCarousel }                            from './modules/tes-carousel.js';
+import { getBranches }                                from './api/branches-api.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   initMenu();
@@ -31,6 +32,11 @@ document.addEventListener('DOMContentLoaded', () => {
   initFavorites();
   initCheckout();
   initBranches();
+
+  getBranches().then(branches => {
+    const el = document.getElementById('heroBranchCount');
+    if (el && branches.length) el.textContent = branches.length;
+  });
   initScrollReveal();
   initDateLabel();
 
