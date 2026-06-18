@@ -269,3 +269,63 @@ Compiled to `main.css` and `admin.css`. Use SCSS variables for consistency.
 - Push to GitHub after each logical chunk of work
 - Never force-push unless explicitly asked
 - Commit messages should be atomic (one logical change per commit)
+
+---
+
+## Git & GitHub Workflow
+
+### Когда делать коммит и отправлять в GitHub
+
+**ДА — КОММИТИТЬ (большие блоки работ):**
+✅ Завершена целая фаза (мобильная версия, дизайн-система, новая функция)
+✅ Добавлена новая страница или раздел
+✅ Исправлена архитектурная проблема
+✅ Изменена логика в нескольких файлах (js, scss, html одновременно)
+✅ Обновлена документация (CLAUDE.md)
+
+**НЕТ — не коммитить после каждого:**
+❌ Изменение одного цвета
+❌ Добавление margin/padding
+❌ Исправление одного селектора
+❌ Изменение одной кнопки
+
+### Формат коммита
+
+```bash
+git add .
+git commit -m "feat: [описание]"
+git push origin main
+```
+
+Примеры хороших сообщений:
+- `feat: Complete design system audit — colors, typography, accessibility`
+- `feat: Add mobile grid layout for today showcase — 2 columns`
+- `feat: Implement horizontal scroll for category filters`
+- `feat: Fix partial order confirmation flow — customer approval`
+- `feat: Add Telegram verification security validation`
+
+### После каждого блока работ
+
+1. Обновить CLAUDE.md если нужно
+2. Выполнить git commit с описанием
+3. Отправить git push в GitHub
+
+Это сохраняет историю больших изменений и облегчает отслеживание версий.
+
+---
+
+## Уточнение намерений перед выполнением
+
+**Перед тем как начинать работу:**
+
+Если промпт содержит неясности — Claude ДОЛЖЕН спросить:
+
+✓ Спроси о деталях которые непонятны
+✓ Уточни границы изменений (какие файлы трогать, какие нет)
+✓ Подтверди функциональные требования
+✓ Спроси о приоритетах если их несколько
+
+Вопросы помогают избежать ошибок и переделок.
+
+Не давай ответ пока не ответишь на уточняющие вопросы ИЛИ
+не получишь от пользователя "Да, делай".
