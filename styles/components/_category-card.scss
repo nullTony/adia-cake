@@ -190,14 +190,18 @@
 }
 
 // ---- Overlay CTA ----
-// .cat-overlay-cta lives inside .cat-body; fades in on card hover
+// .cat-overlay-cta lives inside .cat-overlay; centered on card, fades in on hover
 
 .cat-overlay-cta {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, calc(-50% + 8px));
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin-top: 10px;
-  padding: 6px 14px;
+  padding: 8px 18px;
   background: rgba(255, 255, 255, 0.18);
   color: var(--white);
   font-family: 'Nunito', sans-serif;
@@ -205,14 +209,16 @@
   font-weight: 700;
   border-radius: 100px;
   border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(4px);
+  white-space: nowrap;
   opacity: 0;
-  transform: translateY(6px);
   transition: opacity var(--ease), transform var(--ease);
+  pointer-events: none;
 }
 
 .cat-card:hover .cat-overlay-cta {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate(-50%, -50%);
 }
 
 // ---- Breakpoints ----

@@ -41,7 +41,11 @@ function _buildCard(cat, index) {
       <div class="cat-body">
         <div class="cat-name">${_esc(cat.title)}</div>
         <div class="cat-count">Загрузка…</div>
-        <div class="cat-arrow">→</div>
+        <div class="cat-arrow">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 8h10M9 4l4 4-4 4"/>
+          </svg>
+        </div>
       </div>
     </a>`;
 }

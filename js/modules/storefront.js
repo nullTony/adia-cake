@@ -105,7 +105,12 @@ function _renderCategoryCounts(products) {
     } catch {}
     if (!slug) return;
     const n = counts[slug] || 0;
-    countEl.textContent = n > 0 ? _fmtCount(n) : 'Нет сегодня';
+    if (n > 0) {
+      countEl.textContent = _fmtCount(n);
+      countEl.hidden = false;
+    } else {
+      countEl.hidden = true;
+    }
   });
 }
 
