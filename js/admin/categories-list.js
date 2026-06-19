@@ -65,18 +65,26 @@ function renderTable() {
 }
 
 function buildViewRow(cat) {
-  const imgThumb = cat.imageUrl
-    ? `<img src="${esc(cat.imageUrl)}" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:6px;display:block">`
-    : `<span style="font-size:20px;display:block;text-align:center">📷</span>`;
+  const thumbInner = cat.imageUrl
+    ? `<div class="cat-thumb"><img src="${esc(cat.imageUrl)}" alt="${esc(cat.title)}"></div>`
+    : `<div class="cat-thumb cat-thumb--empty"><i class="ti ti-photo"></i><span>Нет фото</span></div>`;
+
+  const popover = cat.imageUrl
+    ? `<div class="cat-thumb-popover"><img src="${esc(cat.imageUrl)}" alt="${esc(cat.title)}"></div>`
+    : '';
+
   return `
     <tr data-id="${esc(cat.id)}">
       <td style="font-weight:600">${esc(cat.title)}</td>
       <td><code style="font-size:12px;color:var(--a-text-light)">${esc(cat.slug)}</code></td>
       <td style="text-align:center">${esc(String(cat.sortOrder))}</td>
-      <td>
-        <button class="a-btn a-btn-outline a-btn-sm a-btn-icon cat-image-btn" data-id="${esc(cat.id)}" title="Изменить фото" style="padding:2px 6px">
-          ${imgThumb}
-        </button>
+      <td class="cat-thumb-col">
+        <div class="cat-img-cell">
+          <button class="a-btn a-btn-outline cat-image-btn" data-id="${esc(cat.id)}" title="Изменить фото">
+            ${thumbInner}
+          </button>
+          ${popover}
+        </div>
       </td>
       <td style="text-align:center">
         <label class="cl-toggle" title="${cat.isPopular ? 'Популярная' : 'Обычная'}">
