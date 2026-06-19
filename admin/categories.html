@@ -131,6 +131,60 @@
         }
 
         .cat-img-cell:hover .cat-thumb-popover { opacity: 1; }
+
+        /* ── Drag handle ────────────────────────────────────────────── */
+        .cat-drag-cell, .bc-drag-cell {
+            width: 36px;
+            text-align: center;
+            color: var(--a-text-light);
+            cursor: grab;
+            user-select: none;
+            font-size: 16px;
+        }
+        tr[draggable="true"]:hover .cat-drag-cell,
+        tr[draggable="true"]:hover .bc-drag-cell { color: var(--a-text-dark); }
+        tr[draggable="true"]:active .cat-drag-cell,
+        tr[draggable="true"]:active .bc-drag-cell { cursor: grabbing; }
+
+        /* ── Tabs ─────────────────────────────────────────────────────── */
+        .cat-tabs { display:flex; gap:0; border-bottom:2px solid var(--a-border); margin-bottom:24px; }
+        .cat-tab-btn {
+            padding:11px 22px; background:none; border:none; border-bottom:2px solid transparent;
+            margin-bottom:-2px; cursor:pointer; font-family:inherit; font-size:14px;
+            font-weight:600; color:var(--a-text-light); transition:color .15s,border-color .15s;
+        }
+        .cat-tab-btn:hover { color:var(--a-text-dark); }
+        .cat-tab-btn.active { color:var(--a-accent); border-bottom-color:var(--a-accent); }
+        .cat-tab-pane { display:none; }
+        .cat-tab-pane.active { display:block; }
+
+        /* ── Branch categories tab ────────────────────────────────────── */
+        .bc-branch {
+            background:var(--a-card-bg,#fff); border:1px solid var(--a-border);
+            border-radius:12px; margin-bottom:16px; overflow:hidden;
+        }
+        .bc-branch-summary {
+            display:flex; align-items:center; gap:12px; padding:14px 20px;
+            cursor:pointer; font-weight:600; font-size:15px;
+            background:var(--a-bg); list-style:none; user-select:none;
+        }
+        .bc-branch-summary::-webkit-details-marker { display:none; }
+        .bc-branch-summary::before {
+            content:'▶'; font-size:10px; color:var(--a-text-light);
+            transition:transform .2s; flex-shrink:0;
+        }
+        details[open] .bc-branch-summary::before { transform:rotate(90deg); }
+        .bc-branch-addr { font-size:12px; font-weight:400; color:var(--a-text-light); margin-left:auto; }
+        .bc-branch-body { padding:0 16px 16px; }
+        .bc-table { width:100%; border-collapse:collapse; font-size:14px; margin-top:10px; }
+        .bc-table th {
+            text-align:left; padding:8px 12px; font-size:11px; font-weight:700;
+            text-transform:uppercase; letter-spacing:.05em; color:var(--a-text-light);
+            border-bottom:1.5px solid var(--a-border);
+        }
+        .bc-table td { padding:9px 12px; border-bottom:1px solid var(--a-border); vertical-align:middle; }
+        .bc-table tbody tr:last-child td { border-bottom:none; }
+        .bc-table tbody tr:hover { background:var(--a-bg); }
     </style>
 </head>
 <body>
@@ -231,43 +285,102 @@
 
         <div class="a-content">
 
-            <div class="a-page-header">
-                <div>
-                    <div class="a-page-title">Категории товаров</div>
-                    <div class="a-page-sub">Всего: <strong id="catCount">—</strong></div>
+            <!-- ======= ADMIN / MANAGER VIEW (2 tabs) ======= -->
+            <div id="adminManagerView">
+
+                <div class="cat-tabs">
+                    <button class="cat-tab-btn active" data-tab="tab-all">Все категории</button>
+                    <button class="cat-tab-btn" data-tab="tab-branches">По филиалам</button>
                 </div>
-                <button class="a-btn a-btn-accent" id="addCatBtn">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                    </svg>
-                    Добавить категорию
-                </button>
+
+                <!-- Tab: All categories -->
+                <div id="tab-all" class="cat-tab-pane active">
+                    <div class="a-page-header">
+                        <div>
+                            <div class="a-page-title">Категории товаров</div>
+                            <div class="a-page-sub">Всего: <strong id="catCount">—</strong></div>
+                        </div>
+                        <button class="a-btn a-btn-accent" id="addCatBtn">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Добавить категорию
+                        </button>
+                    </div>
+                    <div class="a-card cat-table-wrap">
+                        <table class="cat-table">
+                            <thead>
+                                <tr>
+                                    <th>Название</th>
+                                    <th>Slug</th>
+                                    <th style="text-align:center">Порядок</th>
+                                    <th style="min-width:80px">Фото</th>
+                                    <th>Активна</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="catTbody">
+                                <tr><td colspan="6" style="text-align:center;padding:40px;color:#9a9488">Загрузка…</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="cat-empty-state" id="catEmpty" hidden>
+                            <div class="cat-empty-ico">📂</div>
+                            <div class="cat-empty-text">Категории не найдены — добавьте первую</div>
+                        </div>
+                        <input type="file" id="catImgFile" accept="image/*" style="display:none">
+                    </div>
+                </div>
+
+                <!-- Tab: By branches -->
+                <div id="tab-branches" class="cat-tab-pane">
+                    <div class="a-page-header">
+                        <div>
+                            <div class="a-page-title">Категории по филиалам</div>
+                            <div class="a-page-sub">Порядок, популярность и видимость категорий для каждого филиала</div>
+                        </div>
+                    </div>
+                    <div id="bcContainer"></div>
+                </div>
+
             </div>
 
-            <div class="a-card cat-table-wrap">
-                <table class="cat-table">
-                    <thead>
-                        <tr>
-                            <th>Название</th>
-                            <th>Slug</th>
-                            <th style="text-align:center">Порядок</th>
-                            <th style="min-width:80px">Фото</th>
-                            <th style="text-align:center">Популярная</th>
-                            <th>Активна</th>
-                            <th>Действия</th>
-                        </tr>
-                    </thead>
-                    <tbody id="catTbody">
-                        <tr><td colspan="7" style="text-align:center;padding:40px;color:#9a9488">Загрузка…</td></tr>
-                    </tbody>
-                </table>
-                <div class="cat-empty-state" id="catEmpty" hidden>
-                    <div class="cat-empty-ico">📂</div>
-                    <div class="cat-empty-text">Категории не найдены — добавьте первую</div>
+            <!-- ======= STAFF VIEW (combined, no tabs) ======= -->
+            <div id="staffView" style="display:none">
+                <div class="a-page-header">
+                    <div>
+                        <div class="a-page-title">Категории</div>
+                        <div class="a-page-sub">Всего: <strong id="scCount">—</strong></div>
+                    </div>
+                    <button class="a-btn a-btn-accent" id="scAddBtn">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        Добавить категорию
+                    </button>
                 </div>
-
-                <!-- Image upload input (hidden, triggered from JS) -->
-                <input type="file" id="catImgFile" accept="image/*" style="display:none">
+                <div class="a-card cat-table-wrap">
+                    <table class="cat-table">
+                        <thead>
+                            <tr>
+                                <th style="width:50px">Порядок</th>
+                                <th>Название</th>
+                                <th>Slug</th>
+                                <th style="min-width:80px">Фото</th>
+                                <th style="text-align:center;width:90px">Популярна</th>
+                                <th style="text-align:center;width:80px">Активна</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scTbody">
+                            <tr><td colspan="7" style="text-align:center;padding:40px;color:#9a9488">Загрузка…</td></tr>
+                        </tbody>
+                    </table>
+                    <div class="cat-empty-state" id="scEmpty" hidden>
+                        <div class="cat-empty-ico">📂</div>
+                        <div class="cat-empty-text">Категории не найдены — добавьте первую</div>
+                    </div>
+                    <input type="file" id="catImgFile" accept="image/*" style="display:none">
+                </div>
             </div>
 
         </div>
@@ -313,6 +426,36 @@
 <div class="a-toast" id="toast"></div>
 
 <script type="module" src="../js/admin/categories-list.js"></script>
+
+<script type="module">
+import { initBranchCategoriesTab } from '../js/admin/branch-categories.js';
+import { initCategoriesStaff }     from '../js/admin/categories-staff.js';
+import { getStaffSession }         from '../js/admin/rbac.js';
+
+const ADMIN_ROLES = ['super_admin', 'admin'];
+const session = getStaffSession();
+const isAdmin = ADMIN_ROLES.includes(session?.role);
+
+if (isAdmin) {
+  // Admin / manager — show 2-tab view, remove staff view
+  document.getElementById('staffView').remove();
+
+  document.querySelectorAll('.cat-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cat-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.cat-tab-pane').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      if (btn.dataset.tab === 'tab-branches') initBranchCategoriesTab();
+    });
+  });
+} else {
+  // Staff / operator — show combined view, remove admin tabs
+  document.getElementById('adminManagerView').remove();
+  document.getElementById('staffView').style.display = '';
+  initCategoriesStaff();
+}
+</script>
 
 </body>
 </html>

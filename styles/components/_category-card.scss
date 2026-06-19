@@ -112,6 +112,29 @@
   transition: var(--ease);
 }
 
+// ---- "Все категории" card ----
+
+.cat-ph--all {
+  background: linear-gradient(145deg, #5c3d2e, #2c1810);
+  position: relative;
+
+  // Subtle grid pattern to suggest "all"
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+}
+
+.cat-card--all .cat-count {
+  opacity: 0.6;
+  font-style: italic;
+}
+
 // ---- Skeleton loading state ----
 // Applied by JS while category data is loading (future use)
 

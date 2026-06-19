@@ -27,12 +27,12 @@ export function renderBranchIndicator() {
   const branch = getSelectedBranch();
   if (branch) {
     el.innerHTML =
-      `<span class="bi-icon">📍</span>` +
+      `<i class="ti ti-map-pin"></i>` +
       `<span class="bi-name">${_esc(branch.name)}</span>` +
       `<span class="bi-chevron">▼</span>`;
   } else {
     el.innerHTML =
-      `<span class="bi-icon">📍</span>` +
+      `<i class="ti ti-map-pin"></i>` +
       `<span class="bi-placeholder">Выберите филиал</span>` +
       `<span class="bi-chevron">▼</span>`;
   }

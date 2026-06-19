@@ -1251,6 +1251,23 @@ h3 {
   transition: var(--ease);
 }
 
+.cat-ph--all {
+  background: linear-gradient(145deg, #5c3d2e, #2c1810);
+  position: relative;
+}
+.cat-ph--all::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.cat-card--all .cat-count {
+  opacity: 0.6;
+  font-style: italic;
+}
+
 @keyframes cat-shimmer {
   0% {
     background-position: -400px 0;
@@ -4028,7 +4045,7 @@ h3 {
 }
 
 .bp-icon {
-  font-size: 20px;
+  font-size: 30px;
   color: var(--coffee-dark);
   line-height: 1;
   transition: color var(--ease), transform var(--ease);

@@ -3,7 +3,7 @@
 // ================================
 
 import { getSession, logout }              from './auth.js';
-import { initRbac }                       from './rbac.js';
+import { initRbac, getStaffSession }      from './rbac.js';
 import {
   getCategories, createCategory, updateCategory,
   deleteCategory, countProductsInCategory,
@@ -31,9 +31,9 @@ function generateSlug(title) {
 
 // ── State ─────────────────────────────────────────────────────────────────────
 
-let _all           = [];
-let _editId        = null;  // id of category currently being edited inline
-let _imageModalId  = null;  // id of category being edited in the image modal
+let _all          = [];
+let _editId       = null;
+let _imageModalId = null;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -86,12 +86,6 @@ function buildViewRow(cat) {
           ${popover}
         </div>
       </td>
-      <td style="text-align:center">
-        <label class="cl-toggle" title="${cat.isPopular ? 'Популярная' : 'Обычная'}">
-          <input type="checkbox" class="cat-popular-chk" data-id="${esc(cat.id)}" ${cat.isPopular ? 'checked' : ''}>
-          <span class="cl-toggle-track"></span>
-        </label>
-      </td>
       <td>
         <label class="cl-toggle" title="${cat.isActive ? 'Активна' : 'Скрыта'}">
           <input type="checkbox" class="cat-active-chk" data-id="${esc(cat.id)}" ${cat.isActive ? 'checked' : ''}>
@@ -120,7 +114,6 @@ function buildEditRow(cat) {
       <td><input class="a-input" id="editSlug"  value="${esc(cat.slug)}"  placeholder="slug"     style="padding:6px 10px;font-size:13px;font-family:monospace"></td>
       <td><input class="a-input" id="editSort"  value="${esc(String(cat.sortOrder))}" type="number" min="0" style="padding:6px 10px;font-size:13px;width:70px"></td>
       <td colspan="2">—</td>
-      <td>—</td>
       <td>
         <div class="a-actions">
           <button class="a-btn a-btn-accent a-btn-sm cat-save-btn" data-id="${esc(cat.id)}">Сохранить</button>
@@ -130,7 +123,7 @@ function buildEditRow(cat) {
     </tr>`;
 }
 
-// ── "Add" row at bottom of table ──────────────────────────────────────────────
+// ── "Add" row ─────────────────────────────────────────────────────────────────
 
 function showAddRow() {
   const existing = document.getElementById('catAddRow');
@@ -145,7 +138,6 @@ function showAddRow() {
     <td><input class="a-input" id="addSlug"  placeholder="slug (авто)" style="padding:6px 10px;font-size:13px;font-family:monospace"></td>
     <td><input class="a-input" id="addSort"  placeholder="0" type="number" min="0" value="0" style="padding:6px 10px;font-size:13px;width:70px"></td>
     <td colspan="2">—</td>
-    <td>—</td>
     <td>
       <div class="a-actions">
         <button class="a-btn a-btn-accent a-btn-sm" id="catAddSaveBtn">Добавить</button>
@@ -204,7 +196,7 @@ function openImageModal(cat) {
   _imageModalId = cat.id;
   document.getElementById('imageModalCatName').textContent = cat.title;
 
-  const preview = document.getElementById('imageModalPreview');
+  const preview  = document.getElementById('imageModalPreview');
   const urlInput = document.getElementById('imageModalUrlInput');
   urlInput.value = cat.imageUrl || '';
   if (cat.imageUrl) {
@@ -223,19 +215,17 @@ function closeImageModal() {
 }
 
 function _initImageModal() {
-  const modal      = document.getElementById('imageModal');
-  const pickBtn    = document.getElementById('imageModalPickBtn');
-  const fileInput  = document.getElementById('catImgFile');
-  const urlInput   = document.getElementById('imageModalUrlInput');
-  const preview    = document.getElementById('imageModalPreview');
-  const progress   = document.getElementById('imageModalProgress');
-  const saveBtn    = document.getElementById('imageModalSaveBtn');
-  const cancelBtn  = document.getElementById('imageModalCancelBtn');
+  const modal     = document.getElementById('imageModal');
+  const pickBtn   = document.getElementById('imageModalPickBtn');
+  const fileInput = document.getElementById('catImgFile');
+  const urlInput  = document.getElementById('imageModalUrlInput');
+  const preview   = document.getElementById('imageModalPreview');
+  const progress  = document.getElementById('imageModalProgress');
+  const saveBtn   = document.getElementById('imageModalSaveBtn');
+  const cancelBtn = document.getElementById('imageModalCancelBtn');
 
-  // Trigger hidden file input
   pickBtn.addEventListener('click', () => fileInput.click());
 
-  // File selected — upload to ImgBB
   fileInput.addEventListener('change', async () => {
     const file = fileInput.files[0];
     if (!file) return;
@@ -259,18 +249,12 @@ function _initImageModal() {
     }
   });
 
-  // URL typed manually — update preview
   urlInput.addEventListener('input', () => {
     const val = urlInput.value.trim();
-    if (val) {
-      preview.src = val;
-      preview.style.display = 'block';
-    } else {
-      preview.style.display = 'none';
-    }
+    if (val) { preview.src = val; preview.style.display = 'block'; }
+    else      { preview.style.display = 'none'; }
   });
 
-  // Save
   saveBtn.addEventListener('click', async () => {
     if (!_imageModalId) return;
     const imageUrl = urlInput.value.trim() || null;
@@ -296,32 +280,32 @@ function _initImageModal() {
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 async function init() {
+  // Only run for admin/manager — staff uses categories-staff.js
+  const staffSession = getStaffSession();
+  if (!['super_admin', 'admin', 'manager'].includes(staffSession?.role)) return;
+
   const session = getSession();
   document.getElementById('adminUser').textContent = session?.full_name || session?.role || 'admin';
   document.getElementById('logoutBtn').addEventListener('click', logout);
 
   const tbody = document.getElementById('catTbody');
-  tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:#9a9488">Загрузка…</td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:#9a9488">Загрузка…</td></tr>`;
 
   try {
     _all = await getCategories();
     renderTable();
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:#c0392b">${esc(err.message)}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:#c0392b">${esc(err.message)}</td></tr>`;
     return;
   }
 
-  // Add button
   document.getElementById('addCatBtn').addEventListener('click', showAddRow);
 
-  // Delegated: edit button
-  document.getElementById('catTbody').addEventListener('click', async e => {
-    // Edit
+  tbody.addEventListener('click', async e => {
     const editBtn = e.target.closest('.cat-edit-btn');
     if (editBtn) {
       _editId = editBtn.dataset.id;
       renderTable();
-      // Auto-slug on title change
       const titleEl = document.getElementById('editTitle');
       const slugEl  = document.getElementById('editSlug');
       titleEl?.addEventListener('input', () => {
@@ -332,7 +316,6 @@ async function init() {
       return;
     }
 
-    // Save edit
     const saveBtn = e.target.closest('.cat-save-btn');
     if (saveBtn) {
       const id    = saveBtn.dataset.id;
@@ -355,14 +338,12 @@ async function init() {
       return;
     }
 
-    // Cancel edit
     if (e.target.closest('.cat-cancel-btn')) {
       _editId = null;
       renderTable();
       return;
     }
 
-    // Delete
     const delBtn = e.target.closest('.cat-delete-btn');
     if (delBtn) {
       const cat = _all.find(c => c.id === delBtn.dataset.id);
@@ -371,28 +352,17 @@ async function init() {
     }
   });
 
-  // Active / Popular toggles (delegated)
-  document.getElementById('catTbody').addEventListener('change', async e => {
-    const activeChk  = e.target.closest('.cat-active-chk');
-    const popularChk = e.target.closest('.cat-popular-chk');
-    const chk = activeChk || popularChk;
+  tbody.addEventListener('change', async e => {
+    const chk = e.target.closest('.cat-active-chk');
     if (!chk) return;
-
     const id      = chk.dataset.id;
     const checked = chk.checked;
     chk.disabled  = true;
     try {
-      if (activeChk) {
-        await updateCategory(id, { isActive: checked });
-        const cat = _all.find(c => c.id === id);
-        if (cat) cat.isActive = checked;
-        showToast(checked ? 'Категория активирована' : 'Категория скрыта');
-      } else {
-        await updateCategory(id, { isPopular: checked });
-        const cat = _all.find(c => c.id === id);
-        if (cat) cat.isPopular = checked;
-        showToast(checked ? 'Добавлена в популярные' : 'Убрана из популярных');
-      }
+      await updateCategory(id, { isActive: checked });
+      const cat = _all.find(c => c.id === id);
+      if (cat) cat.isActive = checked;
+      showToast(checked ? 'Категория активирована' : 'Категория скрыта');
     } catch {
       chk.checked = !checked;
     } finally {
@@ -400,21 +370,18 @@ async function init() {
     }
   });
 
-  // Image edit button (delegated)
-  document.getElementById('catTbody').addEventListener('click', async e => {
+  tbody.addEventListener('click', async e => {
     const imgBtn = e.target.closest('.cat-image-btn');
     if (!imgBtn) return;
     const cat = _all.find(c => c.id === imgBtn.dataset.id);
     if (cat) openImageModal(cat);
   });
 
-  // Delete modal
   document.getElementById('delConfirmBtn').addEventListener('click', async () => {
     if (!_pendingDelete) return;
     const cat = _pendingDelete;
     const btn = document.getElementById('delConfirmBtn');
     btn.disabled = true;
-
     try {
       const count = await countProductsInCategory(cat.slug);
       if (count > 0) {

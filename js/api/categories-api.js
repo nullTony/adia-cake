@@ -6,6 +6,7 @@
 
 import { sbFetch }    from './supabase-client.js';
 import { API_CONFIG } from '../config/api-config.js';
+import { getActiveCategoriesForBranch } from './branch-categories-api.js';
 
 const TABLE = API_CONFIG.SUPABASE.TABLES.CATEGORIES;
 
@@ -32,11 +33,37 @@ export async function getCategories(activeOnly = false) {
 }
 
 // Returns only popular active categories for the homepage showcase.
+// Filters out categories without images (won't display well on homepage grid).
 export async function getPopularCategories(limit = 8) {
   const rows = await sbFetch(
     `/${TABLE}?is_popular=eq.true&is_active=eq.true&order=sort_order.asc,title.asc&limit=${limit}`
   );
-  return Array.isArray(rows) ? rows.map(fromCategory) : [];
+  const cats = Array.isArray(rows) ? rows.map(fromCategory) : [];
+  return cats.filter(c => c.imageUrl && c.imageUrl.trim());
+}
+
+// Returns popular active categories for a specific branch (homepage showcase with branch context).
+// Cross-references branch_categories.is_active to ensure the category is enabled for that branch.
+export async function getPopularCategoriesForBranch(branchId) {
+  if (!branchId) return getPopularCategories(8);
+
+  let bindings;
+  try {
+    bindings = await sbFetch(
+      `/branch_categories?branch_id=eq.${encodeURIComponent(branchId)}&is_active=eq.true&order=sort_order.asc`
+    );
+  } catch {
+    return getPopularCategories(8);
+  }
+
+  if (!Array.isArray(bindings) || !bindings.length) return getPopularCategories(8);
+
+  const ids = bindings.map(bc => bc.category_id).join(',');
+  const rows = await sbFetch(
+    `/${TABLE}?id=in.(${ids})&is_popular=eq.true&is_active=eq.true&order=sort_order.asc`
+  );
+  const cats = Array.isArray(rows) ? rows.map(fromCategory) : [];
+  return cats.filter(c => c.imageUrl && c.imageUrl.trim());
 }
 
 // ── Mutations ─────────────────────────────────────────────────────────────────
@@ -85,4 +112,14 @@ export async function deleteCategory(id) {
 export async function countProductsInCategory(slug) {
   const rows = await sbFetch(`/products?category=eq.${encodeURIComponent(slug)}&select=id`);
   return Array.isArray(rows) ? rows.length : 0;
+}
+
+/**
+ * Get categories for display — respects branch bindings if branchId provided.
+ * Falls back to all active categories if no branch selected.
+ */
+export async function getCategoriesByBranch(branchId) {
+  if (!branchId) return await getCategories(true);
+  const rows = await getActiveCategoriesForBranch(branchId);
+  return Array.isArray(rows) ? rows.map(fromCategory) : [];
 }

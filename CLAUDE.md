@@ -244,6 +244,29 @@ Compiled to `main.css` and `admin.css`. Use SCSS variables for consistency.
 
 ---
 
+## Agent Workflow
+
+Every task runs through a 5-agent pipeline. Claude (coordinator) routes the task and launches agents in sequence:
+
+```
+User task
+    ↓
+1. adia-planner  → reads guide-planner skill, builds step-by-step plan, outputs handoff to reader
+2. adia-reader   → reads actual files, finds exact paths/lines, outputs file context to designer
+3. adia-designer → implements CSS/SCSS changes, compiles, outputs handoff to developer
+4. adia-developer → implements JS logic, wires into entry points, outputs handoff to reviewer
+5. adia-reviewer → reviews all changes, either approves (→ commit) or triggers retry cycle
+```
+
+### Pipeline Rules
+- **adia-planner** never asks stylistic questions (hover, animations, colors, icons) — decides autonomously
+- Each agent ends output with a `→ Handoff to [next-agent]` block
+- **adia-reviewer** either approves (commit) or triggers targeted retry: only the agent that owns the broken layer
+- For CSS-only tasks: skip adia-developer. For JS-only tasks: skip adia-designer. Coordinator decides.
+- Full pipeline reference: `.claude/WORKFLOW.md`
+
+---
+
 ## Rules for Claude
 
 ### Code Style & Structure

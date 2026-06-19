@@ -7,7 +7,7 @@ const SESSION_KEY = 'adia_staff';
 export const ROLE_PERMISSIONS = {
   super_admin: ['dashboard', 'products', 'categories', 'orders', 'staff', 'branch_products'],
   admin:       ['dashboard', 'products', 'categories', 'orders', 'branch_products'],
-  manager:     ['orders', 'branch_products'],
+  manager:     ['orders', 'branch_products', 'categories'],
   operator:    ['orders'],
 };
 

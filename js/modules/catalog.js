@@ -6,7 +6,7 @@
 //  This module never modifies branch selection — it only reacts to it.
 // ================================
 
-import { getCategories }          from '../api/categories-api.js';
+import { getCategories, getCategoriesByBranch } from '../api/categories-api.js';
 import { getBranchProducts }      from '../api/branch-products-api.js';
 import { renderProductCard }      from './product-card.js';
 import { syncAddButtons, syncWeightButtons } from './cart.js';
@@ -81,7 +81,7 @@ async function _loadAndRender(grid, countEl, branchId) {
     if (spans[1]) spans[1].textContent = (PRICE_MAX / 1000).toFixed(0) + ' 000';
   }
 
-  await _loadCategoryButtons(cards);
+  await _loadCategoryButtons(cards, branchId);
   _initFilters(cards, grid, PRICE_MAX, countEl);
 }
 
@@ -97,14 +97,19 @@ function _resetFilterState() {
 
 // ── Dynamic category buttons ──────────────────────────────────────────────────
 
-async function _loadCategoryButtons(cards) {
+async function _loadCategoryButtons(cards, branchId) {
   const group = document.getElementById('catFilterGroup');
   if (!group) return;
 
   group.querySelectorAll('[data-cat]:not([data-cat="all"])').forEach(b => b.remove());
 
   let categories = [];
-  try { categories = await getCategories(true); } catch {}
+  try {
+    // If branch selected, respect explicit branch-category bindings
+    categories = branchId
+      ? await getCategoriesByBranch(branchId)
+      : await getCategories(true);
+  } catch {}
   if (!categories.length) return;
 
   const usedSlugs = new Set(cards.map(c => c.dataset.category).filter(Boolean));

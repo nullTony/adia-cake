@@ -260,70 +260,112 @@
 
 // ---- Mobile responsive ----
 
-@media (max-width: 900px) {
+@media (max-width: 768px) {
+  .catalog-section {
+    padding: 0 0 40px;
+  }
+
+  // Remove container horizontal padding — each zone controls its own spacing
+  .catalog-section .container {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .catalog-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
   .cat-sidebar {
     position: static;
-    padding: 0 0 4px;
     background: transparent;
     box-shadow: none;
     border-radius: 0;
+    padding: 0;
+    width: 100%;
+    min-width: 0;
   }
 
+  // The anonymous wrapper div inside sidebar must also stretch
+  .cat-sidebar > div:first-child {
+    width: 100%;
+  }
+
+  // Reset button stays hidden on mobile (chips + "Все" chip act as reset)
+  .cat-reset-btn {
+    display: none;
+  }
+
+  // Category section title stays hidden
   .cat-filter-title {
     display: none;
   }
 
   .cat-filter-group {
-    margin-bottom: 10px;
+    width: 100%;
+    margin-bottom: 0;
   }
 
-  // Category buttons become horizontal scroll strip
+  // Horizontal scroll strip — category chips
   #catFilterGroup {
     display: flex;
     flex-wrap: nowrap;
+    width: 100%;
     overflow-x: auto;
-    gap: 6px;
-    padding-bottom: 4px;
-    scrollbar-width: none;
+    scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
+    gap: 8px;
+    padding: 10px 16px 12px;
+    scrollbar-width: none;
+    box-sizing: border-box;
 
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    &::-webkit-scrollbar { display: none; }
   }
 
   .cat-cat-btn {
     flex-shrink: 0;
     width: auto;
-    padding: 7px 16px;
+    padding: 8px 16px;
     border-radius: 20px;
     border: 1.5px solid var(--border);
     background: var(--white);
+    font-size: 13px;
+    white-space: nowrap;
     margin-bottom: 0;
 
-    &.active {
-      background: var(--text-dark);
-      border-color: var(--text-dark);
-      color: var(--white);
-    }
+    &:hover  { background: var(--beige); border-color: var(--caramel); }
+    &.active { background: var(--text-dark); border-color: var(--text-dark); color: var(--white); }
   }
 
-  // Price slider inline
+  // Price filter — compact strip below the category chips
+  .cat-sidebar > div:nth-child(2) {
+    display: block;
+    padding: 4px 16px 12px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
   .cat-price-display {
-    font-size: 13px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--coffee-dark);
+    margin-bottom: 6px;
   }
 
-  .cat-price-labels span:first-child {
-    display: none;
-  }
-
-  .cat-reset-btn {
-    font-size: 13px;
-    margin-top: 6px;
+  .cat-price-slider {
     width: 100%;
   }
 
-  // Toolbar: count text only, no branch select
+  .cat-price-labels {
+    font-size: 11px;
+    margin-top: 4px;
+  }
+
+  // Products area gets its own horizontal padding
+  .cat-main {
+    padding: 8px 16px 0;
+  }
+
   .cat-toolbar {
     margin-bottom: 12px;
   }

@@ -17,6 +17,9 @@ import { syncFavButtons }         from './favorites.js';
 import { getSelectedBranch }      from '../store/branch-store.js';
 import { initFeatCarousel }       from './featured-carousel.js';
 
+// Last loaded products — used to refresh category counts after showcase re-renders
+let _lastProducts = [];
+
 export async function initStorefront() {
   const branch = getSelectedBranch();
 
@@ -37,6 +40,12 @@ export async function initStorefront() {
       _renderFeatured(newBranch?.id || null),
     ]);
   });
+
+  // categories-showcase.js re-renders the cat-grid after storefront already wrote counts.
+  // Re-apply counts whenever the showcase signals it's done rendering.
+  window.addEventListener('adia:categories-rendered', () => {
+    _renderCategoryCounts(_lastProducts);
+  });
 }
 
 // ── Today showcase ─────────────────────────────────────────────────────────────
@@ -46,6 +55,7 @@ function _showNoBranchState() {
   if (grid) {
     grid.innerHTML = '<p style="padding:24px;text-align:center;color:var(--text-light)">Выберите филиал для просмотра витрины.</p>';
   }
+  _lastProducts = [];
   _renderCategoryCounts([]);
 }
 
@@ -65,6 +75,7 @@ async function _renderToday(branchId) {
     console.error('[storefront] today load error:', err);
   }
 
+  _lastProducts = items;
   _renderCategoryCounts(items);
 
   if (!items.length) {
@@ -90,10 +101,14 @@ function _fmtCount(n) {
 }
 
 function _renderCategoryCounts(products) {
-  const counts = {};
+  const counts  = {};
   products.forEach(p => {
     if (p.category) counts[p.category] = (counts[p.category] || 0) + 1;
   });
+
+  // When products array is non-empty we have real branch data — hide cards with 0 items.
+  // When empty (no branch selected yet) keep all cards visible.
+  const hasData = products.length > 0;
 
   document.querySelectorAll('.cat-card').forEach(card => {
     const countEl = card.querySelector('.cat-count');
@@ -103,13 +118,18 @@ function _renderCategoryCounts(products) {
       slug = new URL(card.getAttribute('href') || '', window.location.href)
         .searchParams.get('category') || '';
     } catch {}
-    if (!slug) return;
+    if (!slug) return; // "Все категории" card — always visible
+
     const n = counts[slug] || 0;
-    if (n > 0) {
+    if (!hasData) {
+      card.hidden = false;
+      countEl.hidden = true;
+    } else if (n > 0) {
       countEl.textContent = _fmtCount(n);
       countEl.hidden = false;
+      card.hidden = false;
     } else {
-      countEl.hidden = true;
+      card.hidden = true; // category exists but 0 products in this branch
     }
   });
 }
