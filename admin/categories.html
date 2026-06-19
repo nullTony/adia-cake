@@ -181,18 +181,23 @@
                             <th>Название</th>
                             <th>Slug</th>
                             <th style="text-align:center">Порядок</th>
+                            <th>Фото</th>
+                            <th style="text-align:center">Популярная</th>
                             <th>Активна</th>
                             <th>Действия</th>
                         </tr>
                     </thead>
                     <tbody id="catTbody">
-                        <tr><td colspan="5" style="text-align:center;padding:40px;color:#9a9488">Загрузка…</td></tr>
+                        <tr><td colspan="7" style="text-align:center;padding:40px;color:#9a9488">Загрузка…</td></tr>
                     </tbody>
                 </table>
                 <div class="cat-empty-state" id="catEmpty" hidden>
                     <div class="cat-empty-ico">📂</div>
                     <div class="cat-empty-text">Категории не найдены — добавьте первую</div>
                 </div>
+
+                <!-- Image upload input (hidden, triggered from JS) -->
+                <input type="file" id="catImgFile" accept="image/*" style="display:none">
             </div>
 
         </div>
@@ -208,6 +213,28 @@
         <div class="pm-actions">
             <button class="pm-cancel" id="delCancelBtn">Отмена</button>
             <button class="pm-confirm" id="delConfirmBtn" style="background:var(--a-danger)">Удалить</button>
+        </div>
+    </div>
+</div>
+
+<!-- ======= IMAGE EDIT MODAL ======= -->
+<div class="pm-backdrop" id="imageModal">
+    <div class="pm-modal" style="max-width:440px">
+        <div class="pm-title">Фото категории</div>
+        <div class="pm-sub" id="imageModalCatName"></div>
+        <div style="margin:18px 0">
+            <img id="imageModalPreview" src="" alt="" style="display:none;width:100%;max-height:200px;object-fit:cover;border-radius:8px;margin-bottom:12px">
+            <div style="display:flex;gap:10px;align-items:center">
+                <button class="a-btn a-btn-outline a-btn-sm" id="imageModalPickBtn" style="flex-shrink:0">
+                    <i class="ti ti-photo"></i> Выбрать фото
+                </button>
+                <input class="a-input" id="imageModalUrlInput" placeholder="или вставьте URL изображения" style="padding:6px 10px;font-size:13px;flex:1">
+            </div>
+            <div id="imageModalProgress" style="display:none;margin-top:10px;font-size:13px;color:var(--a-text-light)">Загрузка…</div>
+        </div>
+        <div class="pm-actions">
+            <button class="pm-cancel" id="imageModalCancelBtn">Отмена</button>
+            <button class="pm-confirm" id="imageModalSaveBtn">Сохранить</button>
         </div>
     </div>
 </div>

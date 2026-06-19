@@ -37,7 +37,7 @@
 
             <div class="h-actions">
                 <button class="h-branch-btn" id="branchIndicator" aria-label="Выбрать филиал">
-                    <i class="bi-icon ti ti-map-pin"></i>
+                    <i class="ti ti-map-pin"></i>
                     <span class="bi-placeholder">Выберите филиал</span>
                     <span class="bi-chevron">▼</span>
                 </button>
@@ -110,15 +110,15 @@
                 </p>
 
                 <div class="hero-actions">
-                    <a href="#today" class="btn btn-dark btn-lg">✨ Витрина на сегодня</a>
-                    <a href="./catalog.html" class="btn btn-outline btn-lg">Перейти в каталог</a>
+                    <a href="#today" class="btn btn-dark">Витрина на сегодня</a>
+                    <a href="./catalog.html" class="btn btn-outline">Перейти в каталог</a>
                 </div>
 
                 <div class="hero-trust">
-                    <div class="trust-item"><div class="trust-ico">🚀</div>Доставка по Ташкенту</div>
-                    <div class="trust-item"><div class="trust-ico">🏪</div><span id="heroBranchCount">4</span> филиала</div>
-                    <div class="trust-item"><div class="trust-ico">🎂</div>Торты на заказ</div>
-                    <div class="trust-item"><div class="trust-ico">🌿</div>Всегда свежее</div>
+                    <div class="trust-item"><div class="trust-ico"><i class="ti ti-truck" aria-hidden="true"></i></div>Доставка по Ташкенту</div>
+                    <div class="trust-item"><div class="trust-ico"><i class="ti ti-building-store" aria-hidden="true"></i></div><span id="heroBranchCount"></span> филиала</div>
+                    <div class="trust-item"><div class="trust-ico"><i class="ti ti-cake" aria-hidden="true"></i></div>Торты на заказ</div>
+                    <div class="trust-item"><div class="trust-ico"><i class="ti ti-leaf" aria-hidden="true"></i></div>Всегда свежее</div>
                 </div>
             </div>
 
@@ -160,48 +160,31 @@
 <!-- ============================== BENEFITS ============================== -->
 <section class="benefits section" id="about">
     <div class="container">
-        <div class="sec-header">
-            <div class="sec-tag">Почему выбирают нас</div>
-            <h2 class="sec-title">Качество,<br>которое чувствуется</h2>
-            <p class="sec-sub">Каждый день мы готовим свежие десерты с вниманием к деталям и искренней любовью к делу.</p>
-        </div>
-        <div class="benefits-grid">
+        <div class="benefits-pills">
 
-            <!-- Fresh daily -->
-            <div class="benefit-card anim">
-                <div class="b-icon">
-                    <i class="ti ti-leaf"></i>
-                </div>
-                <h3 class="b-title">Каждый день свежее</h3>
-                <p class="b-text">Витрина обновляется ежедневно. Никаких вчерашних позиций — только свежеприготовленное.</p>
-            </div>
+            <article class="bp anim" style="--bp-delay: 0s">
+                <div class="bp-icon" aria-hidden="true"><i class="ti ti-leaf"></i></div>
+                <div class="bp-stat" id="benefitsCounter">0%</div>
+                <p class="bp-label">Натуральные ингредиенты</p>
+            </article>
 
-            <!-- Beautiful presentation -->
-            <div class="benefit-card anim">
-                <div class="b-icon">
-                    <i class="ti ti-sparkles"></i>
-                </div>
-                <h3 class="b-title">Красивая подача</h3>
-                <p class="b-text">Каждый десерт — маленькое произведение искусства. Эстетика и качество ингредиентов — наш стандарт.</p>
-            </div>
+            <article class="bp anim" style="--bp-delay: 0.08s">
+                <div class="bp-icon" aria-hidden="true"><i class="ti ti-sparkles"></i></div>
+                <div class="bp-stat">Ежедневно</div>
+                <p class="bp-label">Свежая выпечка</p>
+            </article>
 
-            <!-- City delivery -->
-            <div class="benefit-card anim">
-                <div class="b-icon">
-                    <i class="ti ti-bike"></i>
-                </div>
-                <h3 class="b-title">Доставка по городу</h3>
-                <p class="b-text">Доставляем свежие десерты прямо к вашей двери. Быстро, аккуратно и в красивой упаковке.</p>
-            </div>
+            <article class="bp anim" style="--bp-delay: 0.16s">
+                <div class="bp-icon" aria-hidden="true"><i class="ti ti-truck"></i></div>
+                <div class="bp-stat">60 мин</div>
+                <p class="bp-label">Доставка по городу</p>
+            </article>
 
-            <!-- 4 branches -->
-            <div class="benefit-card anim">
-                <div class="b-icon">
-                    <i class="ti ti-map-pin"></i>
-                </div>
-                <h3 class="b-title">4 удобных филиала</h3>
-                <p class="b-text">Ближайшая точка всегда рядом — удобно зайти самому или заказать самовывоз.</p>
-            </div>
+            <article class="bp anim" style="--bp-delay: 0.24s">
+                <div class="bp-icon" aria-hidden="true"><i class="ti ti-map-pin"></i></div>
+                <div class="bp-stat">4 филиала</div>
+                <p class="bp-label">По всему Ташкенту</p>
+            </article>
 
         </div>
     </div>

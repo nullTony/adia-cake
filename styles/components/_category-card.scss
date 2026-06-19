@@ -23,6 +23,9 @@
   flex-direction: column;
   justify-content: flex-end;
   transition: var(--ease);
+  // Staggered entrance — JS sets --i on each card
+  animation: cat-enter 0.45s var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 80ms);
 
   &:hover {
     transform: translateY(-4px);
@@ -107,6 +110,109 @@
   font-size: 15px;
   margin-top: 10px;
   transition: var(--ease);
+}
+
+// ---- Skeleton loading state ----
+// Applied by JS while category data is loading (future use)
+
+@keyframes cat-shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.cat-card.skeleton {
+  cursor: default;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    var(--beige) 25%,
+    var(--caramel) 50%,
+    var(--beige) 75%
+  );
+  background-size: 800px 100%;
+  animation: cat-shimmer 1.6s linear infinite;
+
+  // Hide all inner content during loading
+  .cat-ph-wrap,
+  .cat-overlay,
+  .cat-body,
+  .cat-badge-new {
+    opacity: 0;
+  }
+}
+
+// ---- Staggered entrance animation ----
+// JS sets style="--i:0", "--i:1", "--i:2" on each card
+
+@keyframes cat-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Respect reduced-motion — disable entrance and shimmer animations
+@media (prefers-reduced-motion: reduce) {
+  .cat-card {
+    animation: none;
+  }
+
+  .cat-card.skeleton {
+    animation: none;
+    // Keep shimmer visible as a static state so card area is still indicated
+    background: var(--beige);
+  }
+}
+
+// ---- Badge "Новинки" ----
+// Positioned top-right; uses powder pink to match .badge-new on product cards
+
+.cat-badge-new {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  padding: 4px 10px;
+  background: var(--powder);
+  color: var(--text-dark);
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 100px;
+  box-shadow: var(--shadow-s);
+  pointer-events: none;
+}
+
+// ---- Overlay CTA ----
+// .cat-overlay-cta lives inside .cat-body; fades in on card hover
+
+.cat-overlay-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--white);
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity var(--ease), transform var(--ease);
+}
+
+.cat-card:hover .cat-overlay-cta {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 // ---- Breakpoints ----

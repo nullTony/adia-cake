@@ -21,6 +21,8 @@ import { initClientNotifications, stopNotifications } from './services/notificat
 import { initNotifications, stopToastNotifications }  from './notifications.js';
 import { initTesCarousel }                            from './modules/tes-carousel.js';
 import { getBranches }                                from './api/branches-api.js';
+import { initBenefitsCounter }                        from './modules/benefits-counter.js';
+import { initCategoriesShowcase }                     from './modules/categories-showcase.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   initMenu();
@@ -38,11 +40,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el && branches.length) el.textContent = branches.length;
   });
   initScrollReveal();
+  initBenefitsCounter();
   initDateLabel();
 
   // Branch selector validates stored branch + shows modal if needed.
   // initStorefront reacts to adia:branch-change so order doesn't matter.
   initBranchSelector();
+  initCategoriesShowcase();
   initStorefront();
   initTesCarousel();
 

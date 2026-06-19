@@ -8,6 +8,7 @@ import {
   getCategories, createCategory, updateCategory,
   deleteCategory, countProductsInCategory,
 } from '../api/categories-api.js';
+import { uploadImage, isImgBBConfigured } from '../api/image-upload-api.js';
 import { initAdminNotifications } from '../services/notification-service.js';
 
 initRbac('categories');
@@ -30,8 +31,9 @@ function generateSlug(title) {
 
 // ── State ─────────────────────────────────────────────────────────────────────
 
-let _all      = [];
-let _editId   = null; // id of category currently being edited inline
+let _all           = [];
+let _editId        = null;  // id of category currently being edited inline
+let _imageModalId  = null;  // id of category being edited in the image modal
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -63,11 +65,25 @@ function renderTable() {
 }
 
 function buildViewRow(cat) {
+  const imgThumb = cat.imageUrl
+    ? `<img src="${esc(cat.imageUrl)}" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:6px;display:block">`
+    : `<span style="font-size:20px;display:block;text-align:center">📷</span>`;
   return `
     <tr data-id="${esc(cat.id)}">
       <td style="font-weight:600">${esc(cat.title)}</td>
       <td><code style="font-size:12px;color:var(--a-text-light)">${esc(cat.slug)}</code></td>
       <td style="text-align:center">${esc(String(cat.sortOrder))}</td>
+      <td>
+        <button class="a-btn a-btn-outline a-btn-sm a-btn-icon cat-image-btn" data-id="${esc(cat.id)}" title="Изменить фото" style="padding:2px 6px">
+          ${imgThumb}
+        </button>
+      </td>
+      <td style="text-align:center">
+        <label class="cl-toggle" title="${cat.isPopular ? 'Популярная' : 'Обычная'}">
+          <input type="checkbox" class="cat-popular-chk" data-id="${esc(cat.id)}" ${cat.isPopular ? 'checked' : ''}>
+          <span class="cl-toggle-track"></span>
+        </label>
+      </td>
       <td>
         <label class="cl-toggle" title="${cat.isActive ? 'Активна' : 'Скрыта'}">
           <input type="checkbox" class="cat-active-chk" data-id="${esc(cat.id)}" ${cat.isActive ? 'checked' : ''}>
@@ -95,6 +111,7 @@ function buildEditRow(cat) {
       <td><input class="a-input" id="editTitle" value="${esc(cat.title)}" placeholder="Название" style="padding:6px 10px;font-size:13px"></td>
       <td><input class="a-input" id="editSlug"  value="${esc(cat.slug)}"  placeholder="slug"     style="padding:6px 10px;font-size:13px;font-family:monospace"></td>
       <td><input class="a-input" id="editSort"  value="${esc(String(cat.sortOrder))}" type="number" min="0" style="padding:6px 10px;font-size:13px;width:70px"></td>
+      <td colspan="2">—</td>
       <td>—</td>
       <td>
         <div class="a-actions">
@@ -119,6 +136,7 @@ function showAddRow() {
     <td><input class="a-input" id="addTitle" placeholder="Название*" style="padding:6px 10px;font-size:13px"></td>
     <td><input class="a-input" id="addSlug"  placeholder="slug (авто)" style="padding:6px 10px;font-size:13px;font-family:monospace"></td>
     <td><input class="a-input" id="addSort"  placeholder="0" type="number" min="0" value="0" style="padding:6px 10px;font-size:13px;width:70px"></td>
+    <td colspan="2">—</td>
     <td>—</td>
     <td>
       <div class="a-actions">
@@ -172,6 +190,101 @@ function closeDeleteConfirm() {
   _pendingDelete = null;
 }
 
+// ── Image modal ───────────────────────────────────────────────────────────────
+
+function openImageModal(cat) {
+  _imageModalId = cat.id;
+  document.getElementById('imageModalCatName').textContent = cat.title;
+
+  const preview = document.getElementById('imageModalPreview');
+  const urlInput = document.getElementById('imageModalUrlInput');
+  urlInput.value = cat.imageUrl || '';
+  if (cat.imageUrl) {
+    preview.src = cat.imageUrl;
+    preview.style.display = 'block';
+  } else {
+    preview.style.display = 'none';
+    preview.src = '';
+  }
+  document.getElementById('imageModal').classList.add('open');
+}
+
+function closeImageModal() {
+  document.getElementById('imageModal').classList.remove('open');
+  _imageModalId = null;
+}
+
+function _initImageModal() {
+  const modal      = document.getElementById('imageModal');
+  const pickBtn    = document.getElementById('imageModalPickBtn');
+  const fileInput  = document.getElementById('catImgFile');
+  const urlInput   = document.getElementById('imageModalUrlInput');
+  const preview    = document.getElementById('imageModalPreview');
+  const progress   = document.getElementById('imageModalProgress');
+  const saveBtn    = document.getElementById('imageModalSaveBtn');
+  const cancelBtn  = document.getElementById('imageModalCancelBtn');
+
+  // Trigger hidden file input
+  pickBtn.addEventListener('click', () => fileInput.click());
+
+  // File selected — upload to ImgBB
+  fileInput.addEventListener('change', async () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    if (!isImgBBConfigured()) {
+      showToast('ImgBB не настроен — вставьте URL вручную', true);
+      return;
+    }
+    progress.style.display = 'block';
+    pickBtn.disabled = true;
+    try {
+      const url = await uploadImage(file);
+      urlInput.value = url;
+      preview.src = url;
+      preview.style.display = 'block';
+    } catch (err) {
+      showToast('Ошибка загрузки: ' + err.message, true);
+    } finally {
+      progress.style.display = 'none';
+      pickBtn.disabled = false;
+      fileInput.value = '';
+    }
+  });
+
+  // URL typed manually — update preview
+  urlInput.addEventListener('input', () => {
+    const val = urlInput.value.trim();
+    if (val) {
+      preview.src = val;
+      preview.style.display = 'block';
+    } else {
+      preview.style.display = 'none';
+    }
+  });
+
+  // Save
+  saveBtn.addEventListener('click', async () => {
+    if (!_imageModalId) return;
+    const imageUrl = urlInput.value.trim() || null;
+    saveBtn.disabled = true;
+    try {
+      await updateCategory(_imageModalId, { imageUrl });
+      const cat = _all.find(c => c.id === _imageModalId);
+      if (cat) cat.imageUrl = imageUrl || '';
+      renderTable();
+      closeImageModal();
+      showToast('Фото обновлено');
+    } catch (err) {
+      showToast('Ошибка: ' + err.message, true);
+    } finally {
+      saveBtn.disabled = false;
+    }
+  });
+
+  cancelBtn.addEventListener('click', closeImageModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeImageModal(); });
+}
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 async function init() {
@@ -180,13 +293,13 @@ async function init() {
   document.getElementById('logoutBtn').addEventListener('click', logout);
 
   const tbody = document.getElementById('catTbody');
-  tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:#9a9488">Загрузка…</td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:#9a9488">Загрузка…</td></tr>`;
 
   try {
     _all = await getCategories();
     renderTable();
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:#c0392b">${esc(err.message)}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:#c0392b">${esc(err.message)}</td></tr>`;
     return;
   }
 
@@ -250,23 +363,41 @@ async function init() {
     }
   });
 
-  // Active toggle (delegated)
+  // Active / Popular toggles (delegated)
   document.getElementById('catTbody').addEventListener('change', async e => {
-    const chk = e.target.closest('.cat-active-chk');
+    const activeChk  = e.target.closest('.cat-active-chk');
+    const popularChk = e.target.closest('.cat-popular-chk');
+    const chk = activeChk || popularChk;
     if (!chk) return;
+
     const id      = chk.dataset.id;
     const checked = chk.checked;
     chk.disabled  = true;
     try {
-      await updateCategory(id, { isActive: checked });
-      const cat = _all.find(c => c.id === id);
-      if (cat) cat.isActive = checked;
-      showToast(checked ? 'Категория активирована' : 'Категория скрыта');
+      if (activeChk) {
+        await updateCategory(id, { isActive: checked });
+        const cat = _all.find(c => c.id === id);
+        if (cat) cat.isActive = checked;
+        showToast(checked ? 'Категория активирована' : 'Категория скрыта');
+      } else {
+        await updateCategory(id, { isPopular: checked });
+        const cat = _all.find(c => c.id === id);
+        if (cat) cat.isPopular = checked;
+        showToast(checked ? 'Добавлена в популярные' : 'Убрана из популярных');
+      }
     } catch {
       chk.checked = !checked;
     } finally {
       chk.disabled = false;
     }
+  });
+
+  // Image edit button (delegated)
+  document.getElementById('catTbody').addEventListener('click', async e => {
+    const imgBtn = e.target.closest('.cat-image-btn');
+    if (!imgBtn) return;
+    const cat = _all.find(c => c.id === imgBtn.dataset.id);
+    if (cat) openImageModal(cat);
   });
 
   // Delete modal
@@ -299,6 +430,8 @@ async function init() {
   document.getElementById('deleteModal').addEventListener('click', e => {
     if (e.target === document.getElementById('deleteModal')) closeDeleteConfirm();
   });
+
+  _initImageModal();
 }
 
 // ── Toast ─────────────────────────────────────────────────────────────────────
