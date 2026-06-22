@@ -18,6 +18,7 @@ export function initFeatCarousel(grid) {
 
   const controls = document.createElement('div');
   controls.className = 'fc-controls';
+  controls.hidden = true; // invisible until overflow confirmed
   controls.innerHTML =
     `<button type="button" class="fc-arrow fc-arrow--prev" aria-label="Предыдущий">←</button>` +
     `<button type="button" class="fc-arrow fc-arrow--next" aria-label="Следующий">→</button>`;
