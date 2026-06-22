@@ -5157,10 +5157,13 @@ h3 {
 .tes-track {
   display: flex;
   width: max-content;
+  padding: 0;
+  margin: 0;
 }
 .tes-track .tes-card {
   min-width: 320px;
   margin-right: 16px;
+  margin-left: 0;
   flex-shrink: 0;
 }
 
