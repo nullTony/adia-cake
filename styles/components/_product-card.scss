@@ -59,7 +59,7 @@
 }
 
 .badge-today { background: var(--coffee-dark); color: var(--white); }
-.badge-hit   { background: var(--caramel); color: var(--text-dark); }
+.badge-hit   { background: var(--caramel); color: var(--text-dark); text-decoration: none; cursor: pointer; }
 .badge-new   { background: var(--powder); color: var(--text-dark); }
 
 // ---- Favourite button ----

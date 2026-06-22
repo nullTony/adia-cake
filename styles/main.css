@@ -1001,6 +1001,8 @@ h3 {
 .badge-hit {
   background: var(--caramel);
   color: var(--text-dark);
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .badge-new {

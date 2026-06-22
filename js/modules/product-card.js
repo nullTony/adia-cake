@@ -47,7 +47,7 @@ export function renderProductCard(p, { showTodayBadge = true, showHitBadge = fal
 
   let badge = '';
   if (showHitBadge && p.isPopular) {
-    badge = '<span class="pc-badge badge-hit">🔥 Хит</span>';
+    badge = '<a href="catalog.html?filter=popular" class="pc-badge badge-hit"><i class="ti ti-star"></i> Популярное</a>';
   } else if (showTodayBadge && p.isTodayShowcase) {
     badge = '<span class="pc-badge badge-today">✓ Сегодня</span>';
   }
@@ -80,6 +80,7 @@ export function renderProductCard(p, { showTodayBadge = true, showHitBadge = fal
     <div class="product-card"
          data-product-id="${esc(String(p.id))}"
          data-category="${esc(p.category || '')}"
+         data-is-popular="${p.isPopular ? 'true' : ''}"
          data-price="${dataPrice}"${weightAttrs}>
       <div class="pc-img">
         <div class="pc-ph">${img}</div>

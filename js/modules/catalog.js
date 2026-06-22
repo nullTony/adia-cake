@@ -49,6 +49,11 @@ async function _loadAndRender(grid, countEl, branchId) {
 
   _resetFilterState();
 
+  // Read URL params before first render to avoid flash of unfiltered content
+  const params    = new URLSearchParams(window.location.search);
+  const urlCat    = params.get('category');
+  const urlFilter = params.get('filter');
+
   let products;
   try {
     products = await getBranchProducts(branchId);
@@ -63,12 +68,22 @@ async function _loadAndRender(grid, countEl, branchId) {
     return;
   }
 
-  grid.innerHTML = products.map(p => renderProductCard(p)).join('');
+  grid.innerHTML = products.map(p => renderProductCard(p, { showHitBadge: true })).join('');
   syncAddButtons();
   syncWeightButtons();
   syncFavButtons();
 
   const cards = Array.from(grid.querySelectorAll('.product-card[data-product-id]'));
+
+  // Hide non-matching cards immediately to prevent flash before _initFilters runs
+  if (urlFilter === 'popular' || urlCat) {
+    cards.forEach(card => {
+      const match = urlFilter === 'popular'
+        ? card.dataset.isPopular === 'true'
+        : card.dataset.category === urlCat;
+      if (!match) card.style.display = 'none';
+    });
+  }
 
   const maxFromProducts = Math.max(...cards.map(c => parseInt(c.dataset.price, 10) || 0));
   const PRICE_MAX = Math.max(Math.ceil(maxFromProducts / 5000) * 5000, 5000);
@@ -82,7 +97,7 @@ async function _loadAndRender(grid, countEl, branchId) {
   }
 
   await _loadCategoryButtons(cards, branchId);
-  _initFilters(cards, grid, PRICE_MAX, countEl);
+  _initFilters(cards, grid, PRICE_MAX, countEl, { initialCategory: urlCat, initialFilter: urlFilter });
 }
 
 // ── Reset filter UI between branch loads ──────────────────────────────────────
@@ -101,7 +116,7 @@ async function _loadCategoryButtons(cards, branchId) {
   const group = document.getElementById('catFilterGroup');
   if (!group) return;
 
-  group.querySelectorAll('[data-cat]:not([data-cat="all"])').forEach(b => b.remove());
+  group.querySelectorAll('[data-cat]:not([data-cat="all"]):not([data-cat="popular"])').forEach(b => b.remove());
 
   let categories = [];
   try {
@@ -126,7 +141,7 @@ async function _loadCategoryButtons(cards, branchId) {
 
 // ── Filters ───────────────────────────────────────────────────────────────────
 
-function _initFilters(cards, grid, PRICE_MAX, countEl) {
+function _initFilters(cards, grid, PRICE_MAX, countEl, { initialCategory = null, initialFilter = null } = {}) {
   const catBtns   = document.querySelectorAll('.cat-cat-btn');
   const slider    = document.getElementById('priceSlider');
   const priceDisp = document.getElementById('priceDisplay');
@@ -134,8 +149,14 @@ function _initFilters(cards, grid, PRICE_MAX, countEl) {
   const emptyEl   = document.getElementById('catEmpty');
   const badgeEl   = document.getElementById('catalogCountBadge');
 
-  let activeCategory = 'all';
-  let maxPrice       = PRICE_MAX;
+  let activeCategory = initialFilter === 'popular' ? 'popular'
+    : initialCategory || 'all';
+  let maxPrice = PRICE_MAX;
+
+  // Highlight the correct button based on URL params
+  catBtns.forEach(b => b.classList.remove('active'));
+  const activeBtn = Array.from(catBtns).find(b => b.dataset.cat === activeCategory) || catBtns[0];
+  if (activeBtn) activeBtn.classList.add('active');
 
   function formatPriceLabel(val) {
     return (val / 1000).toFixed(0) + ' 000 сум';
@@ -159,7 +180,13 @@ function _initFilters(cards, grid, PRICE_MAX, countEl) {
     cards.forEach(card => {
       const cat   = card.dataset.category || '';
       const price = parseInt(card.dataset.price, 10) || 0;
-      const show  = (activeCategory === 'all' || cat === activeCategory) && price <= maxPrice;
+      let catMatch;
+      if (activeCategory === 'popular') {
+        catMatch = card.dataset.isPopular === 'true';
+      } else {
+        catMatch = activeCategory === 'all' || cat === activeCategory;
+      }
+      const show = catMatch && price <= maxPrice;
       card.style.display = show ? '' : 'none';
       if (show) visible++;
     });
@@ -175,6 +202,18 @@ function _initFilters(cards, grid, PRICE_MAX, countEl) {
       activeCategory = btn.dataset.cat || 'all';
       applyFilters();
     });
+  });
+
+  // Intercept badge clicks inside catalog cards — apply popular filter without page reload
+  grid.addEventListener('click', e => {
+    const badge = e.target.closest('.badge-hit');
+    if (!badge) return;
+    e.preventDefault();
+    catBtns.forEach(b => b.classList.remove('active'));
+    const popularBtn = Array.from(catBtns).find(b => b.dataset.cat === 'popular');
+    if (popularBtn) popularBtn.classList.add('active');
+    activeCategory = 'popular';
+    applyFilters();
   });
 
   if (slider) {
@@ -196,16 +235,6 @@ function _initFilters(cards, grid, PRICE_MAX, countEl) {
     if (priceDisp) priceDisp.textContent = 'до ' + formatPriceLabel(PRICE_MAX);
     applyFilters();
   });
-
-  const urlCat = new URLSearchParams(window.location.search).get('category');
-  if (urlCat) {
-    const matchBtn = Array.from(catBtns).find(b => b.dataset.cat === urlCat);
-    if (matchBtn) {
-      catBtns.forEach(b => b.classList.remove('active'));
-      matchBtn.classList.add('active');
-      activeCategory = urlCat;
-    }
-  }
 
   if (priceDisp) priceDisp.textContent = 'до ' + formatPriceLabel(PRICE_MAX);
   applyFilters();
