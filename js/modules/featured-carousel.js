@@ -70,9 +70,10 @@ export function initFeatCarousel(grid) {
     controls.hidden = grid.scrollWidth <= grid.clientWidth + 2;
   }
 
-  _updateVisibility();
+  // Two rAFs: first waits for DOM paint, second waits for layout recalc
+  requestAnimationFrame(() => requestAnimationFrame(_updateVisibility));
 
-  // Re-check on resize (window resize changes how many cards fit)
+  // Re-check when container resizes (handles window resize + branch change)
   const ro = new ResizeObserver(_updateVisibility);
   ro.observe(grid);
 
