@@ -40,7 +40,7 @@ function esc(str) {
  *   showTodayBadge {boolean} — show "✓ Сегодня" badge when isTodayShowcase=true (default true)
  *   showHitBadge   {boolean} — show "🔥 Хит" badge when isPopular=true (default false)
  */
-export function renderProductCard(p, { showTodayBadge = true, showHitBadge = false } = {}) {
+export function renderProductCard(p, { showTodayBadge = true, showHitBadge = false, hideDescription = false } = {}) {
   const img = p.photo
     ? `<img src="${esc(p.photo)}" alt="${esc(p.title)}" loading="lazy">`
     : '';
@@ -89,7 +89,7 @@ export function renderProductCard(p, { showTodayBadge = true, showHitBadge = fal
       </div>
       <div class="pc-body">
         <h3 class="pc-name">${esc(p.title)}</h3>
-        <p class="pc-desc">${esc(p.description || '')}</p>
+        ${!hideDescription ? `<p class="pc-desc">${esc(p.description || '')}</p>` : ''}
         <div class="pc-foot">
           ${foot}
         </div>

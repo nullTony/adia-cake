@@ -10,7 +10,7 @@ export function initFeatCarousel(grid) {
   // Remove any controls injected by a previous call (e.g. on branch change)
   grid.parentElement?.querySelectorAll('.fc-controls').forEach(el => el.remove());
 
-  if (window.innerWidth > 768) return; // grid layout handles desktop
+  // carousel runs on all screen sizes — CSS controls arrow sizing
 
   const cards = Array.from(grid.querySelectorAll('.product-card'));
   if (cards.length < 2) return;

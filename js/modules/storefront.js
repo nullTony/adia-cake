@@ -158,7 +158,7 @@ async function _renderFeatured(branchId) {
 
   if (!items.length) { grid.innerHTML = ''; return; }
 
-  grid.innerHTML = items.map(p => renderProductCard(p, { showHitBadge: true })).join('');
+  grid.innerHTML = items.map(p => renderProductCard(p, { showHitBadge: true, hideDescription: true })).join('');
   syncAddButtons();
   syncWeightButtons();
   syncFavButtons();

@@ -248,28 +248,31 @@ Compiled to `main.css` and `admin.css`. Use SCSS variables for consistency.
 
 ### When to implement directly (no pipeline)
 Coordinator (Claude) implements directly when:
-- **Small task:** 1–3 files, clear requirements, no schema changes
+- **Small task:** 1–5 files, clear requirements, no schema changes
 - **Single-layer change:** Pure CSS fix, text change, config tweak
 - **Urgent fix:** Bug that blocks the user
+- **User explicitly asks to "just do it" or is impatient** — skip pipeline, implement directly
 
-### When to use the full pipeline
-Use agents when the task involves:
-- 4+ files across multiple layers (HTML + JS + SCSS + API)
+### When to use agents
+Use agents only when the task involves:
+- New module from scratch with full event system integration
 - Supabase schema changes (new tables, columns, RLS)
-- New module with event system integration
-- Risk of breaking auth, cart, or RLS
+- Risk of breaking auth, cart, or RLS across many files
 
-### Pipeline (complex tasks only)
+### Pipeline (skip adia-reader — coordinator reads files)
+**The adia-reader step is eliminated.** Coordinator reads files directly (faster), then launches designer + developer IN PARALLEL:
+
 ```
-1. adia-planner  → grep code → build plan → handoff to reader
-2. adia-reader   → read files → find exact lines → handoff to designer/developer
-3. adia-designer → implement SCSS → compile → handoff to developer
-4. adia-developer → implement JS → wire into entry points → handoff to reviewer
-5. adia-reviewer → read changed files → approve or trigger retry
+1. adia-planner  → grep code → build detailed plan with exact line numbers
+2. Coordinator   → reads key files directly (Read tool) — NO adia-reader agent
+3. adia-designer + adia-developer → launched IN PARALLEL with exact file context
+4. adia-reviewer → read changed files → approve or commit
 ```
 
 ### Pipeline Rules
 - **All agents: NEVER ASK QUESTIONS** — grep and read files to resolve all ambiguity
+- **Skip adia-reader** — coordinator reads files (faster, no agent startup overhead)
+- **Launch designer + developer in parallel** when SCSS and JS changes are independent
 - **adia-planner** greps the codebase before planning — never guesses file paths
 - Each agent ends with `→ Handoff to [next-agent]` block
 - **adia-reviewer** either approves (commit) or triggers targeted retry for the broken layer only

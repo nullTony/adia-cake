@@ -277,9 +277,122 @@
 }
 
 .feat-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  gap: 16px;
+  padding: 4px 0 16px;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+// Featured section overrides — compact horizontal scroll layout
+.featured.section {
+  padding: 62px 0;
+
+  @media (max-width: 768px) {
+    padding: 44px 0;
+  }
+}
+
+.featured .sec-header {
+  margin-bottom: 28px;
+}
+
+.featured .sec-sub {
+  font-size: 14px;
+}
+
+.featured .product-card {
+  flex: 0 0 240px;
+  max-width: 240px;
+  scroll-snap-align: start;
+}
+
+.featured .pc-img {
+  aspect-ratio: unset;
+  height: 180px;
+}
+
+.featured .pc-body {
+  padding: 12px 14px 14px;
+}
+
+.featured .pc-desc {
+  display: none;
+}
+
+.featured .pc-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.featured .pc-price {
+  font-size: 16px;
+}
+
+.featured .pc-add {
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+}
+
+// Carousel controls — all screen sizes
+.fc-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px 0 0;
+}
+
+.fc-arrow {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background var(--ease), border-color var(--ease);
+
+  &:hover:not(:disabled) {
+    background: var(--beige);
+    border-color: var(--caramel);
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+}
+
+.fc-dots {
+  display: none; // hidden on desktop, shown on mobile via breakpoint below
+}
+
+.fc-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 4px;
+  background: var(--border);
+  transition: width var(--ease), background var(--ease);
+  flex-shrink: 0;
+
+  &.active {
+    width: 20px;
+    background: var(--coffee-dark);
+  }
 }
 
 // ---- Breakpoints ----
@@ -295,9 +408,7 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .feat-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+
 }
 
 @media (max-width: 560px) {
@@ -352,17 +463,14 @@
     }
 
     .product-card {
-      flex: 0 0 calc(88vw - 40px);
-      max-width: calc(88vw - 40px);
+      flex: 0 0 220px;
+      max-width: 220px;
       scroll-snap-align: start;
     }
   }
 
-  // Fix 5: Featured carousel controls
+  // Mobile carousel controls — smaller size + show dots
   .fc-controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     gap: 14px;
     padding: 14px 0 0;
   }
@@ -370,26 +478,11 @@
   .fc-arrow {
     width: 38px;
     height: 38px;
-    border-radius: 50%;
-    border: 1.5px solid var(--border);
-    background: var(--white);
-    cursor: pointer;
     font-size: 16px;
-    color: var(--text-dark);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: background var(--ease), border-color var(--ease);
 
     &:active {
       background: var(--beige);
       border-color: var(--caramel);
-    }
-
-    &:disabled {
-      opacity: 0.35;
-      cursor: default;
     }
   }
 
@@ -397,19 +490,5 @@
     display: flex;
     align-items: center;
     gap: 6px;
-  }
-
-  .fc-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 4px;
-    background: var(--border);
-    transition: width var(--ease), background var(--ease);
-    flex-shrink: 0;
-
-    &.active {
-      width: 20px;
-      background: var(--coffee-dark);
-    }
   }
 }
