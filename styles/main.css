@@ -4357,7 +4357,21 @@ h3 {
 }
 
 .featured {
-  background: linear-gradient(180deg, var(--cream) 0%, var(--beige) 100%);
+  position: relative;
+  overflow: hidden;
+  background: repeating-linear-gradient(45deg, transparent 0px, transparent 22px, rgba(196, 149, 106, 0.11) 22px, rgba(196, 149, 106, 0.11) 23px), repeating-linear-gradient(-45deg, transparent 0px, transparent 22px, rgba(196, 149, 106, 0.11) 22px, rgba(196, 149, 106, 0.11) 23px), linear-gradient(180deg, var(--cream) 0%, var(--beige-dark) 100%);
+}
+.featured::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  border-radius: 0 0 4px 4px;
+  background: var(--caramel-dark);
+  opacity: 0.6;
 }
 
 .feat-grid {
