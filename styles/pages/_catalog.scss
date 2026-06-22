@@ -149,6 +149,7 @@
 
 .categories {
   background: var(--cream);
+  padding: 20px 0;
 }
 
 // ---- Today Showcase section ----
@@ -179,14 +180,20 @@
 .today-tag {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: linear-gradient(135deg, var(--caramel), var(--coffee));
-  color: var(--white);
-  padding: 7px 15px;
-  border-radius: 100px;
-  font-size: 13px;
-  font-weight: 700;
+  gap: 7px;
+  background: #EDE0D0;
+  color: #6B4226;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 20px;
+  letter-spacing: 0.01em;
   margin-bottom: 16px;
+
+  i {
+    font-size: 18px;
+    color: #6B4226;
+  }
 }
 
 .today-right {

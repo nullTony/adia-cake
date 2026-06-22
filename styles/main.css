@@ -4241,6 +4241,7 @@ h3 {
 }
 .categories {
   background: var(--cream);
+  padding: 20px 0;
 }
 
 .today {
@@ -4268,14 +4269,19 @@ h3 {
 .today-tag {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: linear-gradient(135deg, var(--caramel), var(--coffee));
-  color: var(--white);
-  padding: 7px 15px;
-  border-radius: 100px;
-  font-size: 13px;
-  font-weight: 700;
+  gap: 7px;
+  background: #EDE0D0;
+  color: #6B4226;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 20px;
+  letter-spacing: 0.01em;
   margin-bottom: 16px;
+}
+.today-tag i {
+  font-size: 18px;
+  color: #6B4226;
 }
 
 .today-right {
@@ -5056,29 +5062,31 @@ h3 {
 .testimonials {
   background: var(--cream);
 }
+.testimonials .sec-header {
+  margin-bottom: 32px;
+}
 
-.tes-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+.tes-accent {
+  color: #6B4226;
+  font-size: 1.1em;
+  font-weight: 700;
 }
 
 .tes-card {
-  background: var(--white);
+  background: rgba(107, 66, 38, 0.04);
   border-radius: var(--r-lg);
-  padding: 26px 22px;
-  border: 1px solid var(--border);
+  padding: 1.25rem;
+  border: 1px solid rgba(107, 66, 38, 0.1);
   transition: var(--ease);
 }
 .tes-card:hover {
   box-shadow: var(--shadow-m);
-  transform: translateY(-4px);
 }
 
 .tes-stars {
   display: flex;
   gap: 2px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 .tes-stars span {
   color: var(--star);
@@ -5086,12 +5094,16 @@ h3 {
 }
 
 .tes-text {
-  font-size: 15px;
+  font-size: 14px;
   color: var(--text-med);
-  line-height: 1.72;
-  margin-bottom: 18px;
+  line-height: 1.65;
+  margin-bottom: 14px;
   font-style: italic;
   position: relative;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .tes-text::before {
   content: "“";
@@ -5133,6 +5145,57 @@ h3 {
   color: var(--text-muted);
 }
 
+.tes-marquee {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.tes-track {
+  display: flex;
+  width: max-content;
+}
+.tes-track .tes-card {
+  min-width: 320px;
+  margin-right: 16px;
+  flex-shrink: 0;
+}
+
+.tes-track--left {
+  animation: marquee-left 45s linear infinite;
+}
+
+.tes-track--right {
+  animation: marquee-right 45s linear infinite;
+}
+
+.tes-marquee:hover .tes-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes marquee-right {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+.tes-grid {
+  display: none;
+}
+
 .tc-dots {
   display: none;
   justify-content: center;
@@ -5152,7 +5215,7 @@ h3 {
   cursor: pointer;
 }
 .tc-dot.active {
-  background: var(--brown);
+  background: #6B4226;
   transform: scale(1.25);
 }
 
@@ -5187,6 +5250,16 @@ h3 {
   .tes-card:hover {
     transform: none !important;
     box-shadow: none;
+  }
+}
+@media (max-width: 768px) {
+  .tes-marquee {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tes-track {
+    animation: none;
   }
 }
 .branches {

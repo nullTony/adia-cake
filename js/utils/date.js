@@ -16,6 +16,6 @@ export function getTodayLabel() {
 export function initDateLabel() {
   const label = getTodayLabel();
   document.querySelectorAll('.today-tag').forEach((el) => {
-    el.innerHTML = `📅 Сегодня, ${label}`;
+    el.innerHTML = `<i class="ti ti-calendar-event" aria-hidden="true"></i> Сегодня, ${label}`;
   });
 }
