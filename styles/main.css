@@ -4448,11 +4448,15 @@ h3 {
   font-size: 18px;
 }
 
+.feat-grid--centered {
+  justify-content: center;
+}
+
 .fc-controls {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 16px;
   padding: 18px 0 0;
 }
 
@@ -4469,32 +4473,14 @@ h3 {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: background var(--ease), border-color var(--ease);
+  transition: background var(--ease), border-color var(--ease), opacity var(--ease);
 }
-.fc-arrow:hover:not(:disabled) {
+.fc-arrow:hover {
   background: var(--beige);
   border-color: var(--caramel);
 }
-.fc-arrow:disabled {
-  opacity: 0.35;
-  cursor: default;
-}
-
-.fc-dots {
+.fc-arrow[hidden] {
   display: none;
-}
-
-.fc-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 4px;
-  background: var(--border);
-  transition: width var(--ease), background var(--ease);
-  flex-shrink: 0;
-}
-.fc-dot.active {
-  width: 20px;
-  background: var(--coffee-dark);
 }
 
 @media (max-width: 1200px) {
@@ -4566,11 +4552,6 @@ h3 {
   .fc-arrow:active {
     background: var(--beige);
     border-color: var(--caramel);
-  }
-  .fc-dots {
-    display: flex;
-    align-items: center;
-    gap: 6px;
   }
 }
 .catalog-hero {

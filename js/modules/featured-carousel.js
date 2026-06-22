@@ -1,81 +1,78 @@
 // ================================
 //  FEATURED CAROUSEL
-//  Controls appear only when cards overflow the visible width.
-//  ResizeObserver keeps visibility in sync on window resize.
+//  Controls appear ONLY when cards overflow the visible width.
+//  Left arrow hidden at scroll start, right arrow hidden at scroll end.
+//  Cards centered when no overflow.
 // ================================
 
 export function initFeatCarousel(grid) {
   if (!grid) return;
 
-  // Remove controls from a previous call (e.g. branch change)
+  // Remove controls injected by a previous call (branch change, etc.)
   grid.parentElement?.querySelectorAll('.fc-controls').forEach(el => el.remove());
 
   const cards = Array.from(grid.querySelectorAll('.product-card'));
   if (cards.length < 2) return;
 
-  // ── Inject controls ───────────────────────────────────────────────────────
+  // ── Inject arrow controls ─────────────────────────────────────────────────
 
   const controls = document.createElement('div');
   controls.className = 'fc-controls';
   controls.innerHTML =
     `<button type="button" class="fc-arrow fc-arrow--prev" aria-label="Предыдущий">←</button>` +
-    `<div class="fc-dots">` +
-      cards.map((_, i) => `<span class="fc-dot${i === 0 ? ' active' : ''}"></span>`).join('') +
-    `</div>` +
     `<button type="button" class="fc-arrow fc-arrow--next" aria-label="Следующий">→</button>`;
 
   grid.after(controls);
 
-  const dots    = controls.querySelectorAll('.fc-dot');
   const prevBtn = controls.querySelector('.fc-arrow--prev');
   const nextBtn = controls.querySelector('.fc-arrow--next');
 
-  let currentIdx = 0;
+  // ── Scroll step = one card width + gap ────────────────────────────────────
 
-  function _setActive(idx) {
-    currentIdx = Math.max(0, Math.min(idx, cards.length - 1));
-    dots.forEach((d, i) => d.classList.toggle('active', i === currentIdx));
-    prevBtn.disabled = currentIdx === 0;
-    nextBtn.disabled = currentIdx === cards.length - 1;
+  function _stepWidth() {
+    const card = cards[0];
+    if (!card) return 256;
+    const gap = parseFloat(getComputedStyle(grid).gap) || 16;
+    return card.offsetWidth + gap;
   }
 
-  function _goTo(idx) {
-    _setActive(idx);
-    grid.scrollTo({
-      left: cards[currentIdx].offsetLeft - grid.offsetLeft,
-      behavior: 'smooth',
-    });
+  prevBtn.addEventListener('click', () => {
+    grid.scrollBy({ left: -_stepWidth(), behavior: 'smooth' });
+  });
+
+  nextBtn.addEventListener('click', () => {
+    grid.scrollBy({ left: _stepWidth(), behavior: 'smooth' });
+  });
+
+  // ── Arrow visibility based on scroll position ─────────────────────────────
+
+  function _updateArrows() {
+    const atStart = grid.scrollLeft <= 2;
+    const atEnd   = grid.scrollLeft >= grid.scrollWidth - grid.clientWidth - 2;
+    prevBtn.hidden = atStart;
+    nextBtn.hidden = atEnd;
   }
 
-  prevBtn.addEventListener('click', () => _goTo(currentIdx - 1));
-  nextBtn.addEventListener('click', () => _goTo(currentIdx + 1));
+  grid.addEventListener('scroll', _updateArrows, { passive: true });
 
-  // ── Sync dots while user swipes ───────────────────────────────────────────
+  // ── Show controls only when overflow; center cards otherwise ──────────────
 
-  grid.addEventListener('scroll', () => {
-    const gridLeft = grid.getBoundingClientRect().left;
-    let closest = 0;
-    let minDist  = Infinity;
-    cards.forEach((card, i) => {
-      const dist = Math.abs(card.getBoundingClientRect().left - gridLeft);
-      if (dist < minDist) { minDist = dist; closest = i; }
-    });
-    if (closest !== currentIdx) _setActive(closest);
-  }, { passive: true });
+  function _updateLayout() {
+    const overflows = grid.scrollWidth > grid.clientWidth + 2;
 
-  // ── Show controls only when cards actually overflow ───────────────────────
+    // Show/hide the whole controls block
+    controls.hidden = !overflows;
 
-  function _updateVisibility() {
-    // +2px tolerance for sub-pixel rounding
-    controls.hidden = grid.scrollWidth <= grid.clientWidth + 2;
+    // When cards don't fill the row — center them instead of left-aligning
+    grid.classList.toggle('feat-grid--centered', !overflows);
+
+    if (overflows) _updateArrows();
   }
 
-  // Two rAFs: first waits for DOM paint, second waits for layout recalc
-  requestAnimationFrame(() => requestAnimationFrame(_updateVisibility));
+  // Double rAF: first waits for DOM paint, second for layout recalc
+  requestAnimationFrame(() => requestAnimationFrame(_updateLayout));
 
-  // Re-check when container resizes (handles window resize + branch change)
-  const ro = new ResizeObserver(_updateVisibility);
+  // Re-check when container width changes (window resize, sidebar, etc.)
+  const ro = new ResizeObserver(_updateLayout);
   ro.observe(grid);
-
-  _setActive(0);
 }

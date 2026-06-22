@@ -383,12 +383,17 @@
   font-size: 18px;
 }
 
-// Carousel controls — all screen sizes
+// feat-grid--centered — when cards don't fill the row
+.feat-grid--centered {
+  justify-content: center;
+}
+
+// Carousel controls (injected by JS only when overflow exists)
 .fc-controls {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 16px;
   padding: 18px 0 0;
 }
 
@@ -405,34 +410,16 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: background var(--ease), border-color var(--ease);
+  transition: background var(--ease), border-color var(--ease), opacity var(--ease);
 
-  &:hover:not(:disabled) {
+  &:hover {
     background: var(--beige);
     border-color: var(--caramel);
   }
 
-  &:disabled {
-    opacity: 0.35;
-    cursor: default;
-  }
-}
-
-.fc-dots {
-  display: none; // hidden on desktop, shown on mobile via breakpoint below
-}
-
-.fc-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 4px;
-  background: var(--border);
-  transition: width var(--ease), background var(--ease);
-  flex-shrink: 0;
-
-  &.active {
-    width: 20px;
-    background: var(--coffee-dark);
+  // hidden attribute set by JS at scroll start/end
+  &[hidden] {
+    display: none;
   }
 }
 
@@ -510,7 +497,7 @@
     }
   }
 
-  // Mobile carousel controls — smaller size + show dots
+  // Mobile carousel controls — smaller arrows
   .fc-controls {
     gap: 14px;
     padding: 14px 0 0;
@@ -525,11 +512,5 @@
       background: var(--beige);
       border-color: var(--caramel);
     }
-  }
-
-  .fc-dots {
-    display: flex;
-    align-items: center;
-    gap: 6px;
   }
 }
