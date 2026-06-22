@@ -18,7 +18,7 @@ export function initFeatCarousel(grid) {
 
   const controls = document.createElement('div');
   controls.className = 'fc-controls';
-  controls.hidden = true; // invisible until overflow confirmed
+  controls.style.display = 'none'; // hidden until overflow confirmed
   controls.innerHTML =
     `<button type="button" class="fc-arrow fc-arrow--prev" aria-label="Предыдущий">←</button>` +
     `<button type="button" class="fc-arrow fc-arrow--next" aria-label="Следующий">→</button>`;
@@ -62,7 +62,7 @@ export function initFeatCarousel(grid) {
     const overflows = grid.scrollWidth > grid.clientWidth + 2;
 
     // Show/hide the whole controls block
-    controls.hidden = !overflows;
+    controls.style.display = overflows ? 'flex' : 'none';
 
     // When cards don't fill the row — center them instead of left-aligning
     grid.classList.toggle('feat-grid--centered', !overflows);
