@@ -1,16 +1,14 @@
 // ================================
-//  FEATURED CAROUSEL (mobile only)
-//  Called after _renderFeatured() populates .feat-grid.
-//  On desktop (> 768px) this is a no-op.
+//  FEATURED CAROUSEL
+//  Controls appear only when cards overflow the visible width.
+//  ResizeObserver keeps visibility in sync on window resize.
 // ================================
 
 export function initFeatCarousel(grid) {
   if (!grid) return;
 
-  // Remove any controls injected by a previous call (e.g. on branch change)
+  // Remove controls from a previous call (e.g. branch change)
   grid.parentElement?.querySelectorAll('.fc-controls').forEach(el => el.remove());
-
-  // carousel runs on all screen sizes — CSS controls arrow sizing
 
   const cards = Array.from(grid.querySelectorAll('.product-card'));
   if (cards.length < 2) return;
@@ -28,9 +26,9 @@ export function initFeatCarousel(grid) {
 
   grid.after(controls);
 
-  const dots     = controls.querySelectorAll('.fc-dot');
-  const prevBtn  = controls.querySelector('.fc-arrow--prev');
-  const nextBtn  = controls.querySelector('.fc-arrow--next');
+  const dots    = controls.querySelectorAll('.fc-dot');
+  const prevBtn = controls.querySelector('.fc-arrow--prev');
+  const nextBtn = controls.querySelector('.fc-arrow--next');
 
   let currentIdx = 0;
 
@@ -43,7 +41,6 @@ export function initFeatCarousel(grid) {
 
   function _goTo(idx) {
     _setActive(idx);
-    // Scroll grid so the target card's left edge aligns with the grid's left edge
     grid.scrollTo({
       left: cards[currentIdx].offsetLeft - grid.offsetLeft,
       behavior: 'smooth',
@@ -56,7 +53,6 @@ export function initFeatCarousel(grid) {
   // ── Sync dots while user swipes ───────────────────────────────────────────
 
   grid.addEventListener('scroll', () => {
-    // Find which card is most visible
     const gridLeft = grid.getBoundingClientRect().left;
     let closest = 0;
     let minDist  = Infinity;
@@ -67,5 +63,18 @@ export function initFeatCarousel(grid) {
     if (closest !== currentIdx) _setActive(closest);
   }, { passive: true });
 
-  _setActive(0); // initialise button states
+  // ── Show controls only when cards actually overflow ───────────────────────
+
+  function _updateVisibility() {
+    // +2px tolerance for sub-pixel rounding
+    controls.hidden = grid.scrollWidth <= grid.clientWidth + 2;
+  }
+
+  _updateVisibility();
+
+  // Re-check on resize (window resize changes how many cards fit)
+  const ro = new ResizeObserver(_updateVisibility);
+  ro.observe(grid);
+
+  _setActive(0);
 }
