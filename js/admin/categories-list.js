@@ -10,6 +10,7 @@ import {
 } from '../api/categories-api.js';
 import { uploadImage, isImgBBConfigured } from '../api/image-upload-api.js';
 import { initAdminNotifications } from '../services/notification-service.js';
+import { createTableSkeletons }   from '../utils/skeleton.js';
 
 initRbac('categories');
 initAdminNotifications();
@@ -289,7 +290,7 @@ async function init() {
   document.getElementById('logoutBtn').addEventListener('click', logout);
 
   const tbody = document.getElementById('catTbody');
-  tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:#9a9488">Загрузка…</td></tr>`;
+  tbody.innerHTML = createTableSkeletons(5, 6);
 
   try {
     _all = await getCategories();

@@ -141,7 +141,18 @@ function _renderState(state) {
     </div>`;
   modal.innerHTML = head + (
     state === 'loading'
-      ? `<div class="bs-loading">Загрузка филиалов…</div>`
+      ? `<div class="bs-branches" style="pointer-events:none">${
+          Array.from({ length: 4 }, (_, i) => `
+            <div class="bs-branch-card" style="--i:${i}">
+              <div class="bs-branch-inner">
+                <div class="skeleton skeleton-circle" style="width:36px;height:36px"></div>
+                <div class="bs-branch-info" style="flex:1">
+                  <div class="skeleton skeleton-title" style="width:55%"></div>
+                  <div class="skeleton skeleton-text" style="width:75%"></div>
+                </div>
+              </div>
+            </div>`).join('')
+        }</div>`
       : `<div class="bs-empty">Филиалы временно недоступны. Попробуйте позже.</div>`
   );
   _wireCloseBtn();

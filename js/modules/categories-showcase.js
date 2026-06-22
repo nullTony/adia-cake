@@ -11,6 +11,7 @@
 
 import { getPopularCategories, getPopularCategoriesForBranch } from '../api/categories-api.js';
 import { getSelectedBranchId }   from '../store/branch-store.js';
+import { createCategorySkeletons } from '../utils/skeleton.js';
 
 const GRAD_CLASSES = ['c1', 'c2', 'c3', 'c4', 'c5'];
 const MS_30_DAYS   = 30 * 24 * 60 * 60 * 1000;
@@ -70,6 +71,8 @@ async function _render() {
   const grid = document.querySelector('.cat-grid');
   if (!grid) return;
 
+  grid.innerHTML = createCategorySkeletons(5);
+
   let categories = [];
   try {
     const branchId = getSelectedBranchId();
@@ -80,7 +83,10 @@ async function _render() {
     console.warn('[categories-showcase] fetch error:', err);
   }
 
-  if (!categories.length) return;
+  if (!categories.length) {
+    grid.innerHTML = '';
+    return;
+  }
 
   const cards = categories.map((cat, i) => _buildCard(cat, i));
   cards.push(_buildAllCard(categories.length));

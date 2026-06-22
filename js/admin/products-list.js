@@ -9,6 +9,7 @@ import { CATEGORIES }                               from '../modules/product-car
 import { initAdminNotifications }                   from '../services/notification-service.js';
 import { getCategories }                            from '../api/categories-api.js';
 import { clearProductFromBranches }                 from '../api/branch-products-api.js';
+import { createTableSkeletons }                     from '../utils/skeleton.js';
 
 initRbac('products');
 initAdminNotifications();
@@ -258,10 +259,7 @@ async function loadCategoryFilter() {
 }
 
 async function init() {
-  if (tbody) tbody.innerHTML = `
-    <tr><td colspan="6" style="text-align:center;color:var(--a-text-light);padding:32px">
-      Загрузка...
-    </td></tr>`;
+  if (tbody) tbody.innerHTML = createTableSkeletons(5, 6);
   try {
     [allProducts] = await Promise.all([getProducts(), loadCategoryFilter()]);
     renderStats();

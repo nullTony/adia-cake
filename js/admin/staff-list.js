@@ -12,6 +12,7 @@ import { getBranches }                                       from '../api/branch
 import { sbFetch }                                           from '../api/supabase-client.js';
 import { initAdminNotifications }                            from '../services/notification-service.js';
 import { initPhoneInput, handlePhoneInput, getPhoneValue }   from '../utils/phone-input.js';
+import { createTableSkeletons }                              from '../utils/skeleton.js';
 
 initRbac('staff');
 initAdminNotifications();
@@ -424,7 +425,7 @@ async function init() {
   try { _branches = await getBranches(); } catch { _branches = []; }
 
   const tbody = document.getElementById('staffTbody');
-  tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:#9a9488">Загрузка…</td></tr>`;
+  tbody.innerHTML = createTableSkeletons(5, 7);
 
   try {
     await _reload();

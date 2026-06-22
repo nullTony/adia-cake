@@ -12,6 +12,7 @@ import { renderProductCard }      from './product-card.js';
 import { syncAddButtons, syncWeightButtons } from './cart.js';
 import { syncFavButtons }         from './favorites.js';
 import { getSelectedBranch }      from '../store/branch-store.js';
+import { createProductSkeletons } from '../utils/skeleton.js';
 
 const PRICE_MIN = 0;
 
@@ -44,7 +45,7 @@ export async function initCatalog() {
 // ── Load and render ───────────────────────────────────────────────────────────
 
 async function _loadAndRender(grid, countEl, branchId) {
-  grid.innerHTML = '<p style="padding:40px;text-align:center;color:var(--text-light)">Загрузка товаров…</p>';
+  grid.innerHTML = createProductSkeletons(12);
   if (countEl) countEl.innerHTML = '';
 
   _resetFilterState();

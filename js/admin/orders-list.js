@@ -8,6 +8,7 @@ import { getOrders, getOrderItems, updateOrderStatus, updateOrderItem, updateOrd
 import { getClientById }                                                       from '../api/clients-api.js';
 import { API_CONFIG }                                                           from '../config/api-config.js';
 import { initAdminNotifications, markAdminNotifRead }                          from '../services/notification-service.js';
+import { createProductSkeletons }                                               from '../utils/skeleton.js';
 
 initRbac('orders');
 
@@ -708,11 +709,7 @@ if (userEl && session) userEl.textContent = session.full_name || session.role;
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 async function init() {
-  if (cardsEl) cardsEl.innerHTML = `
-    <div class="ao-empty">
-      <div class="ao-empty-ico" style="font-size:24px;animation:none">⏳</div>
-      <div class="ao-empty-text" style="font-weight:400;color:var(--a-text-light)">Загрузка заказов…</div>
-    </div>`;
+  if (cardsEl) cardsEl.innerHTML = createProductSkeletons(3);
 
   try {
     const _s = getStaffSession();

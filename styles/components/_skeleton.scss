@@ -1,0 +1,168 @@
+// ================================
+//  SKELETON LOADING
+//  Reusable shimmer placeholders for async content.
+//  Pattern mirrors .cat-card.skeleton in _category-card.scss.
+// ================================
+
+// Shimmer keyframes — same timing curve as cat-shimmer,
+// but named globally so any element can reference it.
+@keyframes skeleton-shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+// ---- Base skeleton class ----
+// Apply alone or compose with structural helpers below.
+
+.skeleton {
+  cursor: default;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    var(--beige)      25%,
+    var(--caramel)    50%,
+    var(--beige)      75%
+  );
+  background-size: 800px 100%;
+  animation: skeleton-shimmer 1.6s linear infinite;
+  border-radius: var(--r-sm);
+  // Prevent text content from showing through during load
+  color: transparent;
+}
+
+// ---- Shape variants ----
+// Each sets only geometry — the shimmer comes from .skeleton.
+
+.skeleton-text {
+  height: 12px;
+  border-radius: var(--r-sm);
+  margin-bottom: 6px;
+}
+
+.skeleton-title {
+  height: 20px;
+  border-radius: var(--r-sm);
+  margin-bottom: 10px;
+}
+
+.skeleton-image {
+  aspect-ratio: 1 / 1;
+  border-radius: var(--r-md);
+}
+
+.skeleton-btn {
+  height: 40px;
+  border-radius: 100px; // pill — matches .btn shape
+}
+
+.skeleton-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+// Row placeholder: icon circle + a pair of text lines side-by-side.
+// Usage: <div class="skeleton skeleton-row"><span class="skeleton skeleton-circle"></span>...</div>
+.skeleton-row {
+  height: 48px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+// ---- Product card skeleton ----
+// Mirrors the exact geometry of .product-card so the layout shift on
+// reveal is zero: same aspect-ratio image area, same body padding/gaps.
+
+.product-card.skeleton {
+  // Suppress hover lift — skeleton shouldn't respond to pointer
+  &:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .pc-img {
+    // Matches .pc-img { aspect-ratio: 4 / 3 }
+    aspect-ratio: 4 / 3;
+    background: linear-gradient(
+      90deg,
+      var(--beige)   25%,
+      var(--caramel) 50%,
+      var(--beige)   75%
+    );
+    background-size: 800px 100%;
+    animation: skeleton-shimmer 1.6s linear infinite;
+
+    // Hide real image and emoji placeholder while loading
+    img,
+    .pc-ph { opacity: 0; }
+  }
+
+  .pc-body {
+    padding: 14px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    // Title line — ~60% width to feel like a real product name
+    &::before {
+      content: '';
+      display: block;
+      height: 20px;
+      width: 60%;
+      border-radius: var(--r-sm);
+      background: linear-gradient(
+        90deg,
+        var(--beige)   25%,
+        var(--caramel) 50%,
+        var(--beige)   75%
+      );
+      background-size: 800px 100%;
+      animation: skeleton-shimmer 1.6s linear infinite;
+    }
+
+    // Description line — ~85% width
+    &::after {
+      content: '';
+      display: block;
+      height: 12px;
+      width: 85%;
+      border-radius: var(--r-sm);
+      background: linear-gradient(
+        90deg,
+        var(--beige)   25%,
+        var(--caramel) 50%,
+        var(--beige)   75%
+      );
+      background-size: 800px 100%;
+      animation: skeleton-shimmer 1.6s linear infinite;
+    }
+  }
+
+  // Hide real inner content — badges, fav button, price, add button
+  .pc-badge,
+  .pc-fav,
+  .pc-name,
+  .pc-desc,
+  .pc-foot {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+// ---- Reduced motion ----
+// Override: kill animation, fall back to a static beige fill.
+// Skeleton area is still visible; it just does not move.
+// Note: _animations.scss already has a global reduced-motion block for
+// transitions/animations — this targets skeleton specifically so the
+// static fallback colour (--beige) is set correctly.
+@media (prefers-reduced-motion: reduce) {
+  .skeleton,
+  .product-card.skeleton .pc-img,
+  .product-card.skeleton .pc-body::before,
+  .product-card.skeleton .pc-body::after {
+    animation: none;
+    background: var(--beige);
+  }
+}

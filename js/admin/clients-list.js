@@ -9,6 +9,7 @@ import { getAllStaff, promoteToStaff,
          updateStaffRole, updateStaffActive,
          getStaffByPhoneWithPassword }                              from '../api/staff-api.js';
 import { initAdminNotifications }                                   from '../services/notification-service.js';
+import { createTableSkeletons }                                     from '../utils/skeleton.js';
 
 initRbac('staff');
 initAdminNotifications();
@@ -164,7 +165,7 @@ async function init() {
   });
 
   const tbody = document.getElementById('clientsTbody');
-  tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:#9a9488">Загрузка…</td></tr>`;
+  tbody.innerHTML = createTableSkeletons(5, 5);
 
   try {
     // Load clients and staff in parallel so we can show the badge immediately

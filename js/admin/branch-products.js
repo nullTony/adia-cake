@@ -10,6 +10,7 @@ import { getBranches }                           from '../api/branches-api.js';
 import { getProducts }                           from '../api/products-api.js';
 import { getBranchProductsAdmin,
          upsertBranchProducts }                  from '../api/branch-products-api.js';
+import { createTableSkeletons }                  from '../utils/skeleton.js';
 
 initRbac('branch_products');
 
@@ -133,7 +134,7 @@ function _populateBranchSelect() {
 // ── Load branch ───────────────────────────────────────────────────────────────
 
 async function _loadBranch(branchId) {
-  _setContent('<div class="bp-loading">Загрузка…</div>');
+  _setContent(`<table class="bp-table"><thead><tr><th>Товар</th><th class="bp-check-head">Есть сегодня</th><th class="bp-check-head">Топ</th></tr></thead><tbody>${createTableSkeletons(5, 3)}</tbody></table>`);
   _hasChanges = false;
   _setSaveVisible(false);
 

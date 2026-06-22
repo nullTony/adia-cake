@@ -16,6 +16,7 @@ import { syncAddButtons, syncWeightButtons } from './cart.js';
 import { syncFavButtons }         from './favorites.js';
 import { getSelectedBranch }      from '../store/branch-store.js';
 import { initFeatCarousel }       from './featured-carousel.js';
+import { createProductSkeletons } from '../utils/skeleton.js';
 
 // Last loaded products — used to refresh category counts after showcase re-renders
 let _lastProducts = [];
@@ -67,6 +68,8 @@ async function _renderToday(branchId) {
     _showNoBranchState();
     return;
   }
+
+  grid.innerHTML = createProductSkeletons(6);
 
   let items = [];
   try {
@@ -141,6 +144,8 @@ async function _renderFeatured(branchId) {
   if (!grid) return;
 
   if (!branchId) { grid.innerHTML = ''; return; }
+
+  grid.innerHTML = createProductSkeletons(4);
 
   let items = [];
   try {
