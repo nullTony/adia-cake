@@ -19,17 +19,21 @@ function esc(str) {
 
 function renderCard(branch, index) {
   const hours = branch.workingHours || '';
+  const branchNum = String(index + 1).padStart(2, '0');
   const routeBtn = branch.mapsUrl
     ? `<button class="br-card-route" data-maps-url="${esc(branch.mapsUrl)}">Маршрут →</button>`
     : '';
 
   return `
     <div class="br-card" data-idx="${index}" role="button" tabindex="0" aria-label="${esc(branch.name)}">
-      <div class="br-card-name">${esc(branch.name)}</div>
+      <div class="br-card-header">
+        <span class="br-card-number">${branchNum}</span>
+        <div class="br-card-name">${esc(branch.name)}</div>
+      </div>
       <div class="br-card-addr">${esc(branch.address)}</div>
       <div class="br-card-meta">
-        ${branch.phone ? `<span class="br-card-row"><span class="br-card-ico">📞</span>${esc(branch.phone)}</span>` : ''}
-        ${hours       ? `<span class="br-card-row"><span class="br-card-ico">🕐</span>${esc(hours)}</span>`       : ''}
+        ${branch.phone ? `<span class="br-card-row"><i class="ti ti-phone br-card-ico"></i>${esc(branch.phone)}</span>` : ''}
+        ${hours       ? `<span class="br-card-row"><i class="ti ti-clock br-card-ico"></i>${esc(hours)}</span>`       : ''}
       </div>
       ${routeBtn}
     </div>`;

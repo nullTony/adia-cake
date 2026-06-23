@@ -5063,7 +5063,7 @@ h3 {
   background: var(--cream);
 }
 .testimonials .sec-header {
-  margin-bottom: 32px;
+  margin-bottom: 1.5rem;
 }
 
 .tes-accent {
@@ -5101,7 +5101,7 @@ h3 {
   font-style: italic;
   position: relative;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -5150,21 +5150,22 @@ h3 {
   flex-direction: column;
   gap: 12px;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  margin: 0 -20px;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
 }
 
 .tes-track {
   display: flex;
-  width: max-content;
+  flex-wrap: nowrap;
   padding: 0;
   margin: 0;
 }
 .tes-track .tes-card {
-  min-width: 320px;
+  width: 440px;
+  flex: 0 0 440px;
   margin-right: 16px;
   margin-left: 0;
-  flex-shrink: 0;
 }
 
 .tes-track--left {
@@ -5184,12 +5185,12 @@ h3 {
     transform: translateX(0);
   }
   to {
-    transform: translateX(-50%);
+    transform: translateX(-1368px);
   }
 }
 @keyframes marquee-right {
   from {
-    transform: translateX(-50%);
+    transform: translateX(-1368px);
   }
   to {
     transform: translateX(0);
@@ -5271,7 +5272,7 @@ h3 {
 
 .br-layout {
   display: grid;
-  grid-template-columns: 380px 1fr;
+  grid-template-columns: 40% 60%;
   gap: 32px;
   align-items: start;
 }
@@ -5279,13 +5280,12 @@ h3 {
 .br-left {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0;
   max-height: 520px;
 }
 
 .br-search-wrap {
-  position: relative;
-  flex-shrink: 0;
+  display: none;
 }
 
 .br-search-ico {
@@ -5324,9 +5324,9 @@ h3 {
 .br-list {
   flex: 1;
   overflow-y: auto;
-  border-radius: var(--r-lg);
-  border: 1.5px solid var(--border);
-  background: var(--white);
+  border-radius: 0;
+  border: none;
+  background: transparent;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
@@ -5352,7 +5352,7 @@ h3 {
   padding: 16px 18px;
   border-left: 3px solid transparent;
   cursor: pointer;
-  transition: background var(--ease), border-color var(--ease);
+  transition: background 0.2s ease, border-color 0.2s ease;
   user-select: none;
 }
 .br-card + .br-card {
@@ -5371,13 +5371,28 @@ h3 {
   outline-offset: -2px;
 }
 
-.br-card-name {
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--text-dark);
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
+.br-card-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
   margin-bottom: 4px;
+}
+
+.br-card-number {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--coffee);
+  opacity: 0.75;
+  flex-shrink: 0;
+  min-width: 20px;
+}
+
+.br-card-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 0;
 }
 
 .br-card-addr {
@@ -5385,6 +5400,9 @@ h3 {
   color: var(--text-med);
   margin-bottom: 8px;
   line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .br-card-meta {
@@ -5402,32 +5420,35 @@ h3 {
 }
 
 .br-card-ico {
-  font-size: 13px;
+  font-size: 14px;
+  line-height: 1;
   flex-shrink: 0;
 }
 
 .br-card-route {
   display: inline-block;
-  margin-top: 10px;
+  margin-top: 12px;
   font-size: 12px;
-  font-weight: 700;
-  color: var(--coffee);
-  background: none;
-  border: none;
-  padding: 0;
+  font-weight: 600;
+  color: var(--coffee-dark);
+  background: transparent;
+  border: 1px solid var(--coffee-dark);
+  padding: 5px 14px;
+  border-radius: 20px;
   cursor: pointer;
   font-family: inherit;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 .br-card-route:hover {
-  text-decoration: underline;
-  color: var(--coffee-dark);
+  background: var(--coffee-dark);
+  color: var(--white);
 }
 
 .br-map-wrap {
   position: sticky;
   top: 84px;
   height: 520px;
-  border-radius: var(--r-xl);
+  border-radius: var(--r-md);
   overflow: hidden;
   box-shadow: var(--shadow-m);
   background: var(--cream);
