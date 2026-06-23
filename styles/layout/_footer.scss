@@ -59,15 +59,16 @@
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
-  transition: var(--ease);
+  font-size: 22px;
+  color: rgba(255, 255, 255, 0.85);
+  transition: color var(--ease);
 
   &:hover {
-    background: var(--caramel);
+    color: #EDE0D0;
   }
 }
 

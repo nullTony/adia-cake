@@ -7,6 +7,7 @@
   text-align: center;
   position: relative;
   overflow: hidden;
+  padding: 62px 0;
 }
 
 .cta-bg-deco {
@@ -27,18 +28,23 @@
 }
 
 .cta-title {
-  font-size: clamp(34px, 5.5vw, 62px);
+  font-size: clamp(27px, 4.4vw, 50px);
   font-weight: 600;
   color: var(--text-dark);
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .cta-sub {
-  font-size: 17px;
+  font-size: 16px;
   color: var(--text-med);
   max-width: 500px;
-  margin: 0 auto 40px;
-  line-height: 1.7;
+  margin: 0 auto 28px;
+  line-height: 1.6;
+}
+
+.cta-acts .btn-lg {
+  padding: 12px 24px;
+  font-size: 15px;
 }
 
 .cta-acts {
