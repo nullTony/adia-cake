@@ -62,17 +62,17 @@ function _render() {
     </button>
 
     <nav class="mm-nav">
-      <a class="mm-nav-link" href="${homeHref}">🏠&nbsp; Главная</a>
-      <a class="mm-nav-link" href="${showcaseHref}">✨&nbsp; Витрина сегодня</a>
-      <a class="mm-nav-link" href="catalog.html">📋&nbsp; Каталог</a>
-      <a class="mm-nav-link" href="${branchesHref}">📍&nbsp; Филиалы</a>
-      <a class="mm-nav-link" href="${contactsHref}">📞&nbsp; Контакты</a>
+      <a class="mm-nav-link" href="${homeHref}"><i class="ti ti-home" aria-hidden="true"></i>&nbsp; Главная</a>
+      <a class="mm-nav-link" href="${showcaseHref}"><i class="ti ti-sparkles" aria-hidden="true"></i>&nbsp; Витрина сегодня</a>
+      <a class="mm-nav-link" href="catalog.html"><i class="ti ti-grid-dots" aria-hidden="true"></i>&nbsp; Каталог</a>
+      <a class="mm-nav-link" href="${branchesHref}"><i class="ti ti-map-pin" aria-hidden="true"></i>&nbsp; Филиалы</a>
+      <a class="mm-nav-link" href="${contactsHref}"><i class="ti ti-phone" aria-hidden="true"></i>&nbsp; Контакты</a>
     </nav>
 
     <div class="mm-divider"></div>
 
     <button type="button" class="mm-item mm-item--fav" id="mmFavBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <i class="ti ti-heart" aria-hidden="true"></i>
       Избранное
       ${favCnt > 0 ? `<span class="mm-badge">${favCnt}</span>` : ''}
     </button>
@@ -92,7 +92,7 @@ function _render() {
       ${isAdmin() ? `<a class="mm-item" href="/admin/orders.html">🔧&nbsp; Панель администратора</a>` : ''}
       <button type="button" class="mm-item mm-item--danger" id="mmLogoutBtn">Выйти</button>
     ` : `
-      <button type="button" class="mm-item mm-item--login" id="mmLoginBtn">👤&nbsp; Войти</button>
+      <button type="button" class="mm-item mm-item--login" id="mmLoginBtn"><i class="ti ti-user" aria-hidden="true"></i>&nbsp; Войти</button>
     `}`;
 
   // ── Wire events (fresh DOM, no stacking) ─────────────────────────────────

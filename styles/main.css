@@ -760,6 +760,14 @@ h3 {
   color: var(--coffee-dark);
 }
 
+.mm-nav-link i,
+.mm-item i {
+  font-size: 18px;
+  width: 20px;
+  color: #9C6B47;
+  flex-shrink: 0;
+}
+
 /* ── Divider ───────────────────────────────────────────────────────────── */
 .mm-divider {
   height: 1px;
