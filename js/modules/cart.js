@@ -288,6 +288,14 @@ export function initCart() {
   syncAddButtons();
   syncWeightButtons();
 
+  // Listen for cart changes from other tabs (cross-tab sync)
+  window.addEventListener('storage', e => {
+    if (e.key === 'adia_cart') {
+      updateCartBadge();
+      syncAddButtons();
+    }
+  });
+
   // "+" on product cards is handled by quick-view.js — only inline qty controls here
   document.addEventListener('click', e => {
     // Inline card qty controls (− / +) — piece products only

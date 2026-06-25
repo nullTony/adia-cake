@@ -73,8 +73,10 @@
   color: rgba(255, 255, 255, 0.85);
   transition: color var(--ease);
 
-  &:hover {
-    color: #EDE0D0;
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: #EDE0D0;
+    }
   }
 }
 
@@ -97,8 +99,10 @@
     color: rgba(255, 255, 255, 0.45);
     transition: color var(--ease);
 
-    &:hover {
-      color: var(--caramel);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        color: var(--caramel);
+      }
     }
   }
 }
@@ -127,8 +131,10 @@
     color: rgba(255, 255, 255, 0.45);
     transition: color var(--ease);
 
-    &:hover {
-      color: var(--caramel);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        color: var(--caramel);
+      }
     }
   }
 }
@@ -159,8 +165,10 @@
     color: rgba(255, 255, 255, 0.28);
     transition: color var(--ease);
 
-    &:hover {
-      color: rgba(255, 255, 255, 0.6);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        color: rgba(255, 255, 255, 0.6);
+      }
     }
   }
 }

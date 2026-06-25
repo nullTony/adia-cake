@@ -17,6 +17,26 @@ import { esc as _esc }            from '../utils/format.js';
 const GRAD_CLASSES = ['c1', 'c2', 'c3', 'c4', 'c5'];
 const MS_30_DAYS   = 30 * 24 * 60 * 60 * 1000;
 
+// Helper: fetch with timeout and retry (for slow/flaky networks on pages.dev)
+async function _fetchWithRetry(fetchFn, maxRetries = 1) {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000); // 5-second timeout
+      try {
+        const result = await fetchFn();
+        clearTimeout(timeout);
+        return result;
+      } catch (err) {
+        clearTimeout(timeout);
+        throw err;
+      }
+    } catch (err) {
+      if (attempt === maxRetries) throw err;
+    }
+  }
+}
+
 function _buildCard(cat, index) {
   const gradClass = GRAD_CLASSES[index % GRAD_CLASSES.length];
   const isTall    = index === 0;
@@ -71,9 +91,9 @@ async function _render() {
   let categories = [];
   try {
     const branchId = getSelectedBranchId();
-    categories = branchId
-      ? await getPopularCategoriesForBranch(branchId)
-      : await getPopularCategories(8);
+    categories = await _fetchWithRetry(() => branchId
+      ? getPopularCategoriesForBranch(branchId)
+      : getPopularCategories(8), 1);
   } catch (err) {
     console.warn('[categories-showcase] fetch error:', err);
   }

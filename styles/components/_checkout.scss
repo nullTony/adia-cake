@@ -71,7 +71,9 @@
   color: var(--text-med);
   transition: background var(--ease);
 
-  &:hover { background: var(--caramel); }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { background: var(--caramel); }
+  }
 }
 
 .checkout-body {
@@ -236,7 +238,10 @@
   cursor: pointer;
   transition: background var(--ease), transform var(--ease);
 
-  &:hover   { background: var(--text-dark); }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { background: var(--text-dark); }
+  }
+
   &:active  { transform: scale(0.98); }
   &:disabled { opacity: 0.55; cursor: not-allowed; }
 }

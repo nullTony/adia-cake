@@ -31,9 +31,11 @@
     border-right: none;
   }
 
-  &:hover {
-    .srv-ico  { color: var(--caramel); }
-    .srv-title { color: var(--caramel); }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      .srv-ico  { color: var(--caramel); }
+      .srv-title { color: var(--caramel); }
+    }
   }
 }
 
@@ -80,9 +82,11 @@
   padding: 0;
   cursor: pointer;
 
-  &:hover {
-    gap: 9px;
-    color: var(--caramel-dark);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      gap: 9px;
+      color: var(--caramel-dark);
+    }
   }
 }
 

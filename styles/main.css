@@ -491,8 +491,10 @@ h3 {
   color: rgba(255, 255, 255, 0.85);
   transition: color var(--ease);
 }
-.f-social:hover {
-  color: #EDE0D0;
+@media (hover: hover) and (pointer: fine) {
+  .f-social:hover {
+    color: #EDE0D0;
+  }
 }
 
 .f-col-title {
@@ -512,8 +514,10 @@ h3 {
   color: rgba(255, 255, 255, 0.45);
   transition: color var(--ease);
 }
-.f-links a:hover {
-  color: var(--caramel);
+@media (hover: hover) and (pointer: fine) {
+  .f-links a:hover {
+    color: var(--caramel);
+  }
 }
 
 .f-contact {
@@ -538,8 +542,10 @@ h3 {
   color: rgba(255, 255, 255, 0.45);
   transition: color var(--ease);
 }
-.f-c-text a:hover {
-  color: var(--caramel);
+@media (hover: hover) and (pointer: fine) {
+  .f-c-text a:hover {
+    color: var(--caramel);
+  }
 }
 
 .footer-bottom {
@@ -566,8 +572,10 @@ h3 {
   color: rgba(255, 255, 255, 0.28);
   transition: color var(--ease);
 }
-.f-legal a:hover {
-  color: rgba(255, 255, 255, 0.6);
+@media (hover: hover) and (pointer: fine) {
+  .f-legal a:hover {
+    color: rgba(255, 255, 255, 0.6);
+  }
 }
 
 @media (max-width: 1024px) {
@@ -978,12 +986,14 @@ h3 {
   transition: var(--ease);
   position: relative;
 }
-.product-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-m);
-}
-.product-card:hover .pc-img img {
-  transform: scale(1.06);
+@media (hover: hover) and (pointer: fine) {
+  .product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-m);
+  }
+  .product-card:hover .pc-img img {
+    transform: scale(1.06);
+  }
 }
 
 .pc-img {
@@ -1053,9 +1063,11 @@ h3 {
   box-shadow: var(--shadow-s);
   border: none;
 }
-.pc-fav:hover {
-  transform: scale(1.1);
-  background: var(--powder-light);
+@media (hover: hover) and (pointer: fine) {
+  .pc-fav:hover {
+    transform: scale(1.1);
+    background: var(--powder-light);
+  }
 }
 .pc-fav.active {
   background: var(--powder-light);
@@ -1125,9 +1137,11 @@ h3 {
   flex-shrink: 0;
   position: relative;
 }
-.pc-add:hover {
-  background: var(--coffee-dark);
-  transform: scale(1.1);
+@media (hover: hover) and (pointer: fine) {
+  .pc-add:hover {
+    background: var(--coffee-dark);
+    transform: scale(1.1);
+  }
 }
 .pc-add.added {
   background: var(--green);
@@ -1136,9 +1150,11 @@ h3 {
 .pc-add.pc-add--in-cart {
   background: var(--coffee-dark);
 }
-.pc-add.pc-add--in-cart:hover {
-  background: var(--coffee);
-  transform: scale(1.05);
+@media (hover: hover) and (pointer: fine) {
+  .pc-add.pc-add--in-cart:hover {
+    background: var(--coffee);
+    transform: scale(1.05);
+  }
 }
 .pc-add.pc-add--in-cart::after {
   content: "";
@@ -2272,8 +2288,10 @@ h3 {
   color: var(--text-med);
   transition: background var(--ease);
 }
-.checkout-close:hover {
-  background: var(--caramel);
+@media (hover: hover) and (pointer: fine) {
+  .checkout-close:hover {
+    background: var(--caramel);
+  }
 }
 
 .checkout-body {
@@ -2457,8 +2475,10 @@ h3 {
   cursor: pointer;
   transition: background var(--ease), transform var(--ease);
 }
-.co-submit:hover {
-  background: var(--text-dark);
+@media (hover: hover) and (pointer: fine) {
+  .co-submit:hover {
+    background: var(--text-dark);
+  }
 }
 .co-submit:active {
   transform: scale(0.98);
@@ -4401,9 +4421,11 @@ h3 {
   transition: var(--ease);
   cursor: pointer;
 }
-.view-all:hover {
-  gap: 9px;
-  color: var(--coffee);
+@media (hover: hover) and (pointer: fine) {
+  .view-all:hover {
+    gap: 9px;
+    color: var(--coffee);
+  }
 }
 .view-all:disabled {
   opacity: 0.5;
@@ -4547,9 +4569,11 @@ h3 {
   flex-shrink: 0;
   transition: background var(--ease), border-color var(--ease), opacity var(--ease);
 }
-.fc-arrow:hover {
-  background: var(--beige);
-  border-color: var(--caramel);
+@media (hover: hover) and (pointer: fine) {
+  .fc-arrow:hover {
+    background: var(--beige);
+    border-color: var(--caramel);
+  }
 }
 .fc-arrow[hidden] {
   display: none;
@@ -5035,11 +5059,13 @@ h3 {
 .srv-item:last-child {
   border-right: none;
 }
-.srv-item:hover .srv-ico {
-  color: var(--caramel);
-}
-.srv-item:hover .srv-title {
-  color: var(--caramel);
+@media (hover: hover) and (pointer: fine) {
+  .srv-item:hover .srv-ico {
+    color: var(--caramel);
+  }
+  .srv-item:hover .srv-title {
+    color: var(--caramel);
+  }
 }
 
 .srv-ico {
@@ -5085,9 +5111,11 @@ h3 {
   padding: 0;
   cursor: pointer;
 }
-.srv-link:hover {
-  gap: 9px;
-  color: var(--caramel-dark);
+@media (hover: hover) and (pointer: fine) {
+  .srv-link:hover {
+    gap: 9px;
+    color: var(--caramel-dark);
+  }
 }
 
 @media (max-width: 768px) {
@@ -5153,8 +5181,10 @@ h3 {
   border: 1px solid rgba(107, 66, 38, 0.1);
   transition: var(--ease);
 }
-.tes-card:hover {
-  box-shadow: var(--shadow-m);
+@media (hover: hover) and (pointer: fine) {
+  .tes-card:hover {
+    box-shadow: var(--shadow-m);
+  }
 }
 
 .tes-stars {
@@ -5250,10 +5280,11 @@ h3 {
   animation: marquee-right 45s linear infinite;
 }
 
-.tes-marquee:hover .tes-track {
-  animation-play-state: paused;
+@media (hover: hover) and (pointer: fine) {
+  .tes-marquee:hover .tes-track {
+    animation-play-state: paused;
+  }
 }
-
 @keyframes marquee-left {
   from {
     transform: translateX(0);
@@ -5314,7 +5345,7 @@ h3 {
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    gap: 0;
+    gap: 16px;
   }
   .tes-grid::-webkit-scrollbar {
     display: none;

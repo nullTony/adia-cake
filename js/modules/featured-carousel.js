@@ -20,8 +20,8 @@ export function initFeatCarousel(grid) {
   controls.className = 'fc-controls';
   controls.style.display = 'none'; // hidden until overflow confirmed
   controls.innerHTML =
-    `<button type="button" class="fc-arrow fc-arrow--prev" aria-label="Предыдущий">←</button>` +
-    `<button type="button" class="fc-arrow fc-arrow--next" aria-label="Следующий">→</button>`;
+    `<button type="button" class="fc-arrow fc-arrow--prev" aria-label="Предыдущий"><i class="ti ti-chevron-left"></i></button>` +
+    `<button type="button" class="fc-arrow fc-arrow--next" aria-label="Следующий"><i class="ti ti-chevron-right"></i></button>`;
 
   grid.after(controls);
 

@@ -27,8 +27,10 @@
   border: 1px solid rgba(107, 66, 38, 0.1);
   transition: var(--ease);
 
-  &:hover {
-    box-shadow: var(--shadow-m);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      box-shadow: var(--shadow-m);
+    }
   }
 }
 
@@ -130,8 +132,10 @@
   animation: marquee-right 45s linear infinite;
 }
 
-.tes-marquee:hover .tes-track {
-  animation-play-state: paused;
+@media (hover: hover) and (pointer: fine) {
+  .tes-marquee:hover .tes-track {
+    animation-play-state: paused;
+  }
 }
 
 // 1368px = 3 cards × (440px + 16px margin) — точный размер одного набора
@@ -199,8 +203,7 @@
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    gap: 0;
-    // remove grid gap — each card is full width
+    gap: 16px;
 
     &::-webkit-scrollbar {
       display: none;

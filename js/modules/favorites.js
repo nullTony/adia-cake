@@ -101,6 +101,14 @@ export function initFavorites() {
   updateFavBadge();
   syncFavButtons();
 
+  // Listen for favorites changes from other tabs (cross-tab sync)
+  window.addEventListener('storage', e => {
+    if (e.key === 'adia_favorites') {
+      updateFavBadge();
+      syncFavButtons();
+    }
+  });
+
   // Toggle favourite — heart button on cards
   document.addEventListener('click', e => {
     const btn = e.target.closest('.pc-fav');

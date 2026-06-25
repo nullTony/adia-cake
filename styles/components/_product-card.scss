@@ -10,12 +10,14 @@
   transition: var(--ease);
   position: relative;
 
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-m);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-m);
 
-    .pc-img img {
-      transform: scale(1.06);
+      .pc-img img {
+        transform: scale(1.06);
+      }
     }
   }
 }
@@ -81,9 +83,11 @@
   box-shadow: var(--shadow-s);
   border: none;
 
-  &:hover {
-    transform: scale(1.1);
-    background: var(--powder-light);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: scale(1.1);
+      background: var(--powder-light);
+    }
   }
 
   &.active {
@@ -157,14 +161,18 @@
   flex-shrink: 0;
   position: relative;
 
-  &:hover { background: var(--coffee-dark); transform: scale(1.1); }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { background: var(--coffee-dark); transform: scale(1.1); }
+  }
 
   &.added { background: var(--green); font-size: 14px; }
 
   &.pc-add--in-cart {
     background: var(--coffee-dark);
 
-    &:hover { background: var(--coffee); transform: scale(1.05); }
+    @media (hover: hover) and (pointer: fine) {
+      &:hover { background: var(--coffee); transform: scale(1.05); }
+    }
 
     &::after {
       content: '';

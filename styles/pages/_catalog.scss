@@ -261,9 +261,11 @@
   transition: var(--ease);
   cursor: pointer;
 
-  &:hover {
-    gap: 9px;
-    color: var(--coffee);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      gap: 9px;
+      color: var(--coffee);
+    }
   }
 
   &:disabled {
@@ -431,9 +433,11 @@
   flex-shrink: 0;
   transition: background var(--ease), border-color var(--ease), opacity var(--ease);
 
-  &:hover {
-    background: var(--beige);
-    border-color: var(--caramel);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--beige);
+      border-color: var(--caramel);
+    }
   }
 
   // hidden attribute set by JS at scroll start/end
