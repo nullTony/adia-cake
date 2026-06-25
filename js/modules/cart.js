@@ -100,8 +100,12 @@ export function updateCartBadge() {
   const el = document.getElementById('cartCount');
   if (!el) return;
   const count = getCartUniqueCount();
-  el.textContent = count;
-  el.style.display = count > 0 ? '' : 'none';
+  el.textContent = count > 9 ? '9+' : count;
+  if (count > 0) {
+    el.classList.remove('hidden');
+  } else {
+    el.classList.add('hidden');
+  }
 }
 
 // ---- Inline card qty controls ----

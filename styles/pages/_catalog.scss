@@ -145,6 +145,13 @@
   }
 }
 
+// Extra small phones: reduce benefits pill width for better visibility
+@media (max-width: 390px) {
+  .bp {
+    flex: 0 0 60vw;
+  }
+}
+
 // ---- Categories section ----
 
 .categories {
@@ -359,6 +366,11 @@
   flex: 0 0 240px;
   max-width: 240px;
   scroll-snap-align: start;
+
+  @media (max-width: 390px) {
+    flex: 0 0 160px;
+    max-width: 160px;
+  }
 }
 
 .featured .pc-img {

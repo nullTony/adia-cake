@@ -84,7 +84,13 @@
 
 // ---- Form fields ----
 
-.co-field { margin-bottom: 16px; }
+.co-field {
+  margin-bottom: 16px;
+
+  @media (max-width: 390px) {
+    margin-bottom: 12px;
+  }
+}
 
 .co-label {
   display: block;
@@ -152,6 +158,11 @@
   cursor: pointer;
 
   input { accent-color: var(--coffee-dark); }
+
+  @media (max-width: 390px) {
+    min-height: 44px;
+    padding: 12px 16px;
+  }
 }
 
 // ---- Cart summary block ----

@@ -11,6 +11,12 @@
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
   gap: 40px;
+
+  @media (max-width: 390px) {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 36px 0 24px;
+  }
 }
 
 // ---- Footer logo ----

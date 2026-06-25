@@ -37,8 +37,12 @@ export function updateFavBadge() {
   const el = document.getElementById('favCount');
   if (!el) return;
   const count = getFavCount();
-  el.textContent = count;
-  el.style.display = count > 0 ? '' : 'none';
+  el.textContent = count > 9 ? '9+' : count;
+  if (count > 0) {
+    el.classList.remove('hidden');
+  } else {
+    el.classList.add('hidden');
+  }
 }
 
 // ---- Button states ----

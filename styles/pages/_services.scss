@@ -133,3 +133,13 @@
     }
   }
 }
+
+@media (max-width: 390px) {
+  .srv-item {
+    padding: 16px 12px;
+  }
+
+  .srv-title {
+    font-size: 16px;
+  }
+}
