@@ -8,6 +8,7 @@ import { getBranches }                      from '../api/branches-api.js';
 import { getSelectedBranch, setSelectedBranch } from '../store/branch-store.js';
 import { getCartForBranch }                 from '../store/cart-store.js';
 import { updateCartBadge }                  from './cart.js';
+import { esc as _esc }                     from '../utils/format.js';
 
 const OVERLAY_ID = 'bsOverlay';
 
@@ -276,10 +277,3 @@ function _doSwitch(branch) {
   closeBranchModal();
 }
 
-// ── Utility ───────────────────────────────────────────────────────────────────
-
-function _esc(s) {
-  return String(s || '')
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}

@@ -11,17 +11,13 @@ import { updateFavBadge, syncFavButtons, renderFavPanel }           from './favo
 import { guardAction }                                              from './auth-guard.js';
 import { calculateWeightPrice, formatWeight, generateWeightOptions } from '../utils/weight.js';
 import { getSelectedBranchId }                                      from '../store/branch-store.js';
+import { esc }                                                      from '../utils/format.js';
 
 // ── Helpers ───────────────────────────────────────────────────────
 
+// Formats price without currency suffix — used inline in template literals that append ' сум' separately
 function fmt(val) {
   return String(Math.round(val || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-}
-
-function esc(str) {
-  return (str || '')
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 // ── Read product data from a card element ─────────────────────────

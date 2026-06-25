@@ -11,6 +11,7 @@ import { getProducts }                           from '../api/products-api.js';
 import { getBranchProductsAdmin,
          upsertBranchProducts }                  from '../api/branch-products-api.js';
 import { createTableSkeletons }                  from '../utils/skeleton.js';
+import { esc, formatPrice }                      from '../utils/format.js';
 
 initRbac('branch_products');
 
@@ -29,17 +30,6 @@ let _branchId   = null;
 let _hasChanges = false;
 
 const _BRANCH_KEY = 'adia_admin_selected_branch';
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function esc(s) {
-  return (s || '').toString()
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function fmtPrice(n) {
-  return String(Math.round(n || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' сум';
-}
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 
@@ -100,7 +90,7 @@ async function init() {
           localStorage.removeItem(_BRANCH_KEY);
         }
       }
-    } catch {}
+    } catch (e) { console.warn('[branch-products] Could not restore saved branch from localStorage:', e); }
 
     document.getElementById('bpBranch').addEventListener('change', async e => {
       _branchId = e.target.value || null;
@@ -196,7 +186,7 @@ function _renderTable() {
             ${img}
             <div>
               <div class="bp-prod-name">${esc(p.title)}</div>
-              <div class="bp-prod-price">${fmtPrice(p.price)}</div>
+              <div class="bp-prod-price">${formatPrice(p.price)}</div>
             </div>
           </div>
         </td>

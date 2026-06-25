@@ -9,22 +9,11 @@ import { getCart, getCartTotal, clearCart } from '../store/cart-store.js';
 import { updateCartBadge, renderCartPanel, closeAllPanels } from './cart.js';
 import { createOrder, createOrderItem }     from '../api/orders-api.js';
 import { getCurrentUser }                   from '../services/auth-service.js';
-import { API_CONFIG }                       from '../config/api-config.js';
+import { sendTelegramMessage }              from '../api/telegram-api.js';
 import { getSelectedBranch }                from '../store/branch-store.js';
 import { initPhoneInput, handlePhoneInput, getPhoneValue } from '../utils/phone-input.js';
 import { notifyManagerNewOrder }                          from '../services/manager-notification-service.js';
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function esc(str) {
-  return (str || '')
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-function formatPrice(val) {
-  return String(Math.round(val || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' сум';
-}
+import { esc, formatPrice }                              from '../utils/format.js';
 
 // ── Overlay control ───────────────────────────────────────────────────────────
 
@@ -293,8 +282,7 @@ function showSuccess(order) {
 // ── Telegram order notification ───────────────────────────────────────────────
 
 async function _sendTelegramOrderNotification(telegramId, order, cartItems) {
-  const token = API_CONFIG.TELEGRAM.BOT_TOKEN;
-  if (!token || !telegramId) return;
+  if (!telegramId) return;
 
   const deliveryLine = order.deliveryType === 'pickup'
     ? `🏪 Самовывоз`
@@ -311,11 +299,7 @@ async function _sendTelegramOrderNotification(telegramId, order, cartItems) {
     `${deliveryLine}\n\n` +
     `Администратор свяжется с вами для подтверждения.`;
 
-  await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-    method:  'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify({ chat_id: telegramId, text, parse_mode: 'HTML' }),
-  });
+  await sendTelegramMessage(telegramId, text, 'HTML');
 }
 
 // ── Modal injection ───────────────────────────────────────────────────────────

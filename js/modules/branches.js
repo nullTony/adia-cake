@@ -5,17 +5,10 @@
 // ================================
 
 import { getBranches } from '../api/branches-api.js';
+import { esc }         from '../utils/format.js';
 
 let _branches = [];
 let _activeIdx = -1;
-
-function esc(str) {
-  return (str || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
 
 function renderCard(branch, index) {
   const hours = branch.workingHours || '';
@@ -96,14 +89,29 @@ export async function initBranches() {
   const brSearch = document.getElementById('brSearch');
   if (!brList) return;
 
+  // Show skeleton while branches load
+  brList.innerHTML = Array.from({ length: 4 }, () => `
+    <div class="br-card skeleton" aria-hidden="true">
+      <div class="br-card-header">
+        <div class="skeleton skeleton-title" style="width:15%"></div>
+        <div class="skeleton skeleton-title" style="width:50%"></div>
+      </div>
+      <div class="skeleton skeleton-text" style="width:70%;margin-top:8px"></div>
+      <div class="skeleton skeleton-text" style="width:45%;margin-top:6px"></div>
+    </div>`).join('');
+
   try {
     _branches = await getBranches();
   } catch (err) {
     console.error('[branches] Failed to load branches:', err);
+    brList.innerHTML = '<p style="padding:24px;text-align:center;color:var(--text-light)">Не удалось загрузить филиалы. Попробуйте позже.</p>';
     return;
   }
 
-  if (!_branches.length) return;
+  if (!_branches.length) {
+    brList.innerHTML = '';
+    return;
+  }
 
   brList.innerHTML = _branches.map(renderCard).join('');
 

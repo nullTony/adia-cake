@@ -12,6 +12,7 @@
 import { getPopularCategories, getPopularCategoriesForBranch } from '../api/categories-api.js';
 import { getSelectedBranchId }   from '../store/branch-store.js';
 import { createCategorySkeletons } from '../utils/skeleton.js';
+import { esc as _esc }            from '../utils/format.js';
 
 const GRAD_CLASSES = ['c1', 'c2', 'c3', 'c4', 'c5'];
 const MS_30_DAYS   = 30 * 24 * 60 * 60 * 1000;
@@ -59,12 +60,6 @@ function _buildAllCard(index) {
         </div>
       </div>
     </a>`;
-}
-
-function _esc(s) {
-  return (s || '').toString()
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 async function _render() {

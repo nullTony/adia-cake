@@ -42,7 +42,7 @@ function _template(order, status) {
 
 function _readQueue() {
   try { return JSON.parse(localStorage.getItem(PENDING_KEY) || '[]'); }
-  catch { return []; }
+  catch (e) { console.warn('[notifications] Corrupt pending queue, resetting:', e); return []; }
 }
 
 function _writeQueue(arr) {

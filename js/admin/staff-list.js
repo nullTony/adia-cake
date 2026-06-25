@@ -13,6 +13,7 @@ import { sbFetch }                                           from '../api/supaba
 import { initAdminNotifications }                            from '../services/notification-service.js';
 import { initPhoneInput, handlePhoneInput, getPhoneValue }   from '../utils/phone-input.js';
 import { createTableSkeletons }                              from '../utils/skeleton.js';
+import { esc, formatDateOnly }                              from '../utils/format.js';
 
 initRbac('staff');
 initAdminNotifications();
@@ -49,16 +50,6 @@ let _editingId = null;
 let _tgLinked  = new Set();
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-
-function esc(s) {
-  return (s || '').toString()
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function formatDate(iso) {
-  if (!iso) return '—';
-  return new Date(iso).toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric' });
-}
 
 function initials(name) {
   return (name || '?').trim().split(' ').slice(0, 2).map(w => w[0]?.toUpperCase() || '').join('');
@@ -156,7 +147,7 @@ function renderTable(staff) {
         </td>
         <td class="sl-branch-cell" data-id="${esc(s.id)}">${_renderBranchCell(s)}</td>
         <td>${tgCell}</td>
-        <td>${formatDate(s.createdAt)}</td>
+        <td>${formatDateOnly(s.createdAt)}</td>
         <td>
           <label class="cl-toggle" title="${s.isActive ? 'Активен' : 'Деактивирован'}">
             <input type="checkbox" class="sl-active-chk" data-id="${esc(s.id)}"

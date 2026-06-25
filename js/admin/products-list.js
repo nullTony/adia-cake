@@ -10,6 +10,7 @@ import { initAdminNotifications }                   from '../services/notificati
 import { getCategories }                            from '../api/categories-api.js';
 import { clearProductFromBranches }                 from '../api/branch-products-api.js';
 import { createTableSkeletons }                     from '../utils/skeleton.js';
+import { formatPrice }                              from '../utils/format.js';
 
 initRbac('products');
 initAdminNotifications();
@@ -35,12 +36,6 @@ let pendingDeleteId = null;
 let searchQuery     = '';
 let activeCat       = '';
 let currentFilter   = 'active'; // 'all' | 'active' | 'archived'
-
-// ---- Helpers ----
-
-function formatPrice(price) {
-  return String(Math.round(price || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' сум';
-}
 
 // ---- Stats ----
 

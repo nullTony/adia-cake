@@ -159,6 +159,11 @@ function _ensureToastWrap() {
   return _toastWrap;
 }
 
+function _escNotif(str) {
+  return (str || '').toString()
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 function _toast(message, type = 'info') {
   const wrap = _ensureToastWrap();
   const el   = document.createElement('div');
@@ -167,7 +172,7 @@ function _toast(message, type = 'info') {
   const icons = { success: '🛍️', warn: '⚠️', info: '🔔' };
   el.innerHTML = `
     <span class="notif-toast__ico">${icons[type] || '🔔'}</span>
-    <span class="notif-toast__msg">${message}</span>
+    <span class="notif-toast__msg">${_escNotif(message)}</span>
     <button class="notif-toast__close" aria-label="Закрыть">✕</button>
   `;
 

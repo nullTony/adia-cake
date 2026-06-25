@@ -7,6 +7,7 @@ import { getOrdersByUserId, getOrderItems, updateOrderStatus } from '../api/orde
 import { markClientNotifRead }                                 from '../services/notification-service.js';
 import { notifyManagerClientConfirmed,
          notifyManagerClientCancelled }                       from '../services/manager-notification-service.js';
+import { esc, formatPrice, formatDate }                      from '../utils/format.js';
 
 // ── Config ────────────────────────────────────────────────────────────────────
 
@@ -34,28 +35,10 @@ const STATUS_CLS = {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function esc(str) {
-  return (str || '').toString()
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-function formatPrice(val) {
-  return String(Math.round(val || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' сум';
-}
-
 function calcItemTotal(item, qty) {
   // productPriceSnapshot is always the final price per portion (for weight items it was
   // already computed as pricePerKg × grams / 1000 at add-to-cart time)
   return item.productPriceSnapshot * qty;
-}
-
-function formatDate(iso) {
-  if (!iso) return '—';
-  return new Date(iso).toLocaleString('ru-RU', {
-    day: '2-digit', month: '2-digit', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
-  });
 }
 
 function statusBadge(status) {
@@ -199,6 +182,15 @@ async function _handleClientAction(orderId, newStatus) {
     }
   } catch {
     if (btn) btn.disabled = false;
+    const body = document.getElementById('myOrdersBody');
+    const errBanner = body?.querySelector('.mo-action-error');
+    if (body && !errBanner) {
+      const div = document.createElement('div');
+      div.className = 'mo-action-error';
+      div.textContent = 'Ошибка. Попробуйте ещё раз.';
+      body.prepend(div);
+      setTimeout(() => div.remove(), 4000);
+    }
   }
 }
 

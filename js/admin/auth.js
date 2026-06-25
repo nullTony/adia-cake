@@ -21,9 +21,8 @@ export async function login(phone, password) {
   if (!row)           throw new Error('Сотрудник не найден');
   if (!row.is_active) throw new Error('Аккаунт деактивирован');
 
-  // row.password is undefined if the column doesn't exist yet in DB
   const stored = row.password ?? null;
-  const valid  = stored !== null ? stored === password : password === 'adia2026';
+  const valid  = stored !== null && stored === password;
   if (!valid) throw new Error('Неверный пароль');
 
   const staff = fromStaff(row);

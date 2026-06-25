@@ -11,13 +11,9 @@ import {
   toggleBranchCategory,
   updateBranchCategoryOrder,
 } from '../api/branch-categories-api.js';
+import { esc } from '../utils/format.js';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-
-function esc(s) {
-  return (s || '').toString()
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
 
 function showToast(msg, isError = false) {
   const t = document.getElementById('toast');

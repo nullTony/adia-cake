@@ -125,7 +125,7 @@ async function _loadCategoryButtons(cards, branchId) {
     categories = branchId
       ? await getCategoriesByBranch(branchId)
       : await getCategories(true);
-  } catch {}
+  } catch (e) { console.error('[catalog] Failed to load categories for branch:', e); }
   if (!categories.length) return;
 
   const usedSlugs = new Set(cards.map(c => c.dataset.category).filter(Boolean));

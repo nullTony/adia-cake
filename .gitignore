@@ -6,6 +6,7 @@ package-lock.json
 .env
 .env.local
 .env.*.local
+bot/.env
 
 # OS files
 .DS_Store
@@ -30,3 +31,10 @@ yarn-error.log*
 .cache/
 dist/
 build/
+
+# SCSS source maps — compiled CSS is committed, maps are not needed
+styles/*.css.map
+
+# Claude Code agent configs and plugins — local dev tooling only
+.claude/
+.claude-plugin/

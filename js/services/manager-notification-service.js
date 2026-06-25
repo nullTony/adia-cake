@@ -4,14 +4,11 @@
 //  when order events happen on the customer side.
 // ================================
 
-import { sbFetch }    from '../api/supabase-client.js';
-import { API_CONFIG } from '../config/api-config.js';
+import { sbFetch }              from '../api/supabase-client.js';
+import { sendTelegramMessage }  from '../api/telegram-api.js';
+import { formatPrice }          from '../utils/format.js';
 
 const STAFF_TBL = 'staff_users';
-
-function formatPrice(val) {
-  return String(Math.round(val || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' сум';
-}
 
 async function _getRecipients(branchId) {
   const filter = branchId
@@ -34,13 +31,7 @@ async function _getRecipients(branchId) {
 }
 
 async function _send(chatId, text) {
-  const token = API_CONFIG.TELEGRAM?.BOT_TOKEN;
-  if (!token) return;
-  await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-    method:  'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify({ chat_id: chatId, text }),
-  });
+  await sendTelegramMessage(chatId, text);
 }
 
 export async function notifyManagerNewOrder(order) {

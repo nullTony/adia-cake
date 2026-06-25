@@ -7,8 +7,10 @@ import { initRbac, getStaffSession }                                        from
 import { getOrders, getOrderItems, updateOrderStatus, updateOrderItem, updateOrderConfirmedTotal, confirmPendingItems, fromOrder } from '../api/orders-api.js';
 import { getClientById }                                                       from '../api/clients-api.js';
 import { API_CONFIG }                                                           from '../config/api-config.js';
+import { sendTelegramMessage }                                                   from '../api/telegram-api.js';
 import { initAdminNotifications, markAdminNotifRead }                          from '../services/notification-service.js';
 import { createProductSkeletons }                                               from '../utils/skeleton.js';
+import { formatPrice, formatDate, esc }                                         from '../utils/format.js';
 
 initRbac('orders');
 
@@ -64,24 +66,6 @@ let searchQuery  = '';
 const itemsCache = new Map();
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-
-function formatPrice(val) {
-  return String(Math.round(val || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' сум';
-}
-
-function formatDate(iso) {
-  if (!iso) return '—';
-  return new Date(iso).toLocaleString('ru-RU', {
-    day: '2-digit', month: '2-digit', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
-  });
-}
-
-function esc(str) {
-  return (str || '').toString()
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
 
 function statusBadge(status) {
   const cfg = STATUS_CONFIG[status] || { label: status || '—', badge: 'ao-s-new' };
@@ -416,9 +400,6 @@ async function saveItemChanges(orderId, bodyEl) {
 function _notifyPartialConfirm(orderId, confirmedTotal, items, needsClientApproval = false) {
   const order = allOrders.find(o => String(o.id) === String(orderId));
   if (!order?.userId) return;
-  const token = API_CONFIG.TELEGRAM.BOT_TOKEN;
-  if (!token) return;
-
   getClientById(order.userId).then(user => {
     if (!user?.telegramId) return;
     const num = order.orderNumber ?? order.id;
@@ -439,11 +420,7 @@ function _notifyPartialConfirm(orderId, confirmedTotal, items, needsClientApprov
       `💰 Новая сумма:\n${formatPrice(confirmedTotal)}` +
       (needsClientApproval ? `\n\nПожалуйста, подтвердите изменения в личном кабинете.` : '');
 
-    fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ chat_id: user.telegramId, text }),
-    }).catch(() => {});
+    sendTelegramMessage(user.telegramId, text).catch(() => {});
   }).catch(() => {});
 }
 
@@ -495,23 +472,15 @@ const STATUS_MESSAGES = {
 // order must have .telegramId, .orderNumber (or .id), .status, .cancelReason
 function sendOrderStatusNotification(order) {
   if (!order.telegramId) return;
-  const token = API_CONFIG.TELEGRAM.BOT_TOKEN;
-  if (!token) return;
-
   const num  = order.orderNumber ?? order.id;
   const fn   = STATUS_MESSAGES[order.status];
   if (!fn) return;
 
   const text = fn(num, order.cancelReason || null);
-
-  fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-    method:  'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify({ chat_id: order.telegramId, text }),
-  }).catch(err => console.warn('[notify] Telegram failed:', err.message));
+  sendTelegramMessage(order.telegramId, text).catch(err => console.warn('[notify] Telegram failed:', err.message));
 }
 
-// Fetch user's telegramId from MockAPI, then fire notification (fire-and-forget)
+// Fetch user's telegramId from Supabase, then fire notification (fire-and-forget)
 function notifyUser(order) {
   if (!order.userId) return;
   getClientById(order.userId)

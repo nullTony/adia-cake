@@ -24,15 +24,24 @@ export async function sbFetch(path, options = {}) {
   const url     = `${BASE_URL}/rest/v1${path}`;
   const headers = buildHeaders(options.headers || {});
 
-  console.info(`[supabase] ${method} ${url}`);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 10_000);
+
   let res;
   try {
-    res = await fetch(url, { ...options, headers });
+    res = await fetch(url, { ...options, headers, signal: controller.signal });
   } catch (networkErr) {
+    if (networkErr.name === 'AbortError') {
+      const timeoutErr = new Error('Request timeout');
+      timeoutErr.name = 'TimeoutError';
+      console.error('[supabase] Request timed out:', url);
+      throw timeoutErr;
+    }
     console.error('[supabase] Network error:', networkErr);
     throw networkErr;
+  } finally {
+    clearTimeout(timer);
   }
-  console.info(`[supabase] ${method} ${url} → ${res.status}`);
 
   if (res.status === 204) return null;
 

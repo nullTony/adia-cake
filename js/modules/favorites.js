@@ -8,8 +8,7 @@ import {
 } from '../store/fav-store.js';
 import { openPanel, closeAllPanels } from './cart.js';
 import { guardAction } from './auth-guard.js';
-
-// ---- Helpers ----
+import { esc }        from '../utils/format.js';
 
 function readProductFromCard(card) {
   const id = card.dataset.productId;
@@ -80,15 +79,15 @@ export function renderFavPanel() {
   }
 
   list.innerHTML = favs.map(item => `
-    <div class="fav-item" data-id="${item.id}">
+    <div class="fav-item" data-id="${esc(item.id)}">
       <div class="fi-img">
-        <img src="${item.img}" alt="${item.name}">
+        <img src="${esc(item.img || '')}" alt="${esc(item.name)}">
       </div>
       <div class="fi-info">
-        <p class="fi-name">${item.name}</p>
-        <p class="fi-price">${item.priceStr} ${item.unit}</p>
+        <p class="fi-name">${esc(item.name)}</p>
+        <p class="fi-price">${esc(item.priceStr)} ${esc(item.unit)}</p>
       </div>
-      <button class="fi-remove" data-id="${item.id}" aria-label="Удалить из избранного">✕</button>
+      <button class="fi-remove" data-id="${esc(item.id)}" aria-label="Удалить из избранного">✕</button>
     </div>`).join('');
 }
 

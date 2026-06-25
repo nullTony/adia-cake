@@ -16,6 +16,7 @@ import {
   updateBranchCategoryOrder,
 } from '../api/branch-categories-api.js';
 import { uploadImage, isImgBBConfigured } from '../api/image-upload-api.js';
+import { esc }                            from '../utils/format.js';
 
 // ── Slug generator ────────────────────────────────────────────────────────────
 
@@ -42,11 +43,6 @@ let _imgModalId = null;
 let _dragSrc    = null;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-
-function esc(s) {
-  return (s || '').toString()
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
 
 function _getBinding(catId) {
   return _bindings.find(b => b.category_id === catId) || null;

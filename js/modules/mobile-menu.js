@@ -10,13 +10,10 @@ import { getSelectedBranch }               from '../store/branch-store.js';
 import { openBranchModal }                 from './branch-selector.js';
 import { openAuthModal }                   from './auth-modal.js';
 import { openMyOrders }                    from './my-orders.js';
+import { esc as _esc }                    from '../utils/format.js';
 
 const MENU_ID    = 'mobMenu';
 const BACK_ID    = 'mobMenuBackdrop';
-
-function _esc(s) {
-  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
 
 // ── Helpers to read live DOM state ────────────────────────────────────────────
 

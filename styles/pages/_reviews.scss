@@ -6,7 +6,7 @@
   background: var(--cream);
 
   .sec-header {
-    margin-bottom: 32px;
+    margin-bottom: 1.5rem;
   }
 }
 
@@ -51,7 +51,7 @@
   font-style: italic;
   position: relative;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
 
@@ -103,21 +103,22 @@
   flex-direction: column;
   gap: 12px;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  margin: 0 -20px;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
 }
 
 .tes-track {
   display: flex;
-  width: max-content;
+  flex-wrap: nowrap;
   padding: 0;
   margin: 0;
 
   .tes-card {
-    min-width: 320px;
+    width: 440px;
+    flex: 0 0 440px;
     margin-right: 16px;
     margin-left: 0;
-    flex-shrink: 0;
   }
 }
 
@@ -133,13 +134,14 @@
   animation-play-state: paused;
 }
 
+// 1368px = 3 cards × (440px + 16px margin) — точный размер одного набора
 @keyframes marquee-left {
   from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  to   { transform: translateX(-1368px); }
 }
 
 @keyframes marquee-right {
-  from { transform: translateX(-50%); }
+  from { transform: translateX(-1368px); }
   to   { transform: translateX(0); }
 }
 

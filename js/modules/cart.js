@@ -7,7 +7,9 @@ import {
   isInCart, getCartUniqueCount, getCartTotal, clearCart,
 } from '../store/cart-store.js';
 import { calculateWeightPrice, formatWeight, generateWeightOptions } from '../utils/weight.js';
+import { esc }                                                       from '../utils/format.js';
 
+// Uses toLocaleString for locale-aware formatting — intentionally different from shared formatPrice
 function formatPrice(val) {
   return val.toLocaleString('ru-RU') + ' сум';
 }
@@ -231,7 +233,7 @@ export function renderCartPanel() {
       controls = `
         <div class="ci-weight-row">
           <span class="ci-grams">${formatWeight(item.weightGrams)}</span>
-          ${cfg ? `<button class="ci-edit-btn" data-id="${item.id}" aria-label="Изменить граммовку">
+          ${cfg ? `<button class="ci-edit-btn" data-id="${esc(item.id)}" aria-label="Изменить граммовку">
             <i class="ti ti-pencil"></i>
             Изменить
           </button>` : ''}
@@ -239,21 +241,21 @@ export function renderCartPanel() {
     } else {
       controls = `
         <div class="ci-qty">
-          <button class="ci-qty-btn" data-action="dec" data-id="${item.id}">−</button>
+          <button class="ci-qty-btn" data-action="dec" data-id="${esc(item.id)}">−</button>
           <span class="ci-qty-val">${item.qty}</span>
-          <button class="ci-qty-btn" data-action="inc" data-id="${item.id}">+</button>
+          <button class="ci-qty-btn" data-action="inc" data-id="${esc(item.id)}">+</button>
         </div>`;
     }
 
     return `
-      <div class="cart-item" data-id="${item.id}">
-        <div class="ci-img"><img src="${item.img || ''}" alt="${item.name}"></div>
+      <div class="cart-item" data-id="${esc(item.id)}">
+        <div class="ci-img"><img src="${esc(item.img || '')}" alt="${esc(item.name)}"></div>
         <div class="ci-info">
-          <p class="ci-name">${item.name}</p>
+          <p class="ci-name">${esc(item.name)}</p>
           <p class="ci-price">${totalStr}</p>
           ${controls}
         </div>
-        <button class="ci-remove" data-id="${item.id}" aria-label="Удалить">✕</button>
+        <button class="ci-remove" data-id="${esc(item.id)}" aria-label="Удалить">✕</button>
       </div>`;
   }).join('');
 

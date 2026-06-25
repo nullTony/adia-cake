@@ -10,6 +10,7 @@ import { getAllStaff, promoteToStaff,
          getStaffByPhoneWithPassword }                              from '../api/staff-api.js';
 import { initAdminNotifications }                                   from '../services/notification-service.js';
 import { createTableSkeletons }                                     from '../utils/skeleton.js';
+import { esc, formatDateOnly }                                      from '../utils/format.js';
 
 initRbac('staff');
 initAdminNotifications();
@@ -43,16 +44,6 @@ let _staffPhoneMap = new Map(); // phone → current role, for duplicate-check r
 let _myRole        = 'manager';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-
-function esc(s) {
-  return (s || '').toString()
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function formatDate(iso) {
-  if (!iso) return '—';
-  return new Date(iso).toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric' });
-}
 
 function initials(name) {
   return (name || '?').trim().split(' ').slice(0, 2).map(w => w[0]?.toUpperCase() || '').join('');
@@ -110,7 +101,7 @@ function renderTable(clients) {
           <span class="cl-toggle-track"></span>
         </label>
       </td>
-      <td>${formatDate(c.createdAt)}</td>
+      <td>${formatDateOnly(c.createdAt)}</td>
       <td>${actionCell}</td>
     </tr>`;
   }).join('');

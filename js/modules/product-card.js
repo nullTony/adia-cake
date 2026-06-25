@@ -10,6 +10,7 @@
 
 
 import { formatWeight } from '../utils/weight.js';
+import { esc }         from '../utils/format.js';
 
 export const CATEGORIES = {
   cakes:       'Торты',
@@ -23,14 +24,6 @@ export const CATEGORIES = {
 // Format integer price as "85 000" (space-separated thousands, regular spaces)
 export function formatPrice(price) {
   return String(Math.round(price || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-}
-
-function esc(str) {
-  return (str || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
 }
 
 /**

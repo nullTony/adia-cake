@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /bot/
+
+Sitemap: https://adiacake.uz/sitemap.xml

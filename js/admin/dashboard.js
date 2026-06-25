@@ -5,6 +5,7 @@
 import { logout, getSession }                from './auth.js';
 import { initRbac }                          from './rbac.js';
 import { getOrders }                        from '../api/orders-api.js';
+import { formatPrice, esc }                from '../utils/format.js';
 
 initRbac('dashboard');
 
@@ -26,10 +27,6 @@ if (dateEl) {
 
 // ---- Helpers ----
 
-function formatPrice(n) {
-  return String(Math.round(n || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' сум';
-}
-
 function todayPrefix() {
   return new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
 }
@@ -46,7 +43,7 @@ const STATUS_LABEL = {
 };
 
 function statusBadge(status) {
-  return `<span class="db-status db-status--${status || 'new'}">${STATUS_LABEL[status] || status}</span>`;
+  return `<span class="db-status db-status--${esc(status || 'new')}">${esc(STATUS_LABEL[status] || status)}</span>`;
 }
 
 function deliveryLabel(type) {
@@ -93,16 +90,16 @@ function renderRecentOrders(orders) {
   if (emptyEl) emptyEl.hidden = true;
 
   tbody.innerHTML = recent.map(o => `
-    <tr data-order-id="${o.id}" onclick="location.href='order-details.html?id=${o.id}'" title="Открыть заказ">
-      <td style="font-weight:700">#${o.orderNumber ?? '—'}</td>
+    <tr data-order-id="${esc(o.id)}" onclick="location.href='order-details.html?id=${esc(o.id)}'" title="Открыть заказ">
+      <td style="font-weight:700">#${esc(String(o.orderNumber ?? '—'))}</td>
       <td>
-        <div style="font-weight:600">${o.customerName || '—'}</div>
-        <div style="font-size:12px;color:var(--a-text-light)">${o.phone || ''}</div>
+        <div style="font-weight:600">${esc(o.customerName || '—')}</div>
+        <div style="font-size:12px;color:var(--a-text-light)">${esc(o.phone || '')}</div>
       </td>
       <td style="white-space:nowrap;font-weight:600">${formatPrice(o.totalConfirmedAmount || o.totalRequestedAmount)}</td>
-      <td>${deliveryLabel(o.deliveryType)}</td>
+      <td>${esc(deliveryLabel(o.deliveryType))}</td>
       <td>${statusBadge(o.status)}</td>
-      <td style="white-space:nowrap;font-size:13px;color:var(--a-text-light)">${fmtDate(o.createdAt)}</td>
+      <td style="white-space:nowrap;font-size:13px;color:var(--a-text-light)">${esc(fmtDate(o.createdAt))}</td>
     </tr>`).join('');
 }
 

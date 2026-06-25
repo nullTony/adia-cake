@@ -11,6 +11,7 @@ import {
 import { uploadImage, isImgBBConfigured } from '../api/image-upload-api.js';
 import { initAdminNotifications } from '../services/notification-service.js';
 import { createTableSkeletons }   from '../utils/skeleton.js';
+import { esc }                    from '../utils/format.js';
 
 initRbac('categories');
 initAdminNotifications();
@@ -35,13 +36,6 @@ function generateSlug(title) {
 let _all          = [];
 let _editId       = null;
 let _imageModalId = null;
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function esc(s) {
-  return (s || '').toString()
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
 
 // ── Render ────────────────────────────────────────────────────────────────────
 

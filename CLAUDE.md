@@ -366,3 +366,72 @@ git push origin main
 
 Не давай ответ пока не ответишь на уточняющие вопросы ИЛИ
 не получишь от пользователя "Да, делай".
+
+---
+
+## Agent System
+
+### Active agents (Edmund's plugin)
+- **backend-architect** — Supabase, RLS, DB structure
+- **frontend-architect** — JS modules, UI architecture
+- **security-engineer** — Auth, roles, RLS policies
+- **refactoring-expert** — Code cleanup, MockAPI removal
+- **requirements-analyst** — Feature planning
+- **performance-engineer** — Query optimization
+- **deep-research-agent** — Deep research when needed
+
+### Disabled agents (add `_disabled_` prefix to re-enable)
+- tech-stack-researcher
+- system-architect
+- learning-guide
+- technical-writer
+
+### Archived ADIA agents
+Located in `.claude/archive/agents/` — original ADIA workflow agents.
+To restore: move back to `.claude/agents/`
+
+### Archived ADIA skills
+Located in `.claude/archive/skills/` — original ADIA guide skills.
+
+---
+
+## Agent Usage Rules
+
+### ОБЯЗАТЕЛЬНО запускать агента
+
+**frontend-architect:**
+- Любые изменения структуры JS модулей
+- Новые компоненты или страницы
+- Изменения, которые затрагивают 3+ JS файла
+
+**backend-architect:**
+- Любые новые таблицы или изменения схемы Supabase
+- Новые RLS политики
+- Изменения в API слое (`js/api/`)
+
+**security-engineer:**
+- Любые изменения в auth логике
+- Изменения ролей и прав доступа
+- Перед каждым крупным релизом
+
+**refactoring-expert:**
+- Удаление MockAPI кода
+- Если файл больше 200 строк и его нужно изменить
+- Технический долг
+
+**requirements-analyst:**
+- Любая новая фича, которую пользователь описал словами
+- Перед началом сложной задачи — всегда
+
+**performance-engineer:**
+- Жалобы на медленную загрузку
+- Новые Supabase запросы с JOIN или сложной фильтрацией
+
+### НЕ запускать агента (делать напрямую)
+- Изменения текста или контента
+- CSS/SCSS правки одного файла
+- Исправление одной строки кода
+- Замена иконок
+
+### Принцип
+Лучше запустить агента лишний раз, чем получить некачественный результат без экспертизы. Агенты дают лучшую архитектуру и меньше багов.

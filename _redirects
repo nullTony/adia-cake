@@ -1,0 +1,11 @@
+# Cloudflare Pages redirects
+
+# Block server-only directories from being served as static files
+/bot/*   /index.html  404
+/sql/*   /index.html  404
+
+# Admin SPA — serve actual admin HTML files (they exist on disk)
+/admin/*  /admin/:splat  200
+
+# SPA fallback — for any path that doesn't match a file, serve index.html
+/*  /index.html  200

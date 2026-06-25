@@ -21,7 +21,8 @@ export const API_CONFIG = {
 
   TELEGRAM: {
     BOT_USERNAME: '@nodetree_bot',
-    BOT_TOKEN:    '8710399027:AAF-m99Ksqg61HmRanMDz_MGCBZM2RqXwzk',
+    // BOT_TOKEN removed — stored as Supabase secret TELEGRAM_BOT_TOKEN only.
+    // All sendMessage calls go through supabase/functions/telegram-send.
   },
 
   IMGBB: {

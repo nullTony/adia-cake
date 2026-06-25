@@ -5,28 +5,9 @@
 import { logout, getSession }              from './auth.js';
 import { initRbac }                       from './rbac.js';
 import { getOrderById, getOrderItems }     from '../api/orders-api.js';
+import { formatPrice, formatDate, esc }   from '../utils/format.js';
 
 initRbac('orders');
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function formatPrice(val) {
-  return String(Math.round(val || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' сум';
-}
-
-function formatDate(iso) {
-  if (!iso) return '—';
-  return new Date(iso).toLocaleString('ru-RU', {
-    day: '2-digit', month: '2-digit', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
-  });
-}
-
-function esc(str) {
-  return (str || '').toString()
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
 
 const STATUS_LABEL = {
   new: 'Новый', confirmed: 'Подтверждён', preparing: 'Готовится',

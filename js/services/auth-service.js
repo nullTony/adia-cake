@@ -174,7 +174,7 @@ export async function verifyAdminPassword(phone, password) {
   if (!row.is_active) throw new Error('Аккаунт деактивирован');
 
   const stored = row.password ?? null;
-  const valid  = stored !== null ? stored === password : password === 'adia2026';
+  const valid  = stored !== null && stored === password;
   if (!valid) throw new Error('Неверный пароль');
 
   const staffUser = fromStaff(row);
