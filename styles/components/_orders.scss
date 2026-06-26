@@ -325,8 +325,8 @@
 
   .mo-panel {
     max-width: 100%;
-    max-height: 92vh;
-    border-radius: var(--r-xl) var(--r-xl) 0 0;
+    max-height: 100dvh;
+    border-radius: 0;
     // Override the scale animation — pure translateY on mobile
     transform: translateY(48px);
   }

@@ -53,8 +53,6 @@ function _render() {
         <div class="mm-profile-phone">${_esc(user.phone || '')}</div>
       </div>
 
-      <div class="mm-divider"></div>
-
       ${isAdmin() ? `<a class="mm-item" href="/admin/orders.html">🔧&nbsp; Панель администратора</a>` : ''}
       <button type="button" class="mm-item mm-item--danger" id="mmLogoutBtn">Выйти</button>
     ` : `
