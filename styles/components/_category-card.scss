@@ -27,17 +27,19 @@
   animation: cat-enter 0.45s var(--ease) both;
   animation-delay: calc(var(--i, 0) * 80ms);
 
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-l);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-l);
 
-    .cat-ph {
-      transform: scale(1.06);
-    }
+      .cat-ph {
+        transform: scale(1.06);
+      }
 
-    .cat-arrow {
-      background: var(--white);
-      color: var(--text-dark);
+      .cat-arrow {
+        background: var(--white);
+        color: var(--text-dark);
+      }
     }
   }
 
@@ -239,9 +241,11 @@
   pointer-events: none;
 }
 
-.cat-card:hover .cat-overlay-cta {
-  opacity: 1;
-  transform: translate(-50%, -50%);
+@media (hover: hover) and (pointer: fine) {
+  .cat-card:hover .cat-overlay-cta {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
 }
 
 // ---- Breakpoints ----

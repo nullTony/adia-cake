@@ -59,7 +59,9 @@
   color: var(--text-med);
   transition: background var(--ease);
 
-  &:hover { background: var(--caramel); }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { background: var(--caramel); }
+  }
 }
 
 // ---- Two-column layout ----
@@ -165,7 +167,9 @@
   cursor: pointer;
   transition: background var(--ease);
 
-  &:hover { background: var(--caramel); }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { background: var(--caramel); }
+  }
 }
 
 .qv-qty-val {
@@ -196,10 +200,12 @@
   white-space: nowrap;
   transition: border-color var(--ease), background var(--ease), color var(--ease);
 
-  &:hover {
-    border-color: var(--coffee);
-    background: var(--cream);
-    color: var(--text-dark);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: var(--coffee);
+      background: var(--cream);
+      color: var(--text-dark);
+    }
   }
 
   &--sel {

@@ -23,10 +23,12 @@
     background: var(--text-dark);
     color: var(--white);
 
-    &:hover {
-      background: var(--coffee-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(44, 24, 16, 0.22);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: var(--coffee-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(44, 24, 16, 0.22);
+      }
     }
   }
 
@@ -35,10 +37,12 @@
     color: var(--text-dark);
     border: 1.5px solid rgba(44, 24, 16, 0.28);
 
-    &:hover {
-      background: var(--beige);
-      border-color: var(--caramel-dark);
-      transform: translateY(-2px);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: var(--beige);
+        border-color: var(--caramel-dark);
+        transform: translateY(-2px);
+      }
     }
   }
 
@@ -46,10 +50,12 @@
     background: var(--caramel);
     color: var(--text-dark);
 
-    &:hover {
-      background: var(--caramel-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(196, 149, 106, 0.35);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: var(--caramel-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(196, 149, 106, 0.35);
+      }
     }
   }
 
@@ -57,10 +63,12 @@
     background: var(--white);
     color: var(--text-dark);
 
-    &:hover {
-      background: var(--cream);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(44, 24, 16, 0.12);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: var(--cream);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(44, 24, 16, 0.12);
+      }
     }
   }
 
@@ -68,7 +76,9 @@
     background: transparent;
     color: var(--text-med);
 
-    &:hover { background: var(--beige); }
+    @media (hover: hover) and (pointer: fine) {
+      &:hover { background: var(--beige); }
+    }
   }
 
   // ---- Sizes ----
@@ -92,8 +102,10 @@
   color: var(--text-dark);
   border: 1.5px solid rgba(44, 24, 16, 0.35);
 
-  &:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
   }
 }

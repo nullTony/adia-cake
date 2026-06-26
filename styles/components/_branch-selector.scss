@@ -21,10 +21,12 @@
   white-space: nowrap;
   flex-shrink: 0;
 
-  &:hover {
-    border-color: var(--coffee);
-    background: var(--beige-dark);
-    color: var(--text-dark);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: var(--coffee);
+      background: var(--beige-dark);
+      color: var(--text-dark);
+    }
   }
 
   .bi-icon,
@@ -158,9 +160,11 @@
   transition: background var(--ease), color var(--ease);
   z-index: 1;
 
-  &:hover {
-    background: var(--caramel);
-    color: var(--text-dark);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--caramel);
+      color: var(--text-dark);
+    }
   }
 
   &:active {
@@ -215,10 +219,12 @@
   text-align: left;
   transition: border-color var(--ease), background var(--ease), transform 0.15s ease;
 
-  &:hover {
-    border-color: var(--coffee);
-    background: var(--beige);
-    transform: translateY(-1px);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: var(--coffee);
+      background: var(--beige);
+      transform: translateY(-1px);
+    }
   }
 
   &:active {

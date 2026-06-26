@@ -86,11 +86,13 @@
       transition: width var(--ease);
     }
 
-    &:hover {
-      color: var(--text-dark);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        color: var(--text-dark);
 
-      &::after {
-        width: 100%;
+        &::after {
+          width: 100%;
+        }
       }
     }
   }
@@ -116,9 +118,11 @@
   transition: var(--ease);
   position: relative;
 
-  &:hover {
-    background: var(--caramel);
-    transform: scale(1.05);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--caramel);
+      transform: scale(1.05);
+    }
   }
 
   svg {
@@ -170,9 +174,11 @@
   font-weight: 700;
   transition: var(--ease);
 
-  &:hover {
-    background: var(--coffee-dark);
-    transform: translateY(-1px);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--coffee-dark);
+      transform: translateY(-1px);
+    }
   }
 }
 
@@ -190,8 +196,10 @@
   gap: 5px;
   transition: var(--ease);
 
-  &:hover {
-    background: var(--caramel);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--caramel);
+    }
   }
 
   span {

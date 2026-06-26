@@ -236,11 +236,13 @@ h3 {
   border-radius: 2px;
   transition: width var(--ease);
 }
-.h-nav a:hover {
-  color: var(--text-dark);
-}
-.h-nav a:hover::after {
-  width: 100%;
+@media (hover: hover) and (pointer: fine) {
+  .h-nav a:hover {
+    color: var(--text-dark);
+  }
+  .h-nav a:hover::after {
+    width: 100%;
+  }
 }
 
 .h-actions {
@@ -261,9 +263,11 @@ h3 {
   transition: var(--ease);
   position: relative;
 }
-.h-icon-btn:hover {
-  background: var(--caramel);
-  transform: scale(1.05);
+@media (hover: hover) and (pointer: fine) {
+  .h-icon-btn:hover {
+    background: var(--caramel);
+    transform: scale(1.05);
+  }
 }
 .h-icon-btn svg {
   width: 20px;
@@ -308,9 +312,11 @@ h3 {
   font-weight: 700;
   transition: var(--ease);
 }
-.h-cta:hover {
-  background: var(--coffee-dark);
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .h-cta:hover {
+    background: var(--coffee-dark);
+    transform: translateY(-1px);
+  }
 }
 
 .burger {
@@ -325,8 +331,10 @@ h3 {
   gap: 5px;
   transition: var(--ease);
 }
-.burger:hover {
-  background: var(--caramel);
+@media (hover: hover) and (pointer: fine) {
+  .burger:hover {
+    background: var(--caramel);
+  }
 }
 .burger span {
   display: block;
@@ -917,45 +925,55 @@ h3 {
   background: var(--text-dark);
   color: var(--white);
 }
-.btn-dark:hover {
-  background: var(--coffee-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(44, 24, 16, 0.22);
+@media (hover: hover) and (pointer: fine) {
+  .btn-dark:hover {
+    background: var(--coffee-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(44, 24, 16, 0.22);
+  }
 }
 .btn-outline {
   background: transparent;
   color: var(--text-dark);
   border: 1.5px solid rgba(44, 24, 16, 0.28);
 }
-.btn-outline:hover {
-  background: var(--beige);
-  border-color: var(--caramel-dark);
-  transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) {
+  .btn-outline:hover {
+    background: var(--beige);
+    border-color: var(--caramel-dark);
+    transform: translateY(-2px);
+  }
 }
 .btn-caramel {
   background: var(--caramel);
   color: var(--text-dark);
 }
-.btn-caramel:hover {
-  background: var(--caramel-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(196, 149, 106, 0.35);
+@media (hover: hover) and (pointer: fine) {
+  .btn-caramel:hover {
+    background: var(--caramel-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(196, 149, 106, 0.35);
+  }
 }
 .btn-white {
   background: var(--white);
   color: var(--text-dark);
 }
-.btn-white:hover {
-  background: var(--cream);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(44, 24, 16, 0.12);
+@media (hover: hover) and (pointer: fine) {
+  .btn-white:hover {
+    background: var(--cream);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(44, 24, 16, 0.12);
+  }
 }
 .btn-ghost {
   background: transparent;
   color: var(--text-med);
 }
-.btn-ghost:hover {
-  background: var(--beige);
+@media (hover: hover) and (pointer: fine) {
+  .btn-ghost:hover {
+    background: var(--beige);
+  }
 }
 .btn-lg {
   padding: 18px 36px;
@@ -974,9 +992,11 @@ h3 {
   color: var(--text-dark);
   border: 1.5px solid rgba(44, 24, 16, 0.35);
 }
-.btn-outline-dark:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) {
+  .btn-outline-dark:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+  }
 }
 
 .product-card {
@@ -1209,16 +1229,18 @@ h3 {
   animation: cat-enter 0.45s var(--ease) both;
   animation-delay: calc(var(--i, 0) * 80ms);
 }
-.cat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-l);
-}
-.cat-card:hover .cat-ph {
-  transform: scale(1.06);
-}
-.cat-card:hover .cat-arrow {
-  background: var(--white);
-  color: var(--text-dark);
+@media (hover: hover) and (pointer: fine) {
+  .cat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-l);
+  }
+  .cat-card:hover .cat-ph {
+    transform: scale(1.06);
+  }
+  .cat-card:hover .cat-arrow {
+    background: var(--white);
+    color: var(--text-dark);
+  }
 }
 .cat-card.tall {
   grid-row: span 2;
@@ -1400,11 +1422,12 @@ h3 {
   pointer-events: none;
 }
 
-.cat-card:hover .cat-overlay-cta {
-  opacity: 1;
-  transform: translate(-50%, -50%);
+@media (hover: hover) and (pointer: fine) {
+  .cat-card:hover .cat-overlay-cta {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
 }
-
 @media (max-width: 900px) {
   .cat-grid {
     grid-template-columns: 1fr 1fr;
@@ -1507,8 +1530,10 @@ h3 {
   color: var(--text-med);
   transition: background var(--ease);
 }
-.panel-close:hover {
-  background: var(--caramel);
+@media (hover: hover) and (pointer: fine) {
+  .panel-close:hover {
+    background: var(--caramel);
+  }
 }
 
 .panel-body {
@@ -1642,8 +1667,10 @@ h3 {
   flex-shrink: 0;
   transition: background var(--ease);
 }
-.ci-qty-btn:hover {
-  background: var(--beige);
+@media (hover: hover) and (pointer: fine) {
+  .ci-qty-btn:hover {
+    background: var(--beige);
+  }
 }
 
 .ci-qty-val {
@@ -1670,9 +1697,11 @@ h3 {
   flex-shrink: 0;
   transition: background var(--ease), color var(--ease);
 }
-.ci-remove:hover {
-  background: var(--powder-light);
-  color: var(--powder);
+@media (hover: hover) and (pointer: fine) {
+  .ci-remove:hover {
+    background: var(--powder-light);
+    color: var(--powder);
+  }
 }
 
 .ci-weight-row {
@@ -1708,10 +1737,12 @@ h3 {
   flex-shrink: 0;
   transition: background var(--ease), border-color var(--ease);
 }
-.ci-edit-btn:hover {
-  background: var(--caramel);
-  border-color: var(--coffee);
-  color: var(--text-dark);
+@media (hover: hover) and (pointer: fine) {
+  .ci-edit-btn:hover {
+    background: var(--caramel);
+    border-color: var(--coffee);
+    color: var(--text-dark);
+  }
 }
 
 .cart-gram-picker {
@@ -1743,10 +1774,12 @@ h3 {
   cursor: pointer;
   transition: border-color var(--ease), background var(--ease), color var(--ease);
 }
-.ci-g-btn:hover {
-  border-color: var(--coffee);
-  color: var(--text-dark);
-  background: var(--cream);
+@media (hover: hover) and (pointer: fine) {
+  .ci-g-btn:hover {
+    border-color: var(--coffee);
+    color: var(--text-dark);
+    background: var(--cream);
+  }
 }
 .ci-g-btn--sel {
   border-color: var(--coffee-dark);
@@ -1808,9 +1841,11 @@ h3 {
   flex-shrink: 0;
   transition: background var(--ease), color var(--ease);
 }
-.fi-remove:hover {
-  background: var(--powder-light);
-  color: var(--powder);
+@media (hover: hover) and (pointer: fine) {
+  .fi-remove:hover {
+    background: var(--powder-light);
+    color: var(--powder);
+  }
 }
 
 @media (max-width: 480px) {
@@ -2596,8 +2631,10 @@ h3 {
   color: var(--text-med);
   transition: background var(--ease);
 }
-.qv-close:hover {
-  background: var(--caramel);
+@media (hover: hover) and (pointer: fine) {
+  .qv-close:hover {
+    background: var(--caramel);
+  }
 }
 
 .qv-layout {
@@ -2699,8 +2736,10 @@ h3 {
   cursor: pointer;
   transition: background var(--ease);
 }
-.qv-qty-btn:hover {
-  background: var(--caramel);
+@media (hover: hover) and (pointer: fine) {
+  .qv-qty-btn:hover {
+    background: var(--caramel);
+  }
 }
 
 .qv-qty-val {
@@ -2734,10 +2773,12 @@ h3 {
   white-space: nowrap;
   transition: border-color var(--ease), background var(--ease), color var(--ease);
 }
-.qv-w-btn:hover {
-  border-color: var(--coffee);
-  background: var(--cream);
-  color: var(--text-dark);
+@media (hover: hover) and (pointer: fine) {
+  .qv-w-btn:hover {
+    border-color: var(--coffee);
+    background: var(--cream);
+    color: var(--text-dark);
+  }
 }
 .qv-w-btn--sel {
   border-color: var(--coffee-dark);
@@ -3366,10 +3407,12 @@ h3 {
   white-space: nowrap;
   flex-shrink: 0;
 }
-.h-branch-btn:hover {
-  border-color: var(--coffee);
-  background: var(--beige-dark);
-  color: var(--text-dark);
+@media (hover: hover) and (pointer: fine) {
+  .h-branch-btn:hover {
+    border-color: var(--coffee);
+    background: var(--beige-dark);
+    color: var(--text-dark);
+  }
 }
 .h-branch-btn .bi-icon,
 .h-branch-btn i.ti {
@@ -3491,9 +3534,11 @@ h3 {
   transition: background var(--ease), color var(--ease);
   z-index: 1;
 }
-.bs-close-btn:hover {
-  background: var(--caramel);
-  color: var(--text-dark);
+@media (hover: hover) and (pointer: fine) {
+  .bs-close-btn:hover {
+    background: var(--caramel);
+    color: var(--text-dark);
+  }
 }
 .bs-close-btn:active {
   transform: scale(0.94);
@@ -3544,10 +3589,12 @@ h3 {
   text-align: left;
   transition: border-color var(--ease), background var(--ease), transform 0.15s ease;
 }
-.bs-branch-card:hover {
-  border-color: var(--coffee);
-  background: var(--beige);
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .bs-branch-card:hover {
+    border-color: var(--coffee);
+    background: var(--beige);
+    transform: translateY(-1px);
+  }
 }
 .bs-branch-card:active {
   transform: translateY(0);

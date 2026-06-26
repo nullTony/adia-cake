@@ -67,7 +67,9 @@
   color: var(--text-med);
   transition: background var(--ease);
 
-  &:hover { background: var(--caramel); }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { background: var(--caramel); }
+  }
 }
 
 .panel-body {
@@ -192,7 +194,9 @@
   flex-shrink: 0;
   transition: background var(--ease);
 
-  &:hover { background: var(--beige); }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { background: var(--beige); }
+  }
 }
 
 .ci-qty-val {
@@ -219,7 +223,9 @@
   flex-shrink: 0;
   transition: background var(--ease), color var(--ease);
 
-  &:hover { background: var(--powder-light); color: var(--powder); }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { background: var(--powder-light); color: var(--powder); }
+  }
 }
 
 // ---- Weight product edit UI ----
@@ -257,7 +263,9 @@
   flex-shrink: 0;
   transition: background var(--ease), border-color var(--ease);
 
-  &:hover { background: var(--caramel); border-color: var(--coffee); color: var(--text-dark); }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { background: var(--caramel); border-color: var(--coffee); color: var(--text-dark); }
+  }
 }
 
 // ---- Floating gram picker (position:fixed, appended to body) ----
@@ -290,7 +298,9 @@
   cursor: pointer;
   transition: border-color var(--ease), background var(--ease), color var(--ease);
 
-  &:hover { border-color: var(--coffee); color: var(--text-dark); background: var(--cream); }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { border-color: var(--coffee); color: var(--text-dark); background: var(--cream); }
+  }
 
   &--sel {
     border-color: var(--coffee-dark);
@@ -352,7 +362,9 @@
   flex-shrink: 0;
   transition: background var(--ease), color var(--ease);
 
-  &:hover { background: var(--powder-light); color: var(--powder); }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { background: var(--powder-light); color: var(--powder); }
+  }
 }
 
 // ---- Mobile responsive ----
