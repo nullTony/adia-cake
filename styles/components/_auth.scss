@@ -130,8 +130,17 @@
   cursor: pointer;
   transition: background var(--ease), transform var(--ease);
 
-  &:hover  { background: var(--coffee-dark); }
-  &:active { transform: scale(0.98); }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { background: var(--coffee-dark); }
+    &:active { transform: scale(0.98); }
+  }
+
+  @media (pointer: coarse) {
+    &:focus {
+      outline: none;
+    }
+  }
+
   &:disabled { opacity: 0.55; cursor: not-allowed; }
 }
 

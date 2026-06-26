@@ -983,8 +983,15 @@ h3 {
   padding: 9px 18px;
   font-size: 13px;
 }
-.btn:active {
-  transform: scale(0.97);
+@media (pointer: fine) {
+  .btn:active {
+    transform: scale(0.97);
+  }
+}
+@media (pointer: coarse) {
+  .btn:focus {
+    outline: none;
+  }
 }
 
 .btn-outline-dark {
@@ -2015,11 +2022,18 @@ h3 {
   cursor: pointer;
   transition: background var(--ease), transform var(--ease);
 }
-.auth-btn:hover {
-  background: var(--coffee-dark);
+@media (hover: hover) and (pointer: fine) {
+  .auth-btn:hover {
+    background: var(--coffee-dark);
+  }
+  .auth-btn:active {
+    transform: scale(0.98);
+  }
 }
-.auth-btn:active {
-  transform: scale(0.98);
+@media (pointer: coarse) {
+  .auth-btn:focus {
+    outline: none;
+  }
 }
 .auth-btn:disabled {
   opacity: 0.55;
@@ -2514,9 +2528,14 @@ h3 {
   .co-submit:hover {
     background: var(--text-dark);
   }
+  .co-submit:active {
+    transform: scale(0.98);
+  }
 }
-.co-submit:active {
-  transform: scale(0.98);
+@media (pointer: coarse) {
+  .co-submit:focus {
+    outline: none;
+  }
 }
 .co-submit:disabled {
   opacity: 0.55;
@@ -3539,9 +3558,14 @@ h3 {
     background: var(--caramel);
     color: var(--text-dark);
   }
+  .bs-close-btn:active {
+    transform: scale(0.94);
+  }
 }
-.bs-close-btn:active {
-  transform: scale(0.94);
+@media (pointer: coarse) {
+  .bs-close-btn:focus {
+    outline: none;
+  }
 }
 
 /* ── Header ────────────────────────────────────────────────────────────── */
@@ -3595,9 +3619,14 @@ h3 {
     background: var(--beige);
     transform: translateY(-1px);
   }
+  .bs-branch-card:active {
+    transform: translateY(0);
+  }
 }
-.bs-branch-card:active {
-  transform: translateY(0);
+@media (pointer: coarse) {
+  .bs-branch-card:focus {
+    outline: none;
+  }
 }
 .bs-branch-card--selected {
   border-color: var(--coffee-dark);

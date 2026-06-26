@@ -93,7 +93,15 @@
     font-size: 13px;
   }
 
-  &:active { transform: scale(0.97); }
+  @media (pointer: fine) {
+    &:active { transform: scale(0.97); }
+  }
+
+  @media (pointer: coarse) {
+    &:focus {
+      outline: none;
+    }
+  }
 }
 
 // Standalone outline variant used on dark backgrounds

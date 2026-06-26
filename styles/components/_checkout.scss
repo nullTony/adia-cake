@@ -240,9 +240,15 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover { background: var(--text-dark); }
+    &:active { transform: scale(0.98); }
   }
 
-  &:active  { transform: scale(0.98); }
+  @media (pointer: coarse) {
+    &:focus {
+      outline: none;
+    }
+  }
+
   &:disabled { opacity: 0.55; cursor: not-allowed; }
 }
 
