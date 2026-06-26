@@ -93,6 +93,16 @@
 // ---- Breakpoints ----
 
 @media (max-width: 768px) {
+  // .srv-item uses .anim class (opacity:0 until IntersectionObserver fires).
+  // On mobile, force immediate visibility — dark text on dark bg stays hidden
+  // if JS scroll-reveal doesn't trigger early enough.
+  .srv-item,
+  .srv-item.anim {
+    opacity: 1;
+    transform: none;
+    transition: color var(--ease);
+  }
+
   .srv-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

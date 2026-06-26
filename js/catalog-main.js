@@ -14,6 +14,7 @@ import { initAuth }             from './services/auth-service.js';
 import { initCheckout }         from './modules/checkout.js';
 import { initQuickView }        from './modules/quick-view.js';
 import { initBranchSelector }   from './modules/branch-selector.js';
+import { initMobileNav }             from './modules/mobile-nav.js';
 import { initClientNotifications, stopNotifications } from './services/notification-service.js';
 import { initNotifications, stopToastNotifications }  from './notifications.js';
 
@@ -27,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initFavorites();
   initCheckout();
   initScrollReveal();
+  initMobileNav();
 
   // Branch selector validates stored branch + shows modal if needed.
   // initCatalog reacts to adia:branch-change so order doesn't matter.

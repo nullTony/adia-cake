@@ -22,6 +22,7 @@ import { initNotifications, stopToastNotifications }  from './notifications.js';
 import { initTesCarousel }                            from './modules/tes-carousel.js';
 import { getBranches }                                from './api/branches-api.js';
 import { initBenefitsCounter }                        from './modules/benefits-counter.js';
+import { initMobileNav }                              from './modules/mobile-nav.js';
 import { initCategoriesShowcase }                     from './modules/categories-showcase.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -47,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   initScrollReveal();
   initBenefitsCounter();
+  initMobileNav();
   initDateLabel();
 
   // Branch selector validates stored branch + shows modal if needed.

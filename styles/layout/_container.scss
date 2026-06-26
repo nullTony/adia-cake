@@ -2,6 +2,10 @@
 //  CONTAINER, SECTION WRAPPER, SECTION HEADER
 // ================================
 
+// Contain stray horizontal overflow (hero-visual bleed, wide buttons, etc.)
+// Note: only on body — html overflow:hidden would break position:sticky
+body { overflow-x: hidden; }
+
 .container {
   max-width: var(--max-w);
   margin: 0 auto;

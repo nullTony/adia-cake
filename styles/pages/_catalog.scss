@@ -312,6 +312,18 @@
 
 }
 
+@media (max-width: 480px) {
+  // "Смотреть все десерты на сегодня →" overflows on narrow screens
+  // white-space: nowrap + padding: 18px 36px is wider than viewport
+  .sc-foot .btn {
+    padding: 12px 18px;
+    font-size: 14px;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.4;
+  }
+}
+
 @media (max-width: 560px) {
   .today {
     padding-top: 24px;

@@ -21,6 +21,11 @@
   }
 }
 
+// Prevent page content from hiding under the fixed bar
+@media (max-width: 768px) {
+  body { padding-bottom: 64px; }
+}
+
 .mobile-nav__item {
   display: flex;
   flex-direction: column;
@@ -34,6 +39,11 @@
   cursor: pointer;
   position: relative;
   transition: color var(--ease);
+  text-decoration: none;
+  // Reset button defaults
+  background: none;
+  border: none;
+  font-family: inherit;
 
   &.active,
   &:hover { color: var(--coffee-dark); }

@@ -274,6 +274,20 @@
 
 // ---- Breakpoints ----
 
+// Mobile: clean header — logo + burger only; icons move to bottom nav
+@media (max-width: 768px) {
+  .h-branch-btn { display: none; }
+  .h-icon-btn   { display: none; }
+
+  // iOS Safari: backdrop-filter on sticky promotes element to compositing layer
+  // that renders above z-index 1800 modals. Remove blur, use opaque bg instead.
+  .header {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(254, 252, 248, 0.98);
+  }
+}
+
 @media (max-width: 1024px) {
   .h-nav,
   .h-cta {
