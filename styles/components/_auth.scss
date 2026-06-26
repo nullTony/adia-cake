@@ -9,7 +9,7 @@
   position: fixed;
   inset: 0;
   background: rgba(44, 24, 16, 0.45);
-  z-index: 2000;
+  z-index: 1999;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,6 +36,7 @@
   padding: 40px 36px 36px;
   box-shadow: var(--shadow-l);
   position: relative;
+  z-index: 2000;
   transform: translateY(16px);
   transition: transform var(--ease);
 }
@@ -291,3 +292,34 @@
 .pi-iflag { font-size: 18px; flex-shrink: 0; }
 .pi-iname { flex: 1; color: var(--text-dark); font-weight: 600; }
 .pi-idial { color: var(--text-muted); font-size: 12px; }
+
+// ---- Logout confirmation modal ----
+
+.logout-confirm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 24, 16, 0.45);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--ease);
+
+  &.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+}
+
+.logout-confirm-modal {
+  background: var(--white);
+  border-radius: var(--r-xl);
+  padding: 32px;
+  max-width: 360px;
+  width: 100%;
+  box-shadow: var(--shadow-l);
+  text-align: center;
+}

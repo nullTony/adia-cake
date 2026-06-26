@@ -17,8 +17,11 @@
 import { getClientByPhone, getClientById, createClient, updateClient } from '../api/clients-api.js';
 import { getStaffByPhoneWithPassword, getStaffById, fromStaff }        from '../api/staff-api.js';
 import { createAuthSession, getAuthSession }                            from '../api/tg-verification-api.js';
+import { showLogoutConfirm }                                            from '../modules/auth-modal.js';
 
 const SESSION_KEY = 'adia_user_session';
+const SESSION_VALIDATION_KEY = 'adia_session_validated_at';
+const SESSION_VALIDATION_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
 // ── In-memory state ───────────────────────────────────────────────────────────
 
@@ -31,7 +34,25 @@ function _readSession() {
   catch { return null; }
 }
 
-function _clearSession() { localStorage.removeItem(SESSION_KEY); }
+function _clearSession() {
+  localStorage.removeItem(SESSION_KEY);
+  localStorage.removeItem(SESSION_VALIDATION_KEY);
+}
+
+function _isSessionCacheValid() {
+  try {
+    const lastValidated = localStorage.getItem(SESSION_VALIDATION_KEY);
+    if (!lastValidated) return false;
+    const timestamp = parseInt(lastValidated, 10);
+    return Date.now() - timestamp < SESSION_VALIDATION_TTL;
+  } catch {
+    return false;
+  }
+}
+
+function _markSessionAsValidated() {
+  localStorage.setItem(SESSION_VALIDATION_KEY, String(Date.now()));
+}
 
 // ── Public session API ────────────────────────────────────────────────────────
 
@@ -50,6 +71,14 @@ export async function initAuth() {
     return;
   }
 
+  // Trust cached session if validated recently (within 24 hours)
+  if (_isSessionCacheValid()) {
+    _currentUser = stored;
+    _emitAuthChange();
+    return;
+  }
+
+  // Re-validate session with Supabase if cache expired
   try {
     if (stored.type === 'client' && stored.clientId) {
       _currentUser = await getClientById(stored.clientId);
@@ -62,16 +91,25 @@ export async function initAuth() {
     _currentUser = null;
   }
 
-  if (!_currentUser) _clearSession();
+  if (!_currentUser) {
+    _clearSession();
+  } else {
+    _markSessionAsValidated();
+  }
   _emitAuthChange();
 }
 
 // ── logout ────────────────────────────────────────────────────────────────────
 
-export async function logout() {
+function _performLogout() {
   _currentUser = null;
   _clearSession();
   _emitAuthChange();
+  window.location.href = '/index.html';
+}
+
+export async function logout() {
+  showLogoutConfirm(_performLogout);
 }
 
 function _emitAuthChange() {
@@ -140,6 +178,7 @@ export async function finalizeClientLogin(phone, name = '', sessionId = null) {
   if (staffRow && staffRow.is_active !== false) {
     const staffUser = fromStaff(staffRow);
     localStorage.setItem(SESSION_KEY, JSON.stringify({ staffId: staffUser.id, type: 'staff' }));
+    _markSessionAsValidated();
     _currentUser = staffUser;
     _emitAuthChange();
     return _currentUser;
@@ -161,6 +200,7 @@ export async function finalizeClientLogin(phone, name = '', sessionId = null) {
   }
 
   localStorage.setItem(SESSION_KEY, JSON.stringify({ clientId: client.id, type: 'client' }));
+  _markSessionAsValidated();
   _currentUser = client;
   _emitAuthChange();
   return _currentUser;
@@ -179,6 +219,7 @@ export async function verifyAdminPassword(phone, password) {
 
   const staffUser = fromStaff(row);
   localStorage.setItem(SESSION_KEY, JSON.stringify({ staffId: staffUser.id, type: 'staff' }));
+  _markSessionAsValidated();
   _currentUser = staffUser;
   _emitAuthChange();
   return _currentUser;

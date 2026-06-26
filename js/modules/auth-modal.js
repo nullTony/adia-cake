@@ -301,3 +301,48 @@ function _handleSuccess(user) {
     if (_onSuccess) { const cb = _onSuccess; _onSuccess = null; cb(user); }
   }, 1200);
 }
+
+// ── Logout confirmation ───────────────────────────────────────────────────────
+
+export function showLogoutConfirm(onConfirm) {
+  function injectLogoutModal() {
+    if (document.getElementById('logoutConfirmModal')) return;
+
+    const el = document.createElement('div');
+    el.id = 'logoutConfirmModal';
+    el.className = 'logout-confirm-modal-overlay';
+    el.setAttribute('aria-modal', 'true');
+    el.setAttribute('role', 'dialog');
+    el.innerHTML = `
+      <div class="logout-confirm-modal">
+        <h3 style="margin:0 0 0.5rem; font-size:18px; font-weight:700; color:var(--text-dark);">Выйти из аккаунта?</h3>
+        <p style="color:var(--text-muted); margin:0 0 1.5rem; font-size:14px; line-height:1.5;">
+          Вы уверены что хотите выйти?
+        </p>
+        <div style="display:flex; gap:10px; justify-content:center;">
+          <button id="logoutCancelBtn" class="btn btn-outline" type="button">Отмена</button>
+          <button id="logoutConfirmBtn" class="btn btn-dark" type="button">Выйти</button>
+        </div>
+      </div>
+    </div>`;
+    document.body.appendChild(el);
+
+    document.getElementById('logoutCancelBtn').addEventListener('click', () => {
+      el.classList.remove('open');
+    });
+
+    document.getElementById('logoutConfirmBtn').addEventListener('click', () => {
+      el.classList.remove('open');
+      if (onConfirm) onConfirm();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (e.target === el && el.classList.contains('open')) {
+        el.classList.remove('open');
+      }
+    });
+  }
+
+  injectLogoutModal();
+  document.getElementById('logoutConfirmModal')?.classList.add('open');
+}
