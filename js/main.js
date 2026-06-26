@@ -36,8 +36,14 @@ document.addEventListener('DOMContentLoaded', () => {
   initBranches();
 
   getBranches().then(branches => {
-    const el = document.getElementById('heroBranchCount');
-    if (el && branches.length) el.textContent = branches.length;
+    const active = branches.filter(b => b.is_active !== false);
+    const count = active.length || branches.length;
+
+    const heroEl = document.getElementById('heroBranchCount');
+    if (heroEl && count) heroEl.textContent = count;
+
+    const benefitEl = document.getElementById('branchesCount');
+    if (benefitEl && count) benefitEl.textContent = count + ' филиала';
   });
   initScrollReveal();
   initBenefitsCounter();
