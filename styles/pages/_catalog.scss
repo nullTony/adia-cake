@@ -147,18 +147,6 @@
       border-right: none;
     }
   }
-
-  .bp-icon {
-    font-size: 28px;
-  }
-
-  .bp-stat {
-    font-size: clamp(18px, 5vw, 28px);
-  }
-
-  .bp-label {
-    font-size: 10px;
-  }
 }
 
 // Extra small phones (iPhone SE, etc) — single column like full photos
@@ -170,18 +158,6 @@
   .bp {
     padding: 14px 10px;
     gap: 4px;
-  }
-
-  .bp-icon {
-    font-size: 24px;
-  }
-
-  .bp-stat {
-    font-size: clamp(16px, 4vw, 22px);
-  }
-
-  .bp-label {
-    font-size: 9px;
   }
 }
 
