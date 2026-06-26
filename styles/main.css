@@ -4379,22 +4379,65 @@ h3 {
 
 @media (max-width: 768px) {
   .benefits {
-    padding-top: 32px;
-    padding-bottom: 32px;
+    padding: 20px 0;
   }
   .benefits-pills {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1px;
-    background: var(--border);
-    border-radius: var(--r-md);
-    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 1rem 1.25rem;
+    gap: 8px;
+    background: transparent;
+    border-radius: 0;
+    grid-template-columns: auto;
+  }
+  .benefits-pills::-webkit-scrollbar {
+    display: none;
   }
   .bp {
-    padding: 24px 16px;
-    background: var(--cream);
+    flex: 0 0 auto;
+    min-width: 80px;
+    max-width: 90px;
+    padding: 0 8px;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+    position: relative;
   }
-  .bp:not(:last-child) {
-    border-right: none;
+  .bp:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: -4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 48px;
+    background: rgba(107, 66, 38, 0.15);
+  }
+  .bp-icon {
+    font-size: 20px;
+    color: #9C6B47;
+    margin-bottom: 0;
+  }
+  .bp-stat {
+    font-size: 16px;
+    font-family: "Cormorant Garamond", serif;
+    color: #3D2010;
+    white-space: nowrap;
+  }
+  .bp-label {
+    font-size: 9px;
+    font-weight: 600;
+    color: #9C6B47;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
   }
 }
 @media (max-width: 420px) {
