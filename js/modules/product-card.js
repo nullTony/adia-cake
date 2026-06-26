@@ -40,7 +40,7 @@ export function renderProductCard(p, { showTodayBadge = true, showHitBadge = fal
 
   let badge = '';
   if (showHitBadge && p.isPopular) {
-    badge = '<a href="catalog.html?filter=popular" class="pc-badge badge-hit"><i class="ti ti-star"></i> Популярное</a>';
+    badge = '<a href="catalog.html?filter=popular" class="pc-badge badge-hit" aria-label="Популярное" title="Популярное"><i class="ti ti-star"></i></a>';
   } else if (showTodayBadge && p.isTodayShowcase) {
     badge = '<span class="pc-badge badge-today">✓ Сегодня</span>';
   }
