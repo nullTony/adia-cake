@@ -1,8 +1,11 @@
 // ================================
 //  MOBILE BOTTOM NAVIGATION
-//  Delegates to existing header buttons (cart, fav, profile).
-//  Mirrors their badges via MutationObserver.
+//  Delegates to existing header buttons (cart, fav).
+//  "Мои заказы" opens the orders panel directly.
+//  Mirrors cart/fav badges via MutationObserver.
 // ================================
+
+import { openMyOrders } from './my-orders.js';
 
 function _syncBadge(sourceId, targetId) {
   const source = document.getElementById(sourceId);
@@ -27,8 +30,8 @@ export function initMobileNav() {
     document.getElementById('favBtn')?.click();
   });
 
-  document.getElementById('mnProfile')?.addEventListener('click', () => {
-    document.getElementById('profileBtn')?.click();
+  document.getElementById('mnOrders')?.addEventListener('click', () => {
+    openMyOrders();
   });
 
   document.getElementById('mnCart')?.addEventListener('click', () => {

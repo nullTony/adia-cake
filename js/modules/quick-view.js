@@ -152,6 +152,21 @@ function _render(p) {
       </button>
     </div>`;
 
+  // Mobile ≤640px: move .qv-actions outside the scrollable info area so the cart
+  // button stays pinned at the bottom of the modal regardless of description length.
+  // appendChild moves the DOM node — IDs are preserved for _wireInfo below.
+  document.getElementById('qvMobileFooter')?.remove();
+  if (window.matchMedia('(max-width: 640px)').matches) {
+    const actionsEl = info.querySelector('.qv-actions');
+    if (actionsEl) {
+      const footer = document.createElement('div');
+      footer.id        = 'qvMobileFooter';
+      footer.className = 'qv-footer';
+      document.querySelector('.qv-modal').appendChild(footer);
+      footer.appendChild(actionsEl);
+    }
+  }
+
   _wireInfo(p, isWeight);
 }
 

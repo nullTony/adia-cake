@@ -34,8 +34,10 @@
   transition: transform var(--ease);
   box-shadow: var(--shadow-l);
 
-  &.open { transform: translateX(0); }
 }
+
+// JS adds .open to .mo-overlay (the wrapper), not .mo-panel directly
+.mo-overlay.open .mo-panel { transform: translateX(0); }
 
 // ---- Header ----
 

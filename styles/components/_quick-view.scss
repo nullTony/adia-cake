@@ -237,6 +237,96 @@
   margin-top: auto;
 }
 
+// ---- Mobile full-screen layout ≤640px ----
+// Kicks in at the same breakpoint where the modal already collapses to single-column.
+// Desktop (≥641px) is untouched.
+
+@media (max-width: 640px) {
+  // Overlay: no padding, modal sticks to bottom
+  .qv-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  // Modal: adapts to content, capped at 90dvh — short products stay compact
+  .qv-modal {
+    height: auto;
+    max-height: 90dvh;
+    border-radius: 16px 16px 0 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  // Layout: flex: 1 1 auto so it grows with content but shrinks when capped
+  .qv-layout {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  // Image: 40dvh — fixed; won't grow/shrink when modal adapts
+  .qv-img-wrap {
+    flex: 0 0 40dvh;
+    height: 40dvh;
+    min-height: 0; // override base min-height: 220px
+    border-radius: 16px 16px 0 0;
+  }
+
+  .qv-img {
+    height: 40dvh;
+    object-fit: cover;
+    object-position: center;
+    background: none;
+  }
+
+  .qv-img-placeholder {
+    height: 40dvh;
+    min-height: 0;
+  }
+
+  // Info: grows to content; when modal hits 90dvh ceiling, scrolls here only
+  .qv-info {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 16px 20px 8px;
+  }
+
+  .qv-title {
+    font-size: 19px;
+    margin-bottom: 6px;
+  }
+
+  .qv-desc {
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  .qv-controls {
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .qv-price { font-size: 20px; }
+
+  // Footer: injected by JS — cart button always pinned at bottom of modal
+  .qv-footer {
+    flex: 0 0 auto;
+    padding: 10px 20px 16px;
+    border-top: 1px solid var(--border);
+    background: var(--white);
+
+    .qv-actions {
+      margin-top: 0;
+      gap: 8px;
+    }
+  }
+}
+
 .qv-fav-btn {
   width: 100%;
   padding: 12px;
