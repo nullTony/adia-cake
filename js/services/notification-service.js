@@ -116,6 +116,17 @@ function _updateBadge() {
     // Badge on profile button
     const btn = document.getElementById('profileBtn');
     if (btn) _setBadge(btn, _unread);
+
+    // Badge on mobile nav "Мои заказы" button
+    const mnBadge = document.getElementById('mnOrdersBadge');
+    if (mnBadge) {
+      if (_unread > 0) {
+        mnBadge.textContent = _unread > 9 ? '9+' : String(_unread);
+        mnBadge.classList.remove('hidden');
+      } else {
+        mnBadge.classList.add('hidden');
+      }
+    }
   }
 }
 
