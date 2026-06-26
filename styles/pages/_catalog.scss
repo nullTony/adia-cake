@@ -94,24 +94,24 @@
 
 // ---- Responsive ----
 
-// Mobile: horizontal scroll with dividers
+// Mobile: horizontal scroll strip
 @media (max-width: 768px) {
   .benefits {
-    padding: 20px 0;
+    padding: 16px 0;
   }
 
   .benefits-pills {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    flex-wrap: nowrap;
     align-items: center;
     overflow-x: auto;
+    overflow-y: visible;
     scrollbar-width: none;
-    padding: 1rem 1.25rem;
-    gap: 8px;
-    background: transparent;
-    border-radius: 0;
-    grid-template-columns: auto; // reset grid
+    -webkit-overflow-scrolling: touch;
+    padding: 12px 20px;
+    gap: 0;
+    grid-template-columns: unset;
   }
 
   .benefits-pills::-webkit-scrollbar {
@@ -120,40 +120,56 @@
 
   .bp {
     flex: 0 0 auto;
-    min-width: 80px;
-    max-width: 90px;
-    padding: 0 8px;
+    width: 80px;
+    padding: 8px 0;
     background: transparent;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 6px;
+    gap: 4px;
     position: relative;
+    // Disable scroll-reveal on mobile — items show immediately
+    opacity: 1;
+    transform: none;
+    transition: none;
 
+    // Reset desktop border-right
+    border-right: none;
+
+    // Vertical divider after each item except last
     &:not(:last-child)::after {
       content: '';
       position: absolute;
-      right: -4px;
+      right: 0;
       top: 50%;
       transform: translateY(-50%);
       width: 1px;
-      height: 48px;
+      height: 40px;
       background: rgba(107, 66, 38, 0.15);
     }
+  }
+
+  // Keep visible class working if JS adds it
+  .bp.visible {
+    opacity: 1;
+    transform: none;
   }
 
   .bp-icon {
     font-size: 20px;
     color: #9C6B47;
-    margin-bottom: 0;
+    line-height: 1;
+    margin-bottom: 2px;
   }
 
   .bp-stat {
-    font-size: 16px;
+    font-size: 15px;
     font-family: 'Cormorant Garamond', serif;
+    font-weight: 700;
     color: #3D2010;
     white-space: nowrap;
+    line-height: 1;
   }
 
   .bp-label {
@@ -163,6 +179,7 @@
     letter-spacing: 0.05em;
     text-transform: uppercase;
     white-space: nowrap;
+    line-height: 1.2;
   }
 }
 
