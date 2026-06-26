@@ -120,35 +120,68 @@
   }
 }
 
-// Mobile narrow: stack to single column horizontal scroll
+// Mobile narrow: 2-column grid like photo gallery (no scroll)
 @media (max-width: 420px) {
+  .benefits {
+    padding-top: 28px;
+    padding-bottom: 28px;
+  }
+
   .benefits-pills {
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
-    gap: 0;
-    background: transparent;
-    border-radius: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-radius: var(--r-md);
+    overflow: hidden;
   }
 
   .bp {
-    flex: 0 0 68vw;
-    scroll-snap-align: start;
-    border-right: 1px solid var(--border);
-    border-radius: 0;
+    padding: 16px 12px;
+    gap: 6px;
     background: var(--cream);
+    border-right: none;
+    border-radius: 0;
 
-    &:last-child { border-right: none; }
+    &:not(:last-child) {
+      border-right: none;
+    }
+  }
 
+  .bp-icon {
+    font-size: 24px;
+  }
+
+  .bp-stat {
+    font-size: clamp(16px, 4vw, 24px);
+  }
+
+  .bp-label {
+    font-size: 8px;
   }
 }
 
-// Extra small phones: reduce benefits pill width for better visibility
-@media (max-width: 390px) {
+// Extra small phones (iPhone SE, etc) — single column like full photos
+@media (max-width: 360px) {
+  .benefits-pills {
+    grid-template-columns: 1fr;
+  }
+
   .bp {
-    flex: 0 0 60vw;
+    padding: 14px 10px;
+    gap: 4px;
+  }
+
+  .bp-icon {
+    font-size: 20px;
+  }
+
+  .bp-stat {
+    font-size: clamp(14px, 3.5vw, 20px);
+  }
+
+  .bp-label {
+    font-size: 7px;
   }
 }
 
