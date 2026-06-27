@@ -3,6 +3,15 @@
    Standalone: does NOT depend on main.css
    ================================ */
 
+/* Override Tabler's missing font-display — prevents invisible text while CDN font loads */
+@font-face {
+  font-family: "tabler-icons";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/fonts/tabler-icons.woff2") format("woff2");
+}
+
 /* ---- Variables ---- */
 :root {
   --a-bg:           #F7F8FA;

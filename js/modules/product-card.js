@@ -35,7 +35,7 @@ export function formatPrice(price) {
  */
 export function renderProductCard(p, { showTodayBadge = true, showHitBadge = false, hideDescription = false } = {}) {
   const img = p.photo
-    ? `<img src="${esc(p.photo)}" alt="${esc(p.title)}" loading="lazy">`
+    ? `<img src="${esc(p.photo)}" alt="${esc(p.title)}" loading="lazy" decoding="async">`
     : '';
 
   let badge = '';
