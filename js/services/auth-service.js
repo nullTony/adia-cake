@@ -184,16 +184,18 @@ export async function finalizeClientLogin(phone, name = '', sessionId = null) {
     return _currentUser;
   }
 
-  // Pull telegram_chat_id from the completed session
+  // Pull telegram_chat_id and client_name from the completed session
   let telegramChatId = null;
+  let sessionName    = '';
   if (sessionId) {
-    const session = await getAuthSession(sessionId).catch(() => null);
+    const session  = await getAuthSession(sessionId).catch(() => null);
     telegramChatId = session?.telegram_chat_id ? String(session.telegram_chat_id) : null;
+    sessionName    = session?.client_name       || '';
   }
 
   let client = await getClientByPhone(phone);
   if (!client) {
-    client = await createClient({ phone, name: name || 'Пользователь', telegramChatId });
+    client = await createClient({ phone, name: sessionName || 'Пользователь', telegramChatId });
   } else if (telegramChatId && !client.telegramId) {
     updateClient(client.id, { telegramChatId }).catch(() => {});
     client = { ...client, telegramId: telegramChatId };

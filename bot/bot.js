@@ -84,9 +84,10 @@ bot.onText(/\/start/, async (msg) => {
 // ── Contact received — match phone → send confirm button ─────────────────────
 
 bot.on('contact', async (msg) => {
-  const chatId   = msg.chat.id;
-  const username = msg.chat.username || null;
-  const tgPhone  = normalizePhone(msg.contact.phone_number);
+  const chatId      = msg.chat.id;
+  const username    = msg.chat.username || null;
+  const tgPhone     = normalizePhone(msg.contact.phone_number);
+  const clientName  = [msg.contact.first_name, msg.contact.last_name].filter(Boolean).join(' ') || null;
 
   try {
     const now      = new Date().toISOString();
@@ -110,6 +111,7 @@ bot.on('contact', async (msg) => {
         status:            'phone_matched',
         telegram_chat_id:  String(chatId),
         telegram_username: username,
+        client_name:       clientName,
       }),
     });
 

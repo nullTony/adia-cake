@@ -61,14 +61,6 @@ function injectModal() {
           <p class="auth-modal__sub">Мы отправили запрос подтверждения в ваш Telegram.<br>Нажмите «Войти» в боте 👆</p>
         </div>
 
-        <!-- Name field — new users only -->
-        <div class="auth-name-wrap auth-step--hidden" id="authNameWrap">
-          <div class="auth-field">
-            <input id="authName" class="auth-input" type="text"
-                   placeholder="Ваше имя" maxlength="60" autocomplete="name">
-          </div>
-        </div>
-
         <p class="auth-tg-hint">Ожидание подтверждения…</p>
         <div class="auth-error" id="authTgError"></div>
         <button type="button" class="auth-link" id="authBackToPhone">← Изменить номер</button>
@@ -131,7 +123,6 @@ export function openAuthModal({ onSuccess } = {}) {
   _initPhone();
   _showStep('entry');
   document.getElementById('authPassword').value = '';
-  document.getElementById('authName').value     = '';
   _clearErrors();
   document.getElementById('authModal').classList.add('open');
   setTimeout(() => {
@@ -176,9 +167,8 @@ async function _runPoll(signal, sessionId, phone) {
   if (result === 'aborted') return;
 
   if (result === 'confirmed') {
-    const name = document.getElementById('authName')?.value.trim() || '';
     try {
-      const user = await finalizeClientLogin(phone, name, sessionId);
+      const user = await finalizeClientLogin(phone, '', sessionId);
       _handleSuccess(user);
     } catch (err) {
       _setError('authTgError', err.message || 'Ошибка входа. Попробуйте позже.');
@@ -227,11 +217,8 @@ function _bindModal(backdrop) {
         .classList.toggle('auth-step--hidden', isReturning);
       document.getElementById('authTgReturning')
         .classList.toggle('auth-step--hidden', !isReturning);
-      document.getElementById('authNameWrap')
-        .classList.toggle('auth-step--hidden', role !== 'new');
 
       _showStep('tg');
-      if (role === 'new') setTimeout(() => document.getElementById('authName').focus(), 80);
 
       // Kick off background poll
       _abortPoll();
