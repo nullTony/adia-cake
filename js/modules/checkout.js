@@ -152,6 +152,10 @@ async function renderForm() {
         После отправки заказа администратор проверит наличие и свяжется с вами для подтверждения.
       </p>
 
+      <p class="co-payment-notice">
+        ⚠️ Оплата — только после подтверждения заказа менеджером (после проверки наличия товаров).
+      </p>
+
       <div class="co-error" id="coFormError" style="margin-bottom:12px;text-align:center"></div>
 
       <button type="submit" class="btn btn-dark co-submit" id="coSubmit">Отправить заказ</button>

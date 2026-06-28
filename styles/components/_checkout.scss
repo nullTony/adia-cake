@@ -219,8 +219,20 @@
   font-size: 12px;
   color: var(--text-muted);
   line-height: 1.5;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
   text-align: center;
+}
+
+.co-payment-notice {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--powder-active);
+  line-height: 1.5;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: rgba(232, 80, 106, 0.08);
+  border-left: 3px solid var(--powder-active);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
 }
 
 // ---- Submit button ----

@@ -211,14 +211,30 @@ export async function confirmPendingItems(orderId) {
   );
 }
 
-// Client: count in-progress orders (for mobile nav badge)
+// Client: count in-progress orders (for mobile nav badge).
+// Searches by both userId and phone to catch orders saved with user_id=null
+// (can happen on first order before session was fully stored).
 const _ACTIVE_STATUSES = 'new,confirmed,preparing,ready,awaiting_client';
-export async function countActiveOrders(userId) {
-  if (!userId) return 0;
-  const rows = await sbFetch(
-    `/${ORDERS_TBL}?user_id=eq.${encodeURIComponent(userId)}&status=in.(${_ACTIVE_STATUSES})&select=id`
-  ).catch(() => []);
-  return Array.isArray(rows) ? rows.length : 0;
+export async function countActiveOrders(userId, phone = null) {
+  if (!userId && !phone) return 0;
+  const filter = `status=in.(${_ACTIVE_STATUSES})&select=id`;
+  const seen   = new Set();
+
+  if (userId) {
+    const rows = await sbFetch(
+      `/${ORDERS_TBL}?user_id=eq.${encodeURIComponent(userId)}&${filter}`
+    ).catch(() => []);
+    (Array.isArray(rows) ? rows : []).forEach(r => seen.add(r.id));
+  }
+
+  if (phone) {
+    const rows = await sbFetch(
+      `/${ORDERS_TBL}?phone=eq.${encodeURIComponent(phone)}&${filter}`
+    ).catch(() => []);
+    (Array.isArray(rows) ? rows : []).forEach(r => seen.add(r.id));
+  }
+
+  return seen.size;
 }
 
 // Admin: update order status (cancelReason only stored when status = 'cancelled')

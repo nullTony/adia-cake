@@ -7,6 +7,7 @@
 
 import { sbFetch }             from '../api/supabase-client.js';
 import { countActiveOrders }  from '../api/orders-api.js';
+import { getCurrentUser }     from './auth-service.js';
 
 const ORDERS_TBL = 'orders';
 const POLL_MS    = 30_000;
@@ -144,7 +145,8 @@ function _updateOrdersBadge() {
 
 async function _refreshActiveOrders() {
   if (_mode !== 'client' || !_userId) return;
-  _activeOrders = await countActiveOrders(_userId);
+  const phone = getCurrentUser()?.phone || null;
+  _activeOrders = await countActiveOrders(_userId, phone);
   _updateOrdersBadge();
 }
 
