@@ -251,20 +251,52 @@ function _placePin(coords) {
 
 function _geolocate() {
   if (!_coMap) return;
-  if (!navigator.geolocation) { _showGeoError(); return; }
+  if (!navigator.geolocation) {
+    _showGeoError('Геолокация не поддерживается вашим браузером');
+    return;
+  }
 
-  navigator.geolocation.getCurrentPosition(
-    pos => {
-      const coords = [pos.coords.latitude, pos.coords.longitude];
-      _coMap.setCenter(coords, 16);
-      _placePin(coords);
-    },
-    () => _showGeoError(),
-    { timeout: 10_000 },
-  );
+  const btn = document.getElementById('coGeoBtn');
+  if (btn?._geoRunning) return; // block double-tap while request is in flight
+
+  const origHtml = btn?.innerHTML ?? '';
+  const _setBusy = busy => {
+    if (!btn) return;
+    btn._geoRunning = busy;
+    btn.disabled    = busy;
+    btn.innerHTML   = busy
+      ? '<i class="ti ti-current-location"></i> Определяю…'
+      : origHtml;
+  };
+
+  _setBusy(true);
+
+  const _attempt = (retrying = false) => {
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        _setBusy(false);
+        const coords = [pos.coords.latitude, pos.coords.longitude];
+        _coMap.setCenter(coords, 16);
+        _placePin(coords);
+      },
+      err => {
+        // Timeout (code 3) — auto-retry once without high accuracy
+        if (err.code === 3 && !retrying) { _attempt(true); return; }
+        _setBusy(false);
+        _showGeoError(
+          err.code === 1
+            ? 'Доступ к геолокации запрещён — разрешите в настройках браузера'
+            : 'Не удалось определить местоположение — укажите точку на карте вручную'
+        );
+      },
+      { enableHighAccuracy: !retrying, timeout: 15_000, maximumAge: 60_000 },
+    );
+  };
+
+  _attempt();
 }
 
-function _showGeoError() {
+function _showGeoError(message = 'Не удалось определить местоположение — укажите точку на карте вручную') {
   const mapErr = document.getElementById('coMapErr');
   if (!mapErr) return;
   let msg = document.getElementById('coGeoMsg');
@@ -274,7 +306,7 @@ function _showGeoError() {
     msg.style.cssText = 'font-size:12px;color:var(--text-muted);margin:2px 0 0;line-height:1.4';
     mapErr.after(msg);
   }
-  msg.textContent = 'Не удалось определить местоположение — укажите точку на карте вручную';
+  msg.textContent = message;
   clearTimeout(msg._t);
   msg._t = setTimeout(() => { if (msg.parentNode) msg.remove(); }, 6000);
 }
@@ -371,6 +403,7 @@ async function handleSubmit(e) {
     updateCartBadge();
     renderCartPanel();
     showSuccess(order);
+    window.dispatchEvent(new CustomEvent('adia:order-created', { detail: { orderId: order.id } }));
 
     if (user?.telegramId) {
       _sendTelegramOrderNotification(user.telegramId, order, cart).catch(() => {});

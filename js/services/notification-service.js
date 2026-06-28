@@ -5,7 +5,8 @@
 //  Client: order status changes → badge on profileBtn
 // ================================
 
-import { sbFetch } from '../api/supabase-client.js';
+import { sbFetch }             from '../api/supabase-client.js';
+import { countActiveOrders }  from '../api/orders-api.js';
 
 const ORDERS_TBL = 'orders';
 const POLL_MS    = 30_000;
@@ -18,11 +19,12 @@ const CLIENT_NOTIFY = new Set(['awaiting_client', 'confirmed', 'preparing', 'rea
 
 // ── State ─────────────────────────────────────────────────────────────────────
 
-let _timer      = null;
-let _prevIds    = null; // null = first poll (no toasts on first load)
-let _unread     = 0;
-let _userId     = null;
-let _mode       = null; // 'admin' | 'client'
+let _timer        = null;
+let _prevIds      = null; // null = first poll (no toasts on first load)
+let _unread       = 0;
+let _activeOrders = 0;   // in-progress orders count for #mnOrdersBadge
+let _userId       = null;
+let _mode         = null; // 'admin' | 'client'
 
 // ── Storage ───────────────────────────────────────────────────────────────────
 
@@ -90,6 +92,9 @@ async function _pollClient() {
   _updateBadge();
 
   _prevIds = items.map(o => o.id + ':' + o.status);
+
+  // Refresh active-orders badge in parallel (non-blocking)
+  _refreshActiveOrders();
 }
 
 function _clientMsg(o) {
@@ -113,21 +118,34 @@ function _updateBadge() {
       _setBadge(link, _unread);
     });
   } else {
-    // Badge on profile button
+    // Badge on profile button (unread notifications)
     const btn = document.getElementById('profileBtn');
     if (btn) _setBadge(btn, _unread);
-
-    // Badge on mobile nav "Мои заказы" button
-    const mnBadge = document.getElementById('mnOrdersBadge');
-    if (mnBadge) {
-      if (_unread > 0) {
-        mnBadge.textContent = _unread > 9 ? '9+' : String(_unread);
-        mnBadge.classList.remove('hidden');
-      } else {
-        mnBadge.classList.add('hidden');
-      }
-    }
   }
+}
+
+function _updateOrdersBadge() {
+  const count   = _activeOrders;
+  const display = count > 99 ? '99+' : String(count);
+
+  const mnBadge = document.getElementById('mnOrdersBadge');
+  if (mnBadge) {
+    mnBadge.textContent = display;
+    mnBadge.classList.toggle('hidden', count === 0);
+  }
+
+  // Burger menu / desktop "Мои заказы" badge if present
+  const menuBadge = document.querySelector('.orders-active-badge');
+  if (menuBadge) {
+    menuBadge.textContent = display;
+    menuBadge.toggleAttribute('hidden', count === 0);
+  }
+}
+
+async function _refreshActiveOrders() {
+  if (_mode !== 'client' || !_userId) return;
+  _activeOrders = await countActiveOrders(_userId);
+  _updateOrdersBadge();
 }
 
 function _setBadge(el, count) {
@@ -237,6 +255,7 @@ export function initClientNotifications(userId) {
   _userId = userId;
   if (_timer) clearInterval(_timer);
   _pollClient();
+  _refreshActiveOrders();
   _timer = setInterval(_pollClient, POLL_MS);
 }
 
@@ -244,3 +263,16 @@ export function stopNotifications() {
   if (_timer) clearInterval(_timer);
   _timer = null;
 }
+
+// Clear orders badge on logout; refresh on new order placed
+window.addEventListener('adia:auth-change', e => {
+  const user = e.detail?.user;
+  if (!user || user.type !== 'client') {
+    _activeOrders = 0;
+    _updateOrdersBadge();
+  }
+});
+
+window.addEventListener('adia:order-created', () => {
+  if (_mode === 'client') _refreshActiveOrders();
+});

@@ -211,6 +211,16 @@ export async function confirmPendingItems(orderId) {
   );
 }
 
+// Client: count in-progress orders (for mobile nav badge)
+const _ACTIVE_STATUSES = 'new,confirmed,preparing,ready,awaiting_client';
+export async function countActiveOrders(userId) {
+  if (!userId) return 0;
+  const rows = await sbFetch(
+    `/${ORDERS_TBL}?user_id=eq.${encodeURIComponent(userId)}&status=in.(${_ACTIVE_STATUSES})&select=id`
+  ).catch(() => []);
+  return Array.isArray(rows) ? rows.length : 0;
+}
+
 // Admin: update order status (cancelReason only stored when status = 'cancelled')
 export async function updateOrderStatus(id, status, cancelReason = null) {
   const payload = { status, updated_at: new Date().toISOString() };
