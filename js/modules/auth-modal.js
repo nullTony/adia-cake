@@ -39,6 +39,10 @@ function injectModal() {
         <p class="auth-modal__sub">Введите номер телефона</p>
         <div class="auth-field" id="phoneInputMount"></div>
         <input id="authPhone" type="hidden">
+        <div class="auth-field auth-step--hidden" id="authNameWrap">
+          <input id="authName" class="auth-input" type="text"
+                 placeholder="Ваше имя" autocomplete="name">
+        </div>
         <div class="auth-error" id="authEntryError"></div>
         <button type="button" class="auth-btn" id="authPhoneNext" data-label="Продолжить">Продолжить</button>
       </div>
@@ -123,6 +127,8 @@ export function openAuthModal({ onSuccess } = {}) {
   _initPhone();
   _showStep('entry');
   document.getElementById('authPassword').value = '';
+  document.getElementById('authName').value = '';
+  document.getElementById('authNameWrap').classList.add('auth-step--hidden');
   _clearErrors();
   document.getElementById('authModal').classList.add('open');
   setTimeout(() => {
@@ -168,7 +174,8 @@ async function _runPoll(signal, sessionId, phone) {
 
   if (result === 'confirmed') {
     try {
-      const user = await finalizeClientLogin(phone, '', sessionId);
+      const name = document.getElementById('authName')?.value.trim() || '';
+      const user = await finalizeClientLogin(phone, name, sessionId);
       _handleSuccess(user);
     } catch (err) {
       _setError('authTgError', err.message || 'Ошибка входа. Попробуйте позже.');
@@ -198,6 +205,16 @@ function _bindModal(backdrop) {
       return;
     }
 
+    // If name field is visible, validate it before proceeding
+    const nameWrap  = document.getElementById('authNameWrap');
+    const nameInput = document.getElementById('authName');
+    const nameShown = !nameWrap.classList.contains('auth-step--hidden');
+    if (nameShown && !nameInput.value.trim()) {
+      _setError('authEntryError', 'Введите ваше имя');
+      nameInput.focus();
+      return;
+    }
+
     _setLoading('authPhoneNext', true);
     try {
       const { role } = await checkPhone(phone);
@@ -207,6 +224,13 @@ function _bindModal(backdrop) {
       if (role === 'admin') {
         _showStep('password');
         setTimeout(() => document.getElementById('authPassword').focus(), 80);
+        return;
+      }
+
+      // New user: show name field on first click, proceed on second click
+      if (role === 'new' && !nameShown) {
+        nameWrap.classList.remove('auth-step--hidden');
+        setTimeout(() => nameInput.focus(), 80);
         return;
       }
 

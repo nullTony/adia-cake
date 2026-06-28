@@ -177,7 +177,7 @@ export async function finalizeClientLogin(phone, name = '', sessionId = null) {
   const staffRow = await getStaffByPhoneWithPassword(phone).catch(() => null);
   if (staffRow && staffRow.is_active !== false) {
     const staffUser = fromStaff(staffRow);
-    localStorage.setItem(SESSION_KEY, JSON.stringify({ staffId: staffUser.id, type: 'staff' }));
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ ...staffUser, staffId: staffUser.id, type: 'staff' }));
     _markSessionAsValidated();
     _currentUser = staffUser;
     _emitAuthChange();
@@ -195,13 +195,15 @@ export async function finalizeClientLogin(phone, name = '', sessionId = null) {
 
   let client = await getClientByPhone(phone);
   if (!client) {
-    client = await createClient({ phone, name: sessionName || 'Пользователь', telegramChatId });
+    // Prefer name entered in modal, fallback to Telegram contact name from bot
+    client = await createClient({ phone, name: name || sessionName || 'Пользователь', telegramChatId });
   } else if (telegramChatId && !client.telegramId) {
     updateClient(client.id, { telegramChatId }).catch(() => {});
     client = { ...client, telegramId: telegramChatId };
   }
 
-  localStorage.setItem(SESSION_KEY, JSON.stringify({ clientId: client.id, type: 'client' }));
+  // Store full user object so initAuth can restore name/phone/id without a DB call
+  localStorage.setItem(SESSION_KEY, JSON.stringify({ ...client, clientId: client.id, type: 'client' }));
   _markSessionAsValidated();
   _currentUser = client;
   _emitAuthChange();
@@ -220,7 +222,7 @@ export async function verifyAdminPassword(phone, password) {
   if (!valid) throw new Error('Неверный пароль');
 
   const staffUser = fromStaff(row);
-  localStorage.setItem(SESSION_KEY, JSON.stringify({ staffId: staffUser.id, type: 'staff' }));
+  localStorage.setItem(SESSION_KEY, JSON.stringify({ ...staffUser, staffId: staffUser.id, type: 'staff' }));
   _markSessionAsValidated();
   _currentUser = staffUser;
   _emitAuthChange();
