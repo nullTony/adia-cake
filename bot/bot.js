@@ -16,7 +16,7 @@
 
 const TelegramBot = require('node-telegram-bot-api');
 
-const BOT_TOKEN    = '8710399027:AAF-m99Ksqg61HmRanMDz_MGCBZM2RqXwzk';
+const BOT_TOKEN    = '8710399027:AAGV8C-5Vgz02Y_wOuctPQPgu96DfGD47Ek';
 const SB_URL       = 'https://orfxopppqqvwueoatasu.supabase.co';
 const SB_ANON_KEY  = 'sb_publishable_XnmVOsqn1xIn-kpdSAaMmw_4V4zVkf5';
 const SESSIONS_TBL = 'auth_sessions';

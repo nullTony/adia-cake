@@ -29,4 +29,8 @@ export const API_CONFIG = {
     API_KEY:  '00874767068958e2bdb1574cd77ed26c',
     BASE_URL: 'https://api.imgbb.com/1/upload',
   },
+
+  YANDEX: {
+    MAPS_API_KEY: '7ddc7ff6-4a3a-46f7-8110-146adb428fe3',
+  },
 };

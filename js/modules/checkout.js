@@ -14,6 +14,22 @@ import { getSelectedBranch }                from '../store/branch-store.js';
 import { initPhoneInput, handlePhoneInput, getPhoneValue } from '../utils/phone-input.js';
 import { notifyManagerNewOrder }                          from '../services/manager-notification-service.js';
 import { esc, formatPrice }                              from '../utils/format.js';
+import { loadYandexMaps }                               from '../utils/yandex-maps.js';
+
+// ── Map state — reset each time the form is rendered ─────────────────────────
+
+let _deliveryLat = null;
+let _deliveryLng = null;
+let _coMap       = null;  // ymaps.Map instance
+let _coPl        = null;  // ymaps.Placemark instance
+
+function _resetMapState() {
+  if (_coMap) { try { _coMap.destroy(); } catch {} }
+  _coMap       = null;
+  _coPl        = null;
+  _deliveryLat = null;
+  _deliveryLng = null;
+}
 
 // ── Overlay control ───────────────────────────────────────────────────────────
 
@@ -51,6 +67,8 @@ function buildSummary(cart) {
 // ── Render form ───────────────────────────────────────────────────────────────
 
 async function renderForm() {
+  _resetMapState();
+
   const body = document.getElementById('checkoutBody');
   if (!body) return;
 
@@ -99,9 +117,20 @@ async function renderForm() {
       </div>
 
       <div class="co-field" id="coDeliveryField" hidden>
-        <label class="co-label" for="coAddress">Адрес доставки *</label>
-        <input class="co-input" type="text" id="coAddress" placeholder="Улица, дом, квартира" autocomplete="street-address">
-        <span class="co-error" id="coAddressErr">Введите адрес доставки</span>
+        <label class="co-label">Точка доставки на карте *</label>
+        <div class="co-map-wrap">
+          <div id="coMap" class="co-map"></div>
+          <button type="button" class="co-geo-btn" id="coGeoBtn" title="Определить моё местоположение">
+            <i class="ti ti-current-location"></i>
+          </button>
+        </div>
+        <span class="co-error" id="coMapErr">Укажите точку доставки на карте</span>
+        <label class="co-label" for="coAddress" style="margin-top:10px">
+          Адрес <span style="font-weight:400;color:var(--text-light)">(подъезд, этаж, кв.)</span>
+        </label>
+        <input class="co-input" type="text" id="coAddress"
+          placeholder="Заполнится с карты, можно дополнить"
+          autocomplete="off">
       </div>
 
       <div class="co-field" id="coPickupField" hidden>
@@ -129,9 +158,15 @@ async function renderForm() {
 
   // Delivery-type toggle
   body.querySelectorAll('input[name="coDeliveryType"]').forEach(radio => {
-    radio.addEventListener('change', () => {
-      document.getElementById('coDeliveryField').hidden = radio.value !== 'delivery';
+    radio.addEventListener('change', async () => {
+      const isDelivery = radio.value === 'delivery';
+      document.getElementById('coDeliveryField').hidden = !isDelivery;
       document.getElementById('coPickupField').hidden   = radio.value !== 'pickup';
+      if (isDelivery) {
+        // Let the browser render the container before init
+        await new Promise(r => requestAnimationFrame(r));
+        _initDeliveryMap().catch(err => console.warn('[checkout] map init failed:', err));
+      }
     });
   });
 
@@ -151,6 +186,73 @@ function _prefillUserData() {
   if (phoneEl) initPhoneInput(phoneEl, user?.phone || null);
   const nameEl  = document.getElementById('coName');
   if (nameEl && user?.name) nameEl.value = user.name;
+}
+
+// ── Yandex Maps — delivery map ────────────────────────────────────────────────
+
+const TASHKENT = [41.2995, 69.2401];
+
+async function _initDeliveryMap() {
+  if (_coMap) {
+    // Already initialised — just refresh size (e.g. after tab switch)
+    try { _coMap.container.fitToViewport(); } catch {}
+    return;
+  }
+
+  const container = document.getElementById('coMap');
+  if (!container) return;
+
+  const ymaps = await loadYandexMaps();
+
+  const branch = getSelectedBranch();
+  const center = TASHKENT; // Tashkent; branch coords not stored on client
+
+  _coMap = new ymaps.Map(container, { center, zoom: 13, controls: ['zoomControl'] });
+
+  _coPl = new ymaps.Placemark(center, {}, { preset: 'islands#redDotIcon', draggable: true });
+  _coMap.geoObjects.add(_coPl);
+  _deliveryLat = center[0];
+  _deliveryLng = center[1];
+
+  _coMap.events.add('click', async e => {
+    const coords = e.get('coords');
+    _coPl.geometry.setCoordinates(coords);
+    await _reverseGeocode(ymaps, coords);
+  });
+
+  _coPl.events.add('dragend', async () => {
+    await _reverseGeocode(ymaps, _coPl.geometry.getCoordinates());
+  });
+
+  document.getElementById('coGeoBtn')?.addEventListener('click', () => _geolocate(ymaps));
+}
+
+async function _reverseGeocode(ymaps, coords) {
+  _deliveryLat = coords[0];
+  _deliveryLng = coords[1];
+  document.getElementById('coMapErr')?.classList.remove('visible');
+  try {
+    const res = await ymaps.geocode(coords, { results: 1 });
+    const obj = res.geoObjects.get(0);
+    if (obj) {
+      const el = document.getElementById('coAddress');
+      if (el) el.value = obj.getAddressLine();
+    }
+  } catch {}
+}
+
+async function _geolocate(ymaps) {
+  if (!_coMap) return;
+  try {
+    const loc = await ymaps.geolocation.get({ provider: 'browser', mapStateAutoApply: false });
+    const coords = loc.geoObjects.get(0)?.geometry?.getCoordinates();
+    if (!coords) return;
+    _coMap.setCenter(coords, 16);
+    _coPl.geometry.setCoordinates(coords);
+    await _reverseGeocode(ymaps, coords);
+  } catch (e) {
+    console.warn('[checkout] geolocation failed:', e);
+  }
 }
 
 // ── Validation ────────────────────────────────────────────────────────────────
@@ -176,11 +278,13 @@ function validateForm() {
   const typeEl = document.querySelector('input[name="coDeliveryType"]:checked');
   const typeOk = !!typeEl;
   document.getElementById('coTypeErr')?.classList.toggle('visible', !typeOk);
-  if (!typeOk) { ok = false; }
-  else if (typeEl.value === 'delivery') {
-    const addr = document.getElementById('coAddress')?.value.trim();
-    setFieldError('coAddress', 'coAddressErr', !addr);
-    if (!addr) ok = false;
+  if (!typeOk) {
+    ok = false;
+  } else if (typeEl.value === 'delivery') {
+    // Require marker to be placed (lat/lng set)
+    const hasPin = _deliveryLat !== null && _deliveryLng !== null;
+    document.getElementById('coMapErr')?.classList.toggle('visible', !hasPin);
+    if (!hasPin) ok = false;
   }
 
   return ok;
@@ -206,7 +310,7 @@ async function handleSubmit(e) {
     const phone     = getPhoneValue(document.getElementById('coPhone'));
     const typeEl    = document.querySelector('input[name="coDeliveryType"]:checked');
     const type      = typeEl.value;
-    const address        = type === 'delivery' ? document.getElementById('coAddress').value.trim() : null;
+    const address        = type === 'delivery' ? document.getElementById('coAddress').value.trim() || null : null;
     const selectedBranch = getSelectedBranch();
     const branchId       = selectedBranch?.id || null;
     const comment        = document.getElementById('coComment').value.trim() || null;
@@ -218,6 +322,8 @@ async function handleSubmit(e) {
       phone,
       deliveryType:         type,
       deliveryAddress:      address,
+      deliveryLat:          type === 'delivery' ? _deliveryLat : null,
+      deliveryLng:          type === 'delivery' ? _deliveryLng : null,
       branchId:             branchId ? String(branchId) : null,
       branchName:           selectedBranch?.name || null,
       comment,
@@ -229,7 +335,7 @@ async function handleSubmit(e) {
     await Promise.all(cart.map(item =>
       createOrderItem({
         orderId:              order.id,
-        productId:            item.productId || item.id, // weight items carry base productId
+        productId:            item.productId || item.id,
         productTitleSnapshot: item.name,
         productPriceSnapshot: item.priceVal,
         requestedQty:         item.qty,
@@ -242,11 +348,9 @@ async function handleSubmit(e) {
     renderCartPanel();
     showSuccess(order);
 
-    // Fire-and-forget: notify customer if linked to Telegram
     if (user?.telegramId) {
       _sendTelegramOrderNotification(user.telegramId, order, cart).catch(() => {});
     }
-    // Fire-and-forget: notify branch manager
     notifyManagerNewOrder(order).catch(() => {});
 
   } catch (err) {
@@ -333,7 +437,6 @@ export function initCheckout() {
 
   ensureCheckoutModal();
 
-  // Delegation — works for any button with data-checkout-open, static or dynamic
   document.addEventListener('click', e => {
     if (!e.target.closest('[data-checkout-open]')) return;
     if (!getCart().length) return;

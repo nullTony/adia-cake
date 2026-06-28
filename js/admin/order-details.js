@@ -6,6 +6,7 @@ import { logout, getSession }              from './auth.js';
 import { initRbac }                       from './rbac.js';
 import { getOrderById, getOrderItems }     from '../api/orders-api.js';
 import { formatPrice, formatDate, esc }   from '../utils/format.js';
+import { loadYandexMaps }                 from '../utils/yandex-maps.js';
 
 initRbac('orders');
 
@@ -44,9 +45,27 @@ const DELIVERY_LABEL = { delivery: '🚚 Доставка', pickup: '🏪 Сам
 function renderOrder(order, items) {
   const pickup = order.deliveryType === 'pickup';
   const branchDisplay = order.branchName || order.branchId || '—';
+  const hasCoords = !pickup && order.deliveryLat != null && order.deliveryLng != null;
+  const ymapsLink = hasCoords
+    ? `https://yandex.ru/maps/?pt=${order.deliveryLng},${order.deliveryLat}&z=17&l=map`
+    : null;
+
   const locationRow = pickup
     ? `<div class="a-detail-row"><span class="a-detail-label">Филиал</span><span>${esc(branchDisplay)}</span></div>`
-    : `<div class="a-detail-row"><span class="a-detail-label">Адрес доставки</span><span>${esc(order.deliveryAddress || '—')}</span></div>`;
+    : `
+      <div class="a-detail-row"><span class="a-detail-label">Адрес доставки</span><span>${esc(order.deliveryAddress || '—')}</span></div>
+      ${hasCoords ? `
+      <div class="a-detail-row" style="align-items:flex-start">
+        <span class="a-detail-label">На карте</span>
+        <div style="flex:1;min-width:0">
+          <div id="odMap" style="width:100%;height:200px;border-radius:8px;overflow:hidden;margin-bottom:8px;border:1px solid var(--a-border)"></div>
+          <a href="${ymapsLink}" target="_blank" rel="noopener noreferrer"
+             style="font-size:12px;color:var(--a-accent);text-decoration:none;display:inline-flex;align-items:center;gap:4px">
+            <i class="ti ti-map-2" style="font-size:14px"></i> Открыть в Яндекс.Картах
+          </a>
+        </div>
+      </div>` : ''}
+    `;
 
   // Total: show confirmed if differs from requested
   const hasConfirmed = order.totalConfirmedAmount > 0 &&
@@ -143,6 +162,19 @@ const session = getSession();
 const userEl  = document.getElementById('adminUser');
 if (userEl && session) userEl.textContent = session.full_name || session.role;
 
+// ── Admin delivery map (read-only) ────────────────────────────────────────────
+
+async function _initAdminMap(lat, lng) {
+  const container = document.getElementById('odMap');
+  if (!container) return;
+  const ymaps = await loadYandexMaps();
+  const map = new ymaps.Map(container, { center: [lat, lng], zoom: 16, controls: [] }, {
+    suppressMapOpenBlock: true,
+  });
+  map.behaviors.disable(['drag', 'scrollZoom', 'dblClickZoom', 'multiTouch', 'rightMouseButtonMagnifier']);
+  map.geoObjects.add(new ymaps.Placemark([lat, lng], {}, { preset: 'islands#redDotIcon' }));
+}
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 async function init() {
@@ -172,6 +204,10 @@ async function init() {
     if (titleEl) titleEl.textContent = `Заказ #${displayNum}`;
     document.title = `Заказ #${displayNum} — ADIA Cake Admin`;
     if (contentEl) contentEl.innerHTML = renderOrder(order, items);
+
+    if (order.deliveryType === 'delivery' && order.deliveryLat != null && order.deliveryLng != null) {
+      _initAdminMap(order.deliveryLat, order.deliveryLng).catch(() => {});
+    }
 
   } catch (err) {
     if (contentEl) contentEl.innerHTML = `
