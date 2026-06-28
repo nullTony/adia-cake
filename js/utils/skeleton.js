@@ -4,12 +4,24 @@
 //  Skeleton is replaced automatically when real data renders.
 // ================================
 
-// Product card skeleton — matches real .product-card DOM structure
-export function createProductSkeletons(count = 6) {
+// Product card skeleton — mirrors real .product-card DOM structure exactly.
+// Pass { description: false } when the real cards hide the description row
+// (featured section, catalog) so the skeleton body height stays in sync.
+export function createProductSkeletons(count = 6, { description = true } = {}) {
+  const descLine = description
+    ? '<div class="sk-desc skeleton"></div>'
+    : '';
   return Array.from({ length: count }, (_, i) => `
     <div class="product-card skeleton" style="--i:${i}">
       <div class="pc-img"></div>
-      <div class="pc-body"></div>
+      <div class="pc-body">
+        <div class="sk-name skeleton"></div>
+        ${descLine}
+        <div class="sk-foot">
+          <div class="sk-price skeleton"></div>
+          <div class="sk-btn skeleton"></div>
+        </div>
+      </div>
     </div>
   `).join('');
 }

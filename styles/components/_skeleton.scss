@@ -74,6 +74,11 @@
 // ---- Product card skeleton ----
 // Mirrors the exact geometry of .product-card so the layout shift on
 // reveal is zero: same aspect-ratio image area, same body padding/gaps.
+//
+// Body structure mirrors real .pc-body children:
+//   .sk-name  → .pc-name  (font-size * line-height height, matching margin-bottom)
+//   .sk-desc  → .pc-desc  (2-line clamp height, matching margin-bottom) — optional
+//   .sk-foot  → .pc-foot  (flex row: price bar + 44px circle button)
 
 .product-card.skeleton {
   // Suppress hover lift — skeleton shouldn't respond to pointer
@@ -99,55 +104,59 @@
     .pc-ph { opacity: 0; }
   }
 
+  // Body padding exactly matches real .pc-body { padding: 18px 20px 20px }
   .pc-body {
-    padding: 14px 16px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    padding: 18px 20px 20px;
 
-    // Title line — ~60% width to feel like a real product name
-    &::before {
-      content: '';
-      display: block;
-      height: 20px;
-      width: 60%;
-      border-radius: var(--r-sm);
-      background: linear-gradient(
-        90deg,
-        var(--beige)   25%,
-        var(--caramel) 50%,
-        var(--beige)   75%
-      );
-      background-size: 800px 100%;
-      animation: skeleton-shimmer 1.6s linear infinite;
-    }
-
-    // Description line — ~85% width
-    &::after {
-      content: '';
-      display: block;
-      height: 12px;
-      width: 85%;
-      border-radius: var(--r-sm);
-      background: linear-gradient(
-        90deg,
-        var(--beige)   25%,
-        var(--caramel) 50%,
-        var(--beige)   75%
-      );
-      background-size: 800px 100%;
-      animation: skeleton-shimmer 1.6s linear infinite;
+    // Safety: hide any real content that might leak in
+    .pc-badge,
+    .pc-fav,
+    .pc-name,
+    .pc-desc,
+    .pc-foot {
+      opacity: 0;
+      pointer-events: none;
     }
   }
 
-  // Hide real inner content — badges, fav button, price, add button
-  .pc-badge,
-  .pc-fav,
-  .pc-name,
-  .pc-desc,
-  .pc-foot {
-    opacity: 0;
-    pointer-events: none;
+  // Title bar — height mirrors pc-name line box (font-size 20px × line-height 1.3)
+  .sk-name {
+    height: 26px;
+    width: 70%;
+    margin-bottom: 6px; // mirrors .pc-name { margin-bottom: 6px }
+
+    // pc-name shrinks at ≤390px breakpoint
+    @media (max-width: 390px) {
+      height: 20px; // 15px × 1.3 line-height
+    }
+  }
+
+  // Description bar — height mirrors 2-line -webkit-line-clamp (13px × 1.55 × 2)
+  .sk-desc {
+    height: 40px;
+    width: 90%;
+    margin-bottom: 14px; // mirrors .pc-desc { margin-bottom: 14px }
+  }
+
+  // Footer row — mirrors .pc-foot { display:flex; align-items:center; space-between }
+  .sk-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  // Price bar — mirrors .pc-price { font-size: 19px }
+  .sk-price {
+    height: 19px;
+    width: 45%;
+  }
+
+  // Button circle — mirrors .pc-add { width:44px; height:44px; border-radius:50% }
+  .sk-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    flex-shrink: 0;
   }
 }
 
@@ -158,11 +167,17 @@
 // transitions/animations — this targets skeleton specifically so the
 // static fallback colour (--beige) is set correctly.
 @media (prefers-reduced-motion: reduce) {
+  // .skeleton catches .sk-name/.sk-desc/.sk-price/.sk-btn (all carry that class).
+  // .pc-img shimmer is set directly on the element, so it needs an explicit override.
   .skeleton,
-  .product-card.skeleton .pc-img,
-  .product-card.skeleton .pc-body::before,
-  .product-card.skeleton .pc-body::after {
+  .product-card.skeleton .pc-img {
     animation: none;
     background: var(--beige);
   }
+
+  // Kill photo spinner and card entrance animation
+  .pc-spinner { animation: none; }
+  .product-card:not(.skeleton) { animation: none; }
+  .pc-photo { transition: none; opacity: 1; }
+  .pc-photo.is-loaded { opacity: 1; }
 }

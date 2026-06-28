@@ -25,11 +25,26 @@ function fromSupabase(row) {
   };
 }
 
+const BRANCHES_CACHE_KEY = 'adia_branches_v1';
+const BRANCHES_CACHE_TTL = 5 * 60 * 1000; // 5 min — branches change rarely
+
 // Returns only active branches, ordered by sort_order asc.
+// Cached in localStorage to avoid a network round-trip on every page load.
 export async function getBranches() {
+  try {
+    const cached = JSON.parse(localStorage.getItem(BRANCHES_CACHE_KEY) || 'null');
+    if (cached && Date.now() - cached.ts < BRANCHES_CACHE_TTL) return cached.data;
+  } catch {}
+
   const rows = await sbFetch(
     `/${TABLE}?select=id,name,address,phone,working_hours,maps_url,map_widget_url,is_active,sort_order&is_active=eq.true&order=sort_order.asc`
   );
   if (!Array.isArray(rows)) return [];
-  return rows.map(fromSupabase);
+  const result = rows.map(fromSupabase);
+
+  try {
+    localStorage.setItem(BRANCHES_CACHE_KEY, JSON.stringify({ ts: Date.now(), data: result }));
+  } catch {}
+
+  return result;
 }

@@ -35,6 +35,11 @@ build/
 # SCSS source maps — compiled CSS is committed, maps are not needed
 styles/*.css.map
 
+# Supabase migration dumps — contain schema + data, never commit
+roles.sql
+schema.sql
+data.sql
+
 # Claude Code agent configs and plugins — local dev tooling only
 .claude/
 .claude-plugin/

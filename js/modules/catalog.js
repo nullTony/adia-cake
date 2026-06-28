@@ -6,9 +6,9 @@
 //  This module never modifies branch selection — it only reacts to it.
 // ================================
 
-import { getCategories, getCategoriesByBranch } from '../api/categories-api.js';
+import { getCategoriesByBranch } from '../api/categories-api.js';
 import { getBranchProducts }      from '../api/branch-products-api.js';
-import { renderProductCard }      from './product-card.js';
+import { renderProductCard, wireCardImages } from './product-card.js';
 import { syncAddButtons, syncWeightButtons } from './cart.js';
 import { syncFavButtons }         from './favorites.js';
 import { getSelectedBranch }      from '../store/branch-store.js';
@@ -45,7 +45,7 @@ export async function initCatalog() {
 // ── Load and render ───────────────────────────────────────────────────────────
 
 async function _loadAndRender(grid, countEl, branchId) {
-  grid.innerHTML = createProductSkeletons(12);
+  grid.innerHTML = createProductSkeletons(12, { description: false });
   if (countEl) countEl.innerHTML = '';
 
   _resetFilterState();
@@ -55,9 +55,17 @@ async function _loadAndRender(grid, countEl, branchId) {
   const urlCat    = params.get('category');
   const urlFilter = params.get('filter');
 
-  let products;
+  // Products and categories are independent — fire both in parallel.
+  // Category errors are caught individually so a categories failure never blocks the grid.
+  let products, categories;
   try {
-    products = await getBranchProducts(branchId);
+    [products, categories] = await Promise.all([
+      getBranchProducts(branchId),
+      getCategoriesByBranch(branchId).catch(e => {
+        console.error('[catalog] categories load error:', e);
+        return [];
+      }),
+    ]);
   } catch (err) {
     grid.innerHTML = `<p style="padding:40px;text-align:center;color:#E8506A">Ошибка загрузки: ${err.message}</p>`;
     return;
@@ -69,10 +77,11 @@ async function _loadAndRender(grid, countEl, branchId) {
     return;
   }
 
-  grid.innerHTML = products.map(p => renderProductCard(p, { showHitBadge: true })).join('');
+  grid.innerHTML = products.map((p, i) => renderProductCard(p, { showHitBadge: true, index: i })).join('');
   syncAddButtons();
   syncWeightButtons();
   syncFavButtons();
+  wireCardImages(grid);
 
   const cards = Array.from(grid.querySelectorAll('.product-card[data-product-id]'));
 
@@ -97,7 +106,7 @@ async function _loadAndRender(grid, countEl, branchId) {
     if (spans[1]) spans[1].textContent = (PRICE_MAX / 1000).toFixed(0) + ' 000';
   }
 
-  await _loadCategoryButtons(cards, branchId);
+  _buildCategoryButtons(cards, categories);
   _initFilters(cards, grid, PRICE_MAX, countEl, { initialCategory: urlCat, initialFilter: urlFilter });
 }
 
@@ -112,20 +121,13 @@ function _resetFilterState() {
 }
 
 // ── Dynamic category buttons ──────────────────────────────────────────────────
+// Receives pre-fetched categories (already loaded in parallel with products).
 
-async function _loadCategoryButtons(cards, branchId) {
+function _buildCategoryButtons(cards, categories) {
   const group = document.getElementById('catFilterGroup');
   if (!group) return;
 
   group.querySelectorAll('[data-cat]:not([data-cat="all"]):not([data-cat="popular"])').forEach(b => b.remove());
-
-  let categories = [];
-  try {
-    // If branch selected, respect explicit branch-category bindings
-    categories = branchId
-      ? await getCategoriesByBranch(branchId)
-      : await getCategories(true);
-  } catch (e) { console.error('[catalog] Failed to load categories for branch:', e); }
   if (!categories.length) return;
 
   const usedSlugs = new Set(cards.map(c => c.dataset.category).filter(Boolean));

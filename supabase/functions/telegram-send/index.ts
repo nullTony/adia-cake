@@ -5,7 +5,7 @@
 //   supabase functions deploy telegram-send
 //   supabase secrets set TELEGRAM_BOT_TOKEN=<new-token-from-botfather>
 //
-// Endpoint: https://lblgfajadwmlxdlbmrzm.supabase.co/functions/v1/telegram-send
+// Endpoint: https://orfxopppqqvwueoatasu.supabase.co/functions/v1/telegram-send
 
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 

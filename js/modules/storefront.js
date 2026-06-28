@@ -11,7 +11,7 @@
 // ================================
 
 import { getBranchProducts }      from '../api/branch-products-api.js';
-import { renderProductCard }      from './product-card.js';
+import { renderProductCard, wireCardImages } from './product-card.js';
 import { syncAddButtons, syncWeightButtons } from './cart.js';
 import { syncFavButtons }         from './favorites.js';
 import { getSelectedBranch }      from '../store/branch-store.js';
@@ -69,7 +69,7 @@ async function _renderToday(branchId) {
     return;
   }
 
-  grid.innerHTML = createProductSkeletons(6);
+  grid.innerHTML = createProductSkeletons(6, { description: true });
 
   let items = [];
   try {
@@ -86,10 +86,11 @@ async function _renderToday(branchId) {
     return;
   }
 
-  grid.innerHTML = items.map(p => renderProductCard(p, { showTodayBadge: true })).join('');
+  grid.innerHTML = items.map((p, i) => renderProductCard(p, { showTodayBadge: true, index: i })).join('');
   syncAddButtons();
   syncWeightButtons();
   syncFavButtons();
+  wireCardImages(grid);
 }
 
 // ── Category counts ────────────────────────────────────────────────────────────
@@ -145,7 +146,7 @@ async function _renderFeatured(branchId) {
 
   if (!branchId) { grid.innerHTML = ''; return; }
 
-  grid.innerHTML = createProductSkeletons(4);
+  grid.innerHTML = createProductSkeletons(4, { description: false });
 
   let items = [];
   try {
@@ -158,9 +159,10 @@ async function _renderFeatured(branchId) {
 
   if (!items.length) { grid.innerHTML = ''; return; }
 
-  grid.innerHTML = items.map(p => renderProductCard(p, { showHitBadge: true, hideDescription: true })).join('');
+  grid.innerHTML = items.map((p, i) => renderProductCard(p, { showHitBadge: true, hideDescription: true, index: i })).join('');
   syncAddButtons();
   syncWeightButtons();
   syncFavButtons();
+  wireCardImages(grid);
   initFeatCarousel(grid); // no-op on desktop; carousel on mobile
 }

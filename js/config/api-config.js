@@ -4,8 +4,8 @@
 
 export const API_CONFIG = {
   SUPABASE: {
-    URL:      'https://lblgfajadwmlxdlbmrzm.supabase.co',
-    ANON_KEY: 'sb_publishable_jYs37uOipMm3iZyy20KViQ_0Q8Nmtm2',
+    URL:      'https://orfxopppqqvwueoatasu.supabase.co',
+    ANON_KEY: 'sb_publishable_XnmVOsqn1xIn-kpdSAaMmw_4V4zVkf5',
     TABLES: {
       PRODUCTS:           'products',
       CATEGORIES:         'categories',

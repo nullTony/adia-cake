@@ -43,27 +43,17 @@ export async function getPopularCategories(limit = 8) {
 }
 
 // Returns popular active categories for a specific branch (homepage showcase with branch context).
-// Cross-references branch_categories.is_active to ensure the category is enabled for that branch.
+// Reuses getCategoriesByBranch (already optimised to 1 round-trip via embedding) and
+// filters client-side — avoids a separate sequential branch_categories + categories fetch.
 export async function getPopularCategoriesForBranch(branchId) {
   if (!branchId) return getPopularCategories(8);
-
-  let bindings;
   try {
-    bindings = await sbFetch(
-      `/branch_categories?branch_id=eq.${encodeURIComponent(branchId)}&is_active=eq.true&order=sort_order.asc`
-    );
+    const all     = await getCategoriesByBranch(branchId);
+    const popular = all.filter(c => c.isPopular && c.imageUrl && c.imageUrl.trim());
+    return popular.length ? popular : getPopularCategories(8);
   } catch {
     return getPopularCategories(8);
   }
-
-  if (!Array.isArray(bindings) || !bindings.length) return getPopularCategories(8);
-
-  const ids = bindings.map(bc => bc.category_id).join(',');
-  const rows = await sbFetch(
-    `/${TABLE}?id=in.(${ids})&is_popular=eq.true&is_active=eq.true&order=sort_order.asc`
-  );
-  const cats = Array.isArray(rows) ? rows.map(fromCategory) : [];
-  return cats.filter(c => c.imageUrl && c.imageUrl.trim());
 }
 
 // ── Mutations ─────────────────────────────────────────────────────────────────

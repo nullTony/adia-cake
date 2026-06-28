@@ -3,6 +3,13 @@
 //  Used in: Today Showcase, Featured sections
 // ================================
 
+// ---- Card entrance animation ----
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
 .product-card {
   background: var(--white);
   border-radius: var(--r-lg);
@@ -10,12 +17,18 @@
   transition: var(--ease);
   position: relative;
 
+  // Entrance animation for real cards (not skeletons)
+  &:not(.skeleton) {
+    animation: card-in .35s ease both;
+    animation-delay: calc(var(--i, 0) * 40ms);
+  }
+
   @media (hover: hover) and (pointer: fine) {
     &:hover {
       transform: translateY(-4px);
       box-shadow: var(--shadow-m);
 
-      .pc-img img {
+      .pc-img .pc-photo {
         transform: scale(1.06);
       }
     }
@@ -24,17 +37,45 @@
 
 // ---- Image area ----
 
+@keyframes pc-spin {
+  to { transform: rotate(360deg); }
+}
+
 .pc-img {
   position: relative;
   aspect-ratio: 4 / 3;
   overflow: hidden;
+  background: var(--cream); // visible while photo fades in
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform var(--ease);
+    transition: transform var(--ease), opacity .4s ease;
   }
+}
+
+// Photo starts invisible and fades in on load
+.pc-photo {
+  opacity: 0;
+
+  &.is-loaded {
+    opacity: 1;
+  }
+}
+
+// Spinning arc centered in .pc-img while photo loads
+.pc-spinner {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--beige);
+  border-top-color: var(--coffee-dark);
+  border-radius: 50%;
+  animation: pc-spin 0.7s linear infinite;
+  pointer-events: none;
 }
 
 .pc-ph {

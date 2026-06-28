@@ -32,11 +32,13 @@ export function formatPrice(price) {
  * Options:
  *   showTodayBadge {boolean} — show "✓ Сегодня" badge when isTodayShowcase=true (default true)
  *   showHitBadge   {boolean} — show "🔥 Хит" badge when isPopular=true (default false)
+ *   index          {number}  — card index for stagger animation via CSS --i variable
  */
-export function renderProductCard(p, { showTodayBadge = true, showHitBadge = false, hideDescription = false } = {}) {
-  const img = p.photo
-    ? `<img src="${esc(p.photo)}" alt="${esc(p.title)}" loading="lazy" decoding="async">`
+export function renderProductCard(p, { showTodayBadge = true, showHitBadge = false, hideDescription = false, index = 0 } = {}) {
+  const imgContent = p.photo
+    ? `<img class="pc-photo" src="${esc(p.photo)}" alt="${esc(p.title)}" loading="lazy" decoding="async">`
     : '';
+  const spinner = p.photo ? '<span class="pc-spinner" aria-hidden="true"></span>' : '';
 
   let badge = '';
   if (showHitBadge && p.isPopular) {
@@ -71,12 +73,14 @@ export function renderProductCard(p, { showTodayBadge = true, showHitBadge = fal
 
   return `
     <div class="product-card"
+         style="--i:${index}"
          data-product-id="${esc(String(p.id))}"
          data-category="${esc(p.category || '')}"
          data-is-popular="${p.isPopular ? 'true' : ''}"
          data-price="${dataPrice}"${weightAttrs}>
       <div class="pc-img">
-        <div class="pc-ph">${img}</div>
+        <div class="pc-ph">${imgContent}</div>
+        ${spinner}
         ${badge}
         <button class="pc-fav" aria-label="Добавить в избранное">♡</button>
       </div>
@@ -88,4 +92,38 @@ export function renderProductCard(p, { showTodayBadge = true, showHitBadge = fal
         </div>
       </div>
     </div>`;
+}
+
+/**
+ * Wires load/error handlers for .pc-photo images in a rendered grid.
+ * Call after grid.innerHTML is set, alongside syncAddButtons / syncFavButtons.
+ *
+ * - Cached images (img.complete) are marked loaded immediately — no spinner flash.
+ * - Loaded images fade in via .is-loaded class.
+ * - Errored images hide the spinner; broken img is removed so pc-ph stays clean.
+ */
+export function wireCardImages(grid) {
+  grid.querySelectorAll('.pc-photo').forEach(img => {
+    const pcImg  = img.closest('.pc-img');
+    const spinner = pcImg?.querySelector('.pc-spinner');
+
+    const markLoaded = () => {
+      img.classList.add('is-loaded');
+      if (spinner) spinner.hidden = true;
+    };
+
+    const markError = () => {
+      if (spinner) spinner.hidden = true;
+      img.style.display = 'none';
+    };
+
+    if (img.complete) {
+      // naturalWidth === 0 means failed (e.g. 404 hit from cache)
+      if (img.naturalWidth > 0) markLoaded();
+      else markError();
+    } else {
+      img.addEventListener('load',  markLoaded, { once: true });
+      img.addEventListener('error', markError,  { once: true });
+    }
+  });
 }
