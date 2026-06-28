@@ -14,14 +14,15 @@ import { getSelectedBranch }                from '../store/branch-store.js';
 import { initPhoneInput, handlePhoneInput, getPhoneValue } from '../utils/phone-input.js';
 import { notifyManagerNewOrder }                          from '../services/manager-notification-service.js';
 import { esc, formatPrice }                              from '../utils/format.js';
-import { loadYandexMaps }                               from '../utils/yandex-maps.js';
+import { loadYandexMaps, reverseGeocode }               from '../utils/yandex-maps.js';
 
 // ── Map state — reset each time the form is rendered ─────────────────────────
 
 let _deliveryLat = null;
 let _deliveryLng = null;
-let _coMap       = null;  // ymaps.Map instance
-let _coPl        = null;  // ymaps.Placemark instance
+let _coMap       = null;   // ymaps.Map instance
+let _coPl        = null;   // ymaps.Placemark instance
+let _ymaps       = null;   // resolved ymaps global — persists across form opens
 
 function _resetMapState() {
   if (_coMap) { try { _coMap.destroy(); } catch {} }
@@ -29,6 +30,7 @@ function _resetMapState() {
   _coPl        = null;
   _deliveryLat = null;
   _deliveryLng = null;
+  // _ymaps kept — no need to reload the script
 }
 
 // ── Overlay control ───────────────────────────────────────────────────────────
@@ -120,8 +122,8 @@ async function renderForm() {
         <label class="co-label">Точка доставки на карте *</label>
         <div class="co-map-wrap">
           <div id="coMap" class="co-map"></div>
-          <button type="button" class="co-geo-btn" id="coGeoBtn" title="Определить моё местоположение">
-            <i class="ti ti-current-location"></i>
+          <button type="button" class="co-geo-btn" id="coGeoBtn">
+            <i class="ti ti-current-location"></i> Моё местоположение
           </button>
         </div>
         <span class="co-error" id="coMapErr">Укажите точку доставки на карте</span>
@@ -194,7 +196,6 @@ const TASHKENT = [41.2995, 69.2401];
 
 async function _initDeliveryMap() {
   if (_coMap) {
-    // Already initialised — just refresh size (e.g. after tab switch)
     try { _coMap.container.fitToViewport(); } catch {}
     return;
   }
@@ -202,57 +203,80 @@ async function _initDeliveryMap() {
   const container = document.getElementById('coMap');
   if (!container) return;
 
-  const ymaps = await loadYandexMaps();
+  _ymaps = await loadYandexMaps();
 
-  const branch = getSelectedBranch();
-  const center = TASHKENT; // Tashkent; branch coords not stored on client
-
-  _coMap = new ymaps.Map(container, { center, zoom: 13, controls: ['zoomControl'] });
-
-  _coPl = new ymaps.Placemark(center, {}, { preset: 'islands#redDotIcon', draggable: true });
-  _coMap.geoObjects.add(_coPl);
-  _deliveryLat = center[0];
-  _deliveryLng = center[1];
-
-  _coMap.events.add('click', async e => {
-    const coords = e.get('coords');
-    _coPl.geometry.setCoordinates(coords);
-    await _reverseGeocode(ymaps, coords);
+  _coMap = new _ymaps.Map(container, {
+    center: TASHKENT,
+    zoom: 13,
+    controls: ['zoomControl'],
+  }, {
+    suppressMapOpenBlock: true,
   });
 
-  _coPl.events.add('dragend', async () => {
-    await _reverseGeocode(ymaps, _coPl.geometry.getCoordinates());
-  });
+  // Click anywhere on the map → place / move pin
+  _coMap.events.add('click', e => _placePin(e.get('coords')));
 
-  document.getElementById('coGeoBtn')?.addEventListener('click', () => _geolocate(ymaps));
+  document.getElementById('coGeoBtn')?.addEventListener('click', _geolocate);
 }
 
-async function _reverseGeocode(ymaps, coords) {
+// Saves coords, moves/creates pin, then tries HTTP reverse geocoding (non-blocking).
+function _placePin(coords) {
+  if (!_ymaps || !_coMap) return;
+
   _deliveryLat = coords[0];
   _deliveryLng = coords[1];
   document.getElementById('coMapErr')?.classList.remove('visible');
-  try {
-    const res = await ymaps.geocode(coords, { results: 1 });
-    const obj = res.geoObjects.get(0);
-    if (obj) {
+
+  if (!_coPl) {
+    _coPl = new _ymaps.Placemark(coords, { hintContent: 'Точка доставки' }, {
+      preset: 'islands#redDotIcon',
+      draggable: true,
+    });
+    _coMap.geoObjects.add(_coPl);
+    // Drag also updates coords + geocodes
+    _coPl.events.add('dragend', () => _placePin(_coPl.geometry.getCoordinates()));
+  } else {
+    _coPl.geometry.setCoordinates(coords);
+  }
+
+  // HTTP geocoder replaces ymaps.geocode (which throws "scriptError" with this key).
+  // Failure is silent — lat/lng are already saved, user can type address manually.
+  reverseGeocode(_deliveryLat, _deliveryLng).then(addr => {
+    if (addr) {
       const el = document.getElementById('coAddress');
-      if (el) el.value = obj.getAddressLine();
+      if (el) el.value = addr;
     }
-  } catch {}
+  }).catch(() => {});
 }
 
-async function _geolocate(ymaps) {
+function _geolocate() {
   if (!_coMap) return;
-  try {
-    const loc = await ymaps.geolocation.get({ provider: 'browser', mapStateAutoApply: false });
-    const coords = loc.geoObjects.get(0)?.geometry?.getCoordinates();
-    if (!coords) return;
-    _coMap.setCenter(coords, 16);
-    _coPl.geometry.setCoordinates(coords);
-    await _reverseGeocode(ymaps, coords);
-  } catch (e) {
-    console.warn('[checkout] geolocation failed:', e);
+  if (!navigator.geolocation) { _showGeoError(); return; }
+
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const coords = [pos.coords.latitude, pos.coords.longitude];
+      _coMap.setCenter(coords, 16);
+      _placePin(coords);
+    },
+    () => _showGeoError(),
+    { timeout: 10_000 },
+  );
+}
+
+function _showGeoError() {
+  const mapErr = document.getElementById('coMapErr');
+  if (!mapErr) return;
+  let msg = document.getElementById('coGeoMsg');
+  if (!msg) {
+    msg = document.createElement('p');
+    msg.id = 'coGeoMsg';
+    msg.style.cssText = 'font-size:12px;color:var(--text-muted);margin:2px 0 0;line-height:1.4';
+    mapErr.after(msg);
   }
+  msg.textContent = 'Не удалось определить местоположение — укажите точку на карте вручную';
+  clearTimeout(msg._t);
+  msg._t = setTimeout(() => { if (msg.parentNode) msg.remove(); }, 6000);
 }
 
 // ── Validation ────────────────────────────────────────────────────────────────
