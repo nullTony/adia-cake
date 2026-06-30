@@ -149,9 +149,11 @@ function _updateOrdersBadge() {
 }
 
 async function _refreshActiveOrders() {
-  if (_mode !== 'client' || !_userId) return;
-  const phone = getCurrentUser()?.phone || null;
-  _activeOrders = await countActiveOrders(_userId, phone);
+  if (_mode !== 'client') return;
+  const user  = getCurrentUser();
+  const phone = user?.phone || null;
+  if (!_userId && !phone) return;
+  _activeOrders = await countActiveOrders(_userId || null, phone);
   _updateOrdersBadge();
 }
 
@@ -271,12 +273,14 @@ export function stopNotifications() {
   _timer = null;
 }
 
-// Clear orders badge on logout; refresh on new order placed
+// Clear badge on logout; refresh on login or any client auth change
 window.addEventListener('adia:auth-change', e => {
   const user = e.detail?.user;
   if (!user || user.type !== 'client') {
     _activeOrders = 0;
     _updateOrdersBadge();
+  } else if (_mode === 'client') {
+    _refreshActiveOrders();
   }
 });
 

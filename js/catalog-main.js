@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     stopToastNotifications();
     const user = e.detail?.user;
     if (user?.type === 'client') {
-      initClientNotifications(user.id);
+      initClientNotifications(user.id || user.clientId);
       initNotifications();
     }
   }, { once: false });
