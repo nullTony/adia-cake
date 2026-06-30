@@ -68,14 +68,16 @@
 
         /* ── Role select ───────────────────────────────────── */
         .sl-role-select {
-            padding: 6px 10px;
+            padding: 6px 30px 6px 10px;
             border: 1.5px solid var(--a-border);
             border-radius: 8px;
             font-size: 13px;
             font-family: inherit;
             font-weight: 600;
             color: var(--a-text-dark);
-            background: var(--a-white);
+            background: var(--a-white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%239a9488' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;
+            -webkit-appearance: none;
+            appearance: none;
             cursor: pointer;
             outline: none;
             transition: border-color .15s;
@@ -127,10 +129,12 @@
         .sl-branch-select {
             font-size: 12px;
             font-family: inherit;
-            padding: 4px 8px;
+            padding: 4px 26px 4px 8px;
             border: 1.5px solid var(--a-border);
             border-radius: 8px;
-            background: var(--a-white);
+            background: var(--a-white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%239a9488' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 8px center;
+            -webkit-appearance: none;
+            appearance: none;
             color: var(--a-text);
             cursor: pointer;
             outline: none;
@@ -224,6 +228,14 @@
             color: var(--a-text);
             outline: none;
             transition: border-color .15s;
+        }
+        .sm-select {
+            padding-right: 36px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%239a9488' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            -webkit-appearance: none;
+            appearance: none;
         }
         .sm-input:focus, .sm-select:focus { border-color: var(--a-accent); }
         .sm-input.error, .sm-select.error { border-color: #ee0055; }
@@ -461,9 +473,9 @@
                 <span class="sm-error" id="smEmailErr">Введите email</span>
             </div>
             <div class="sm-field">
-                <label class="sm-label" id="smPasswordLabel">Пароль *</label>
-                <input class="sm-input" type="password" id="smPassword" placeholder="Минимум 4 символа" autocomplete="new-password">
-                <span class="sm-error" id="smPasswordErr">Введите пароль</span>
+                <label class="sm-label" id="smPasswordLabel">Пароль</label>
+                <input class="sm-input" type="password" id="smPassword" placeholder="Минимум 4 символа. Оставьте пустым — пароль не изменится" autocomplete="new-password">
+                <span class="sm-error" id="smPasswordErr">Минимум 4 символа</span>
             </div>
             <div class="sm-field">
                 <label class="sm-label">Роль *</label>

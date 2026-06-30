@@ -231,8 +231,8 @@ function openModal(staff = null) {
     nameEl.value         = '';
     initPhoneInput(phoneEl, null);
     pwdEl.value          = '';
-    pwdEl.placeholder    = 'Минимум 4 символа';
-    pwdLabel.textContent = 'Пароль *';
+    pwdEl.placeholder    = 'Минимум 4 символа. Оставьте пустым — пароль не изменится';
+    pwdLabel.textContent = 'Пароль';
     roleEl.value         = assignable.includes('super_admin') ? 'super_admin'
                          : assignable.includes('admin')       ? 'admin'
                          : assignable[0] || 'operator';
@@ -349,7 +349,7 @@ async function _handleSave() {
   let valid = true;
   if (!name)                             { _fieldError('smName', 'smNameErr');         valid = false; }
   if (!phone)                            { _fieldError('smPhone', 'smPhoneErr');        valid = false; }
-  if (!_editingId && !pwd.trim())        { _fieldError('smPassword', 'smPasswordErr'); valid = false; }
+  if (pwd.trim() && pwd.trim().length < 4) { _fieldError('smPassword', 'smPasswordErr'); valid = false; }
   if (_needsBranch(role) && !branchId)  { _fieldError('smBranch', 'smBranchErr');     valid = false; }
   if (!valid) return;
 
