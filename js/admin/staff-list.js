@@ -6,7 +6,7 @@ import { getSession, ensureAuth }                            from './auth.js';
 import { initRbac, ROLE_PERMISSIONS,
          EXTRA_GRANTABLE, PERM_LABEL }                      from './rbac.js';
 import { getAllStaff, createStaff,
-         updateStaff, checkStaffPhone,
+         updateStaff, updateStaffActive, checkStaffPhone,
          updateStaffTelegramChatId, copyChatIdFromClient }   from '../api/staff-api.js';
 import { getBranches }                                       from '../api/branches-api.js';
 import { sbFetch }                                           from '../api/supabase-client.js';
@@ -480,7 +480,7 @@ async function init() {
       const checked = chk.checked;
       chk.disabled  = true;
       try {
-        await updateStaff(id, { isActive: checked });
+        await updateStaffActive(id, checked);
         const s = _all.find(x => x.id === id);
         if (s) s.isActive = checked;
         chk.closest('tr').classList.toggle('sl-inactive', !checked);
