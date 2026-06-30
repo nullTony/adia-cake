@@ -5,10 +5,14 @@
 // ================================
 
 import { getCurrentUser, logout, isAdmin } from '../services/auth-service.js';
+import { getStaffByPhone }                 from '../api/staff-api.js';
 import { getSelectedBranch }               from '../store/branch-store.js';
 import { openBranchModal }                 from './branch-selector.js';
 import { openAuthModal }                   from './auth-modal.js';
 import { esc as _esc }                    from '../utils/format.js';
+
+// Tracks whether the current client user's phone belongs to a staff member.
+let _clientIsStaff = false;
 
 const MENU_ID = 'mobMenu';
 const BACK_ID = 'mobMenuBackdrop';
@@ -53,7 +57,7 @@ function _render() {
         <div class="mm-profile-phone">${_esc(user.phone || '')}</div>
       </div>
 
-      ${isAdmin() ? `<a class="mm-item" href="/admin/orders.html">🔧&nbsp; Панель администратора</a>` : ''}
+      ${(isAdmin() || _clientIsStaff) ? `<a class="mm-item" href="${isAdmin() ? '/admin/orders.html' : '/admin/login.html'}">🔧&nbsp; Панель администратора</a>` : ''}
       <button type="button" class="mm-item mm-item--danger" id="mmLogoutBtn">Выйти</button>
     ` : `
       <button type="button" class="mm-item mm-item--login" id="mmLoginBtn"><i class="ti ti-user" aria-hidden="true"></i>&nbsp; Войти</button>
@@ -114,7 +118,18 @@ export function initMobileMenu() {
     if (e.key === 'Escape') _close();
   });
 
-  window.addEventListener('adia:auth-change',   () => {
+  window.addEventListener('adia:auth-change', ({ detail }) => {
+    const user = detail?.user;
+    _clientIsStaff = false;
+    if (user?.type === 'client' && user.phone) {
+      // Check in background; re-render when result arrives if menu is open
+      getStaffByPhone(user.phone)
+        .then(s => {
+          _clientIsStaff = !!(s && s.isActive !== false);
+          if (document.getElementById(MENU_ID)?.classList.contains('open')) _render();
+        })
+        .catch(() => {});
+    }
     if (document.getElementById(MENU_ID)?.classList.contains('open')) _render();
   });
   window.addEventListener('adia:branch-change', () => {

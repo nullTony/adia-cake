@@ -87,12 +87,14 @@ async function _refreshSession() {
 
   try {
     const { sbFetch } = await import('../api/supabase-client.js');
-    const rows = await sbFetch(
-      `/staff_users?id=eq.${encodeURIComponent(s.id)}&select=role,branch_id,is_active,extra_permissions&limit=1`
-    );
-    if (!Array.isArray(rows) || !rows[0]) return;
-
-    const row = rows[0];
+    const result = await sbFetch(`/rpc/get_staff_by_id`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ p_id: s.id }),
+    });
+    const row = (result && !Array.isArray(result)) ? result
+      : (Array.isArray(result) && result.length ? result[0] : null);
+    if (!row) return;
 
     // Deactivated while logged in → force logout
     if (row.is_active === false) {

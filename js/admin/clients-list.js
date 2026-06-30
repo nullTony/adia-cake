@@ -2,7 +2,7 @@
 //  ADMIN — CLIENTS LIST
 // ================================
 
-import { getSession }                                               from './auth.js';
+import { getSession, ensureAuth }                                   from './auth.js';
 import { initRbac }                                                from './rbac.js';
 import { getAllClients, updateClient }                               from '../api/clients-api.js';
 import { getAllStaff, promoteToStaff,
@@ -147,6 +147,7 @@ function closePromote() {
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 async function init() {
+  if (!await ensureAuth()) return;
   const session = getSession();
   _myRole = session?.role || 'manager';
   document.getElementById('adminUser').textContent = session?.full_name || _myRole;

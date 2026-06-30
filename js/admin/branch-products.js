@@ -4,7 +4,7 @@
 //  and which are featured on the homepage (top 4).
 // ================================
 
-import { logout, getSession }                    from './auth.js';
+import { logout, getSession, ensureAuth }         from './auth.js';
 import { initRbac }                              from './rbac.js';
 import { getBranches }                           from '../api/branches-api.js';
 import { getProducts }                           from '../api/products-api.js';
@@ -34,6 +34,7 @@ const _BRANCH_KEY = 'adia_admin_selected_branch';
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 async function init() {
+  if (!await ensureAuth()) return;
   const dateEl = document.getElementById('bpDate');
   if (dateEl) {
     dateEl.textContent = new Date().toLocaleDateString('ru-RU', {

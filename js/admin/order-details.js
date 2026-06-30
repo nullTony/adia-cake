@@ -2,7 +2,7 @@
 //  ADMIN — ORDER DETAILS
 // ================================
 
-import { logout, getSession }              from './auth.js';
+import { logout, getSession, ensureAuth }  from './auth.js';
 import { initRbac }                       from './rbac.js';
 import { getOrderById, getOrderItems }     from '../api/orders-api.js';
 import { formatPrice, formatDate, esc }   from '../utils/format.js';
@@ -178,6 +178,7 @@ async function _initAdminMap(lat, lng) {
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 async function init() {
+  if (!await ensureAuth()) return;
   const id = new URLSearchParams(window.location.search).get('id');
   const contentEl = document.getElementById('orderContent');
   const titleEl   = document.getElementById('pageTitle');

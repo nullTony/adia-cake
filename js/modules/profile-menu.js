@@ -5,10 +5,15 @@
 // ================================
 
 import { getCurrentUser, isAdmin, logout } from '../services/auth-service.js';
+import { getStaffByPhone }                 from '../api/staff-api.js';
 import { openAuthModal }                   from './auth-modal.js';
 import { openMyOrders }                    from './my-orders.js';
 
 const DROPDOWN_ID = 'profileDropdown';
+
+// Tracks whether the current client user's phone belongs to a staff member.
+// Set asynchronously on auth-change; used to show the admin panel link.
+let _clientIsStaff = false;
 
 // ── Inject dropdown HTML once ─────────────────────────────────────────────────
 
@@ -81,9 +86,16 @@ export function updateProfileBtn() {
   const adminLink = document.getElementById('profileDropAdmin');
   const ordersBtn = document.getElementById('profileDropOrders');
 
-  if (nameEl)    nameEl.textContent    = user?.name  || '';
-  if (phoneEl)   phoneEl.textContent   = user?.phone || '';
-  if (adminLink) adminLink.style.display = isAdmin() ? '' : 'none';
+  if (nameEl)    nameEl.textContent  = user?.name  || '';
+  if (phoneEl)   phoneEl.textContent = user?.phone || '';
+
+  if (adminLink) {
+    const showAdmin = isAdmin() || _clientIsStaff;
+    adminLink.style.display = showAdmin ? '' : 'none';
+    // Staff session → admin products; client with staff phone → admin login
+    adminLink.href = isAdmin() ? '/admin/products.html' : '/admin/login.html';
+  }
+
   if (ordersBtn) ordersBtn.style.display = user ? '' : 'none';
 }
 
@@ -111,7 +123,18 @@ export function initProfileMenu() {
     }
   });
 
-  window.addEventListener('adia:auth-change', () => {
+  window.addEventListener('adia:auth-change', ({ detail }) => {
+    const user = detail?.user;
+    _clientIsStaff = false;
+    if (user?.type === 'client' && user.phone) {
+      // Check in background whether this client phone belongs to a staff member
+      getStaffByPhone(user.phone)
+        .then(s => {
+          _clientIsStaff = !!(s && s.isActive !== false);
+          updateProfileBtn();
+        })
+        .catch(() => {});
+    }
     updateProfileBtn();
     _closeDropdown();
   });

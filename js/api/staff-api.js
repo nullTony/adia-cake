@@ -1,12 +1,11 @@
 // ================================
 //  STAFF API — Supabase
 //  Table: staff_users
-//  Admin/manager accounts.
+//  All reads/writes go through SECURITY DEFINER RPCs.
+//  Direct REST to staff_users is blocked by RLS.
 // ================================
 
 import { sbFetch } from './supabase-client.js';
-
-const TABLE = 'staff_users';
 
 export function fromStaff(row) {
   return {
@@ -28,12 +27,85 @@ function _clean(phone) {
   return '+' + (phone || '').replace(/\D/g, '');
 }
 
-// ── Queries ───────────────────────────────────────────────────────────────────
+function _rpcRow(result) {
+  if (result && !Array.isArray(result)) return result;
+  if (Array.isArray(result) && result.length) return result[0];
+  return null;
+}
+
+// ── Supabase Auth email lookup ────────────────────────────────────────────────
+// RPC get_staff_email_by_phone returns a virtual email "9XXXXXXXXX@adia.app"
+// that maps the staff phone to their Supabase Auth account.
+
+export async function getStaffEmailByPhone(phone) {
+  const clean = _clean(phone);
+  const result = await sbFetch('/rpc/get_staff_email_by_phone', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ p_phone: clean }),
+  });
+  // RPC returns either a plain string or { email: '...' } depending on definition
+  if (typeof result === 'string') return result;
+  if (result?.email) return result.email;
+  // Fallback: derive email from raw phone string if RPC is unavailable
+  if (!result && clean !== phone) {
+    const r2 = await sbFetch('/rpc/get_staff_email_by_phone', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ p_phone: phone }),
+    });
+    if (typeof r2 === 'string') return r2;
+    if (r2?.email) return r2.email;
+  }
+  return null;
+}
+
+// ── Phone lookup — NO password in response ────────────────────────────────────
 
 export async function getStaffByPhone(phone) {
-  const row = await getStaffByPhoneWithPassword(phone);
+  const clean = _clean(phone);
+  let result = await sbFetch(`/rpc/get_staff_by_phone`, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ p_phone: clean }),
+  });
+  let row = _rpcRow(result);
+  // Fallback: try raw phone string if E.164 normalisation differs
+  if (!row && clean !== phone) {
+    result = await sbFetch(`/rpc/get_staff_by_phone`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ p_phone: phone }),
+    });
+    row = _rpcRow(result);
+  }
   return row ? fromStaff(row) : null;
 }
+
+// ── Server-side password verification ─────────────────────────────────────────
+// Returns fromStaff object on success; null for wrong phone / inactive / wrong password.
+// The password value never leaves the server.
+
+export async function verifyStaffLogin(phone, password) {
+  const clean = _clean(phone);
+  let result = await sbFetch(`/rpc/verify_staff_login`, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ p_phone: clean, p_password: password }),
+  });
+  let row = _rpcRow(result);
+  if (!row && clean !== phone) {
+    result = await sbFetch(`/rpc/verify_staff_login`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ p_phone: phone, p_password: password }),
+    });
+    row = _rpcRow(result);
+  }
+  return row ? fromStaff(row) : null;
+}
+
+// ── Queries ───────────────────────────────────────────────────────────────────
 
 export async function getStaffById(id) {
   if (!id) return null;
@@ -42,8 +114,19 @@ export async function getStaffById(id) {
     headers: { 'Content-Type': 'application/json' },
     body:    JSON.stringify({ p_id: id }),
   });
-  const row = result && !Array.isArray(result) ? result
-    : (Array.isArray(result) && result.length ? result[0] : null);
+  const row = _rpcRow(result);
+  return row ? fromStaff(row) : null;
+}
+
+// Returns the authenticated staff member's profile using auth.uid() from the JWT.
+// Requires a valid Supabase Auth session (JWT set via setAuthToken).
+export async function getMyStaffProfile() {
+  const result = await sbFetch('/rpc/get_my_staff_profile', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({}),
+  });
+  const row = _rpcRow(result);
   return row ? fromStaff(row) : null;
 }
 
@@ -82,63 +165,66 @@ export async function promoteToStaff(phone, fullName, role) {
   });
 }
 
-
-// Direct REST queries (anon read/write allowed per migration RLS)
-
+// Kept for backward compatibility — routes through RPC, no direct REST
 export async function getStaffWithBranches() {
-  const rows = await sbFetch(
-    `/${TABLE}?select=id,full_name,phone,role,is_active,created_at,branch_id,telegram_chat_id,extra_permissions&order=created_at.desc`
-  );
-  return Array.isArray(rows) ? rows.map(fromStaff) : [];
+  return getAllStaff('');
 }
 
 export async function createStaff(data) {
-  const rows = await sbFetch(`/${TABLE}`, {
+  const result = await sbFetch(`/rpc/create_staff_user`, {
     method:  'POST',
-    headers: { 'Prefer': 'return=representation' },
+    headers: { 'Content-Type': 'application/json' },
     body:    JSON.stringify({
-      full_name:         data.name,
-      phone:             data.phone,
-      password:          data.password,
-      role:              data.role,
-      branch_id:         data.branchId || null,
-      is_active:         true,
-      extra_permissions: data.extraPermissions || [],
+      p_full_name:         data.name,
+      p_phone:             data.phone,
+      p_password:          data.password,
+      p_role:              data.role,
+      p_branch_id:         data.branchId || null,
+      p_extra_permissions: data.extraPermissions || [],
     }),
   });
-  return Array.isArray(rows) ? rows[0] : rows;
+  const row = _rpcRow(result);
+  return row ? fromStaff(row) : null;
 }
 
 export async function updateStaff(id, data) {
-  const payload = {};
-  if (data.name     !== undefined) payload.full_name          = data.name;
-  if (data.phone    !== undefined) payload.phone              = data.phone;
-  if (data.password)               payload.password           = data.password;
-  if (data.role     !== undefined) payload.role               = data.role;
-  if ('branchId' in data)          payload.branch_id          = data.branchId || null;
-  if (data.isActive          !== undefined) payload.is_active          = data.isActive;
-  if (data.extraPermissions !== undefined) payload.extra_permissions = data.extraPermissions;
+  const payload = { p_id: id };
+  if (data.name     !== undefined) payload.p_full_name         = data.name;
+  if (data.phone    !== undefined) payload.p_phone             = data.phone;
+  if (data.password)               payload.p_password          = data.password;
+  if (data.role     !== undefined) payload.p_role              = data.role;
+  // p_set_branch_id signals that branch_id must be written (even when the new value is null)
+  if ('branchId' in data) {
+    payload.p_set_branch_id = true;
+    payload.p_branch_id     = data.branchId || null;
+  }
+  if (data.isActive          !== undefined) payload.p_is_active          = data.isActive;
+  if (data.extraPermissions !== undefined) payload.p_extra_permissions = data.extraPermissions;
 
-  const rows = await sbFetch(`/${TABLE}?id=eq.${id}`, {
-    method:  'PATCH',
-    headers: { 'Prefer': 'return=representation' },
+  const result = await sbFetch(`/rpc/update_staff_user`, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
     body:    JSON.stringify(payload),
   });
-  return Array.isArray(rows) ? rows[0] : rows;
+  const row = _rpcRow(result);
+  return row ? fromStaff(row) : null;
 }
 
 export async function checkStaffPhone(phone) {
-  const rows = await sbFetch(
-    `/${TABLE}?phone=eq.${encodeURIComponent(phone)}&select=id&limit=1`
-  );
-  return Array.isArray(rows) && rows.length ? rows[0] : null;
+  const result = await sbFetch(`/rpc/check_staff_phone_exists`, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ p_phone: phone }),
+  });
+  // RPC returns a uuid string or null
+  return result ? { id: result } : null;
 }
 
 export async function updateStaffTelegramChatId(id, chatId) {
-  await sbFetch(`/${TABLE}?id=eq.${encodeURIComponent(id)}`, {
-    method:  'PATCH',
-    headers: { 'Prefer': 'return=minimal' },
-    body:    JSON.stringify({ telegram_chat_id: chatId }),
+  await sbFetch(`/rpc/update_staff_telegram`, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ p_id: id, p_chat_id: chatId }),
   });
 }
 
@@ -148,28 +234,4 @@ export async function copyChatIdFromClient(phone) {
     `/clients?phone=eq.${encodeURIComponent(phone)}&select=telegram_chat_id&limit=1`
   );
   return (Array.isArray(rows) && rows[0]?.telegram_chat_id) ? rows[0].telegram_chat_id : null;
-}
-
-// Uses a SECURITY DEFINER RPC to bypass RLS on staff_users
-export async function getStaffByPhoneWithPassword(phone) {
-  const clean = _clean(phone);
-  const result = await sbFetch(`/rpc/check_staff_phone`, {
-    method:  'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify({ p_phone: clean }),
-  });
-  if (result && !Array.isArray(result)) return result; // single jsonb row
-  if (Array.isArray(result) && result.length) return result[0];
-
-  // Fallback: try raw phone string if format differs
-  if (clean !== phone) {
-    const result2 = await sbFetch(`/rpc/check_staff_phone`, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ p_phone: phone }),
-    });
-    if (result2 && !Array.isArray(result2)) return result2;
-    if (Array.isArray(result2) && result2.length) return result2[0];
-  }
-  return null;
 }

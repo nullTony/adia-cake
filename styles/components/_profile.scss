@@ -13,6 +13,7 @@
   border: 1px solid var(--border);
   min-width: 220px;
   padding: 8px 0;
+  overflow: hidden;
 
   &.open {
     display: block;

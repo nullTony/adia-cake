@@ -8,11 +8,20 @@ import { API_CONFIG } from '../config/api-config.js';
 
 const { URL: BASE_URL, ANON_KEY } = API_CONFIG.SUPABASE;
 
+// ── Auth token slot ───────────────────────────────────────────────────────────
+// Set by supabase-auth.js when staff signs in or token refreshes.
+// When null, all requests use the anon key (public / client context).
+
+let _authToken = null;
+
+export function setAuthToken(token)  { _authToken = token || null; }
+export function clearAuthToken()     { _authToken = null; }
+
 function buildHeaders(extra = {}) {
   return {
     'Content-Type':  'application/json',
     'apikey':        ANON_KEY,
-    'Authorization': `Bearer ${ANON_KEY}`,
+    'Authorization': `Bearer ${_authToken || ANON_KEY}`,
     ...extra,
   };
 }

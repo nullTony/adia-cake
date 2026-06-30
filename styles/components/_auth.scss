@@ -81,7 +81,7 @@
 // ---- Step management ----
 
 .auth-step         { display: flex; flex-direction: column; gap: 16px; }
-.auth-step--hidden { display: none; }
+.auth-step--hidden { display: none !important; }
 
 // ---- Form fields ----
 

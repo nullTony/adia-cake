@@ -2,8 +2,8 @@
 //  MY ORDERS — user-facing order history panel
 // ================================
 
-import { getCurrentUser }                                     from '../services/auth-service.js';
-import { getOrdersByUserId, getOrderItems, updateOrderStatus } from '../api/orders-api.js';
+import { getCurrentUser }                                                             from '../services/auth-service.js';
+import { getOrdersByUserId, getMyOrderItems, clientUpdateOrderStatus } from '../api/orders-api.js';
 import { markClientNotifRead }                                 from '../services/notification-service.js';
 import { notifyManagerClientConfirmed,
          notifyManagerClientCancelled }                       from '../services/manager-notification-service.js';
@@ -166,7 +166,8 @@ async function _handleClientAction(orderId, newStatus) {
   const btn = document.querySelector(`.mo-accept-btn[data-id="${orderId}"], .mo-cancel-btn[data-id="${orderId}"]`);
   if (btn) btn.disabled = true;
   try {
-    await updateOrderStatus(orderId, newStatus);
+    const phone = getCurrentUser()?.phone || null;
+    await clientUpdateOrderStatus(orderId, newStatus, phone);
     const order = _orders.find(o => o.id === orderId);
     if (order) order.status = newStatus;
     const body = document.getElementById('myOrdersBody');
@@ -275,7 +276,8 @@ async function toggleItems(orderId, btn) {
   }
 
   try {
-    const items = await getOrderItems(orderId);
+    const phone = getCurrentUser()?.phone || null;
+    const items = await getMyOrderItems(orderId, phone);
     itemsCache.set(orderId, items);
     renderItems(wrap, items, order);
   } catch {

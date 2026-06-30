@@ -1,6 +1,9 @@
 // ================================
 //  AUTH MODAL
-//  Steps: entry → tg → success  (admin: entry → password → success)
+//  Steps: entry → tg → success
+//
+//  All users (clients and staff-phone users) go through Telegram confirmation.
+//  Admin login is separate: /admin/login.html (email + password).
 //
 //  Client TG flow:
 //    1. Phone entered → checkPhone() → startAuth() → creates auth_session in DB
@@ -12,7 +15,7 @@
 // ================================
 
 import {
-  checkPhone, startAuth, pollAuthSession, finalizeClientLogin, verifyAdminPassword,
+  checkPhone, startAuth, pollAuthSession, finalizeClientLogin,
 } from '../services/auth-service.js';
 import { API_CONFIG } from '../config/api-config.js';
 import { initPhoneInput } from './phone-input.js';
@@ -39,10 +42,6 @@ function injectModal() {
         <p class="auth-modal__sub">Введите номер телефона</p>
         <div class="auth-field" id="phoneInputMount"></div>
         <input id="authPhone" type="hidden">
-        <div class="auth-field auth-step--hidden" id="authNameWrap">
-          <input id="authName" class="auth-input" type="text"
-                 placeholder="Ваше имя" autocomplete="name">
-        </div>
         <div class="auth-error" id="authEntryError"></div>
         <button type="button" class="auth-btn" id="authPhoneNext" data-label="Продолжить">Продолжить</button>
       </div>
@@ -65,21 +64,15 @@ function injectModal() {
           <p class="auth-modal__sub">Мы отправили запрос подтверждения в ваш Telegram.<br>Нажмите «Войти» в боте 👆</p>
         </div>
 
+        <!-- Name field — shown only for new users -->
+        <div class="auth-field auth-step--hidden" id="authTgNameWrap">
+          <input id="authTgName" class="auth-input" type="text"
+                 placeholder="Ваше имя" autocomplete="name">
+        </div>
+
         <p class="auth-tg-hint">Ожидание подтверждения…</p>
         <div class="auth-error" id="authTgError"></div>
         <button type="button" class="auth-link" id="authBackToPhone">← Изменить номер</button>
-      </div>
-
-      <!-- Step: admin password -->
-      <div class="auth-step auth-step--hidden" id="authStepPassword">
-        <h2 class="auth-modal__title">Пароль администратора</h2>
-        <div class="auth-field">
-          <input id="authPassword" class="auth-input" type="password"
-                 placeholder="Пароль" autocomplete="current-password">
-        </div>
-        <div class="auth-error" id="authPasswordError"></div>
-        <button type="button" class="auth-btn" id="authPasswordNext" data-label="Войти">Войти</button>
-        <button type="button" class="auth-link" id="authBackToPhone2">← Изменить номер</button>
       </div>
 
       <!-- Step: success -->
@@ -126,9 +119,6 @@ export function openAuthModal({ onSuccess } = {}) {
   _onSuccess = onSuccess || null;
   _initPhone();
   _showStep('entry');
-  document.getElementById('authPassword').value = '';
-  document.getElementById('authName').value = '';
-  document.getElementById('authNameWrap').classList.add('auth-step--hidden');
   _clearErrors();
   document.getElementById('authModal').classList.add('open');
   setTimeout(() => {
@@ -144,7 +134,7 @@ export function closeAuthModal() {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function _showStep(name) {
-  ['entry', 'tg', 'password', 'success'].forEach(s => {
+  ['entry', 'tg', 'success'].forEach(s => {
     const el = document.getElementById(`authStep${s[0].toUpperCase()}${s.slice(1)}`);
     el?.classList.toggle('auth-step--hidden', s !== name);
   });
@@ -174,7 +164,7 @@ async function _runPoll(signal, sessionId, phone) {
 
   if (result === 'confirmed') {
     try {
-      const name = document.getElementById('authName')?.value.trim() || '';
+      const name = document.getElementById('authTgName')?.value.trim() || '';
       const user = await finalizeClientLogin(phone, name, sessionId);
       _handleSuccess(user);
     } catch (err) {
@@ -205,34 +195,11 @@ function _bindModal(backdrop) {
       return;
     }
 
-    // If name field is visible, validate it before proceeding
-    const nameWrap  = document.getElementById('authNameWrap');
-    const nameInput = document.getElementById('authName');
-    const nameShown = !nameWrap.classList.contains('auth-step--hidden');
-    if (nameShown && !nameInput.value.trim()) {
-      _setError('authEntryError', 'Введите ваше имя');
-      nameInput.focus();
-      return;
-    }
-
     _setLoading('authPhoneNext', true);
     try {
       const { role } = await checkPhone(phone);
       _pendingPhone = phone;
       _pendingRole  = role;
-
-      if (role === 'admin') {
-        _showStep('password');
-        setTimeout(() => document.getElementById('authPassword').focus(), 80);
-        return;
-      }
-
-      // New user: show name field on first click, proceed on second click
-      if (role === 'new' && !nameShown) {
-        nameWrap.classList.remove('auth-step--hidden');
-        setTimeout(() => nameInput.focus(), 80);
-        return;
-      }
 
       const { sessionId, isReturning } = await startAuth(phone);
 
@@ -241,6 +208,16 @@ function _bindModal(backdrop) {
         .classList.toggle('auth-step--hidden', isReturning);
       document.getElementById('authTgReturning')
         .classList.toggle('auth-step--hidden', !isReturning);
+
+      // Show name field only for new users
+      const nameWrap = document.getElementById('authTgNameWrap');
+      const nameInput = document.getElementById('authTgName');
+      if (role === 'new') {
+        nameWrap.classList.remove('auth-step--hidden');
+        nameInput.value = '';
+      } else {
+        nameWrap.classList.add('auth-step--hidden');
+      }
 
       _showStep('tg');
 
@@ -264,36 +241,6 @@ function _bindModal(backdrop) {
 
   document.getElementById('authBackToPhone').addEventListener('click', () => {
     _abortPoll();
-    _clearErrors();
-    _showStep('entry');
-    setTimeout(() => {
-      document.getElementById('phoneInputMount')?.querySelector('.pi-national')?.focus();
-    }, 80);
-  });
-
-  // ── Password step ─────────────────────────────────────────────────────────
-
-  document.getElementById('authPasswordNext').addEventListener('click', async () => {
-    _clearErrors();
-    const password = document.getElementById('authPassword').value;
-    if (!password) { _setError('authPasswordError', 'Введите пароль'); return; }
-
-    _setLoading('authPasswordNext', true);
-    try {
-      const user = await verifyAdminPassword(_pendingPhone, password);
-      _handleSuccess(user);
-    } catch (err) {
-      _setError('authPasswordError', err.message || 'Неверный пароль');
-    } finally {
-      _setLoading('authPasswordNext', false);
-    }
-  });
-
-  document.getElementById('authPassword').addEventListener('keydown', e => {
-    if (e.key === 'Enter') document.getElementById('authPasswordNext').click();
-  });
-
-  document.getElementById('authBackToPhone2').addEventListener('click', () => {
     _clearErrors();
     _showStep('entry');
     setTimeout(() => {

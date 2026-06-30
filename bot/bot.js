@@ -15,10 +15,11 @@
 // ================================
 
 const TelegramBot = require('node-telegram-bot-api');
+require('dotenv').config();
 
-const BOT_TOKEN    = '8710399027:AAGV8C-5Vgz02Y_wOuctPQPgu96DfGD47Ek';
-const SB_URL       = 'https://orfxopppqqvwueoatasu.supabase.co';
-const SB_ANON_KEY  = 'sb_publishable_XnmVOsqn1xIn-kpdSAaMmw_4V4zVkf5';
+const BOT_TOKEN      = process.env.BOT_TOKEN;
+const SB_URL         = process.env.SB_URL;
+const SB_SERVICE_KEY = process.env.SB_SERVICE_KEY;
 const SESSIONS_TBL = 'auth_sessions';
 const CLIENTS_TBL  = 'clients';
 const STAFF_TBL    = 'staff_users';
@@ -42,8 +43,8 @@ async function sbRequest(path, options = {}) {
   const res = await fetch(`${SB_URL}/rest/v1${path}`, {
     ...options,
     headers: {
-      'apikey':        SB_ANON_KEY,
-      'Authorization': `Bearer ${SB_ANON_KEY}`,
+      'apikey':        SB_SERVICE_KEY,
+      'Authorization': `Bearer ${SB_SERVICE_KEY}`,
       'Content-Type':  'application/json',
       ...(options.headers || {}),
     },

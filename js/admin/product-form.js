@@ -2,7 +2,7 @@
 //  ADMIN — PRODUCT ADD / EDIT FORM
 // ================================
 
-import { logout, getSession }                            from './auth.js';
+import { logout, getSession, ensureAuth }                from './auth.js';
 import { initRbac }                                     from './rbac.js';
 import { getProductById, createProduct, updateProduct }  from '../api/products-api.js';
 import { uploadImage, isImgBBConfigured }                from '../api/image-upload-api.js';
@@ -327,8 +327,11 @@ function showError(msg) {
 
 // ---- Init ----
 
-if (isEdit) {
-  loadProduct();
-} else {
-  loadCategories();
-}
+(async () => {
+  if (!await ensureAuth()) return;
+  if (isEdit) {
+    loadProduct();
+  } else {
+    loadCategories();
+  }
+})();

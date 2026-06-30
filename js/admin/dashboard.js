@@ -2,7 +2,7 @@
 //  ADMIN — DASHBOARD
 // ================================
 
-import { logout, getSession }                from './auth.js';
+import { logout, getSession, ensureAuth }    from './auth.js';
 import { initRbac }                          from './rbac.js';
 import { getOrders }                        from '../api/orders-api.js';
 import { formatPrice, esc }                from '../utils/format.js';
@@ -106,6 +106,7 @@ function renderRecentOrders(orders) {
 // ---- Init ----
 
 async function init() {
+  if (!await ensureAuth()) return;
   try {
     const orders = await getOrders();
     renderStats(orders);

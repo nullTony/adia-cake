@@ -7,17 +7,19 @@
 //    3. pollAuthSession(sessionId, signal)       → polls DB every 2s until resolved
 //    4. finalizeClientLogin(phone, name, sessId) → finds/creates client, saves session
 //
-//  Staff flow:
-//    verifyAdminPassword(phone, password) → lookup staff_users, compare password
+//  Staff flow (Supabase Auth JWT):
+//    verifyAdminPassword(phone, password) → getStaffEmailByPhone → signInWithEmailPassword → JWT
 //
 //  Session format in localStorage:
 //    { clientId, type: 'client' }  or  { staffId, type: 'staff' }
 // ================================
 
-import { getClientByPhone, getClientById, createClient, updateClient } from '../api/clients-api.js';
-import { getStaffByPhoneWithPassword, getStaffById, fromStaff }        from '../api/staff-api.js';
+import { getClientByPhone, getClientById, createClient, updateClientTelegram } from '../api/clients-api.js';
+import { getStaffByPhone, getStaffEmailByPhone, getStaffById }         from '../api/staff-api.js';
 import { createAuthSession, getAuthSession }                            from '../api/tg-verification-api.js';
 import { showLogoutConfirm }                                            from '../modules/auth-modal.js';
+import { signInWithEmailPassword, signOut, getActiveSession, restoreSession } from '../api/supabase-auth.js';
+import { setAuthToken, clearAuthToken }                                 from '../api/supabase-client.js';
 
 const SESSION_KEY = 'adia_user_session';
 const SESSION_VALIDATION_KEY = 'adia_session_validated_at';
@@ -74,6 +76,9 @@ export async function initAuth() {
   // Trust cached session if validated recently (within 24 hours)
   if (_isSessionCacheValid()) {
     _currentUser = stored;
+    // For staff: restore JWT in background so sbFetch sends Bearer token, not anon key.
+    // getActiveSession() instantiates supabase-js, registers onAuthStateChange, and sets the token.
+    if (stored.type === 'staff') getActiveSession().catch(() => {});
     _emitAuthChange();
     return;
   }
@@ -83,7 +88,16 @@ export async function initAuth() {
     if (stored.type === 'client' && stored.clientId) {
       _currentUser = await getClientById(stored.clientId);
     } else if (stored.type === 'staff' && stored.staffId) {
-      _currentUser = await getStaffById(stored.staffId);
+      // For staff: verify the Supabase Auth JWT is still valid / refreshable.
+      // restoreSession() triggers supabase-js to silently exchange the refresh_token.
+      const accessToken = await restoreSession();
+      if (!accessToken) {
+        // Refresh failed — session is fully expired, force re-login
+        _currentUser = null;
+      } else {
+        setAuthToken(accessToken);
+        _currentUser = await getStaffById(stored.staffId);
+      }
     } else {
       _currentUser = null;
     }
@@ -104,6 +118,8 @@ export async function initAuth() {
 function _performLogout() {
   _currentUser = null;
   _clearSession();
+  clearAuthToken();
+  signOut(); // fire-and-forget — clears supabase-js sb-*-auth-token from localStorage
   _emitAuthChange();
   window.location.href = '/index.html';
 }
@@ -120,8 +136,8 @@ function _emitAuthChange() {
 // Returns { role: 'admin' | 'client' | 'new' }
 
 export async function checkPhone(phone) {
-  const staffRow = await getStaffByPhoneWithPassword(phone).catch(() => null);
-  if (staffRow && staffRow.is_active !== false) return { role: 'admin' };
+  const staffRow = await getStaffByPhone(phone).catch(() => null);
+  if (staffRow && staffRow.isActive !== false) return { role: 'admin' };
 
   const client = await getClientByPhone(phone).catch(() => null);
   if (client) return { role: 'client' };
@@ -173,16 +189,7 @@ export async function pollAuthSession(sessionId, signal) {
 // Reads telegram_chat_id from the auth_session, finds/creates client, saves local session.
 
 export async function finalizeClientLogin(phone, name = '', sessionId = null) {
-  // Safety: staff phones must never produce a client session
-  const staffRow = await getStaffByPhoneWithPassword(phone).catch(() => null);
-  if (staffRow && staffRow.is_active !== false) {
-    const staffUser = fromStaff(staffRow);
-    localStorage.setItem(SESSION_KEY, JSON.stringify({ ...staffUser, staffId: staffUser.id, type: 'staff' }));
-    _markSessionAsValidated();
-    _currentUser = staffUser;
-    _emitAuthChange();
-    return _currentUser;
-  }
+  // Always creates a client session — staff login is separate (/admin/login.html)
 
   // Pull telegram_chat_id and client_name from the completed session
   let telegramChatId = null;
@@ -198,7 +205,7 @@ export async function finalizeClientLogin(phone, name = '', sessionId = null) {
     // Prefer name entered in modal, fallback to Telegram contact name from bot
     client = await createClient({ phone, name: name || sessionName || 'Пользователь', telegramChatId });
   } else if (telegramChatId && !client.telegramId) {
-    updateClient(client.id, { telegramChatId }).catch(() => {});
+    updateClientTelegram(client.id, telegramChatId).catch(() => {});
     client = { ...client, telegramId: telegramChatId };
   }
 
@@ -211,18 +218,27 @@ export async function finalizeClientLogin(phone, name = '', sessionId = null) {
 }
 
 // ── Staff password login ──────────────────────────────────────────────────────
+// Password is verified by Supabase Auth (not the legacy RPC).
+// Profile data is still read from staff_users via getStaffByPhone.
 
 export async function verifyAdminPassword(phone, password) {
-  const row = await getStaffByPhoneWithPassword(phone);
-  if (!row)           throw new Error('Сотрудник не найден');
-  if (!row.is_active) throw new Error('Аккаунт деактивирован');
+  // 1. Resolve the virtual email address Supabase Auth knows this staff member by
+  const email = await getStaffEmailByPhone(phone);
+  if (!email) throw new Error('Неверный телефон или пароль');
 
-  const stored = row.password ?? null;
-  const valid  = stored !== null && stored === password;
-  if (!valid) throw new Error('Неверный пароль');
+  // 2. Authenticate with Supabase Auth — throws on wrong credentials
+  const { accessToken } = await signInWithEmailPassword(email, password);
 
-  const staffUser = fromStaff(row);
-  localStorage.setItem(SESSION_KEY, JSON.stringify({ ...staffUser, staffId: staffUser.id, type: 'staff' }));
+  // 3. Put the JWT into sbFetch so subsequent REST calls go as authenticated user
+  setAuthToken(accessToken);
+
+  // 4. Load the staff profile from staff_users (RLS now sees a valid JWT)
+  const staffUser = await getStaffByPhone(phone);
+  if (!staffUser) throw new Error('Неверный телефон или пароль');
+
+  localStorage.setItem(SESSION_KEY, JSON.stringify({
+    ...staffUser, staffId: staffUser.id, type: 'staff', staffEmail: email,
+  }));
   _markSessionAsValidated();
   _currentUser = staffUser;
   _emitAuthChange();

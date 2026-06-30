@@ -2,7 +2,7 @@
 //  ADMIN — ORDERS LIST (card layout)
 // ================================
 
-import { logout, getSession }                                                from './auth.js';
+import { logout, getSession, ensureAuth }                                    from './auth.js';
 import { initRbac, getStaffSession }                                        from './rbac.js';
 import { getOrders, getOrderItems, updateOrderStatus, updateOrderItem, updateOrderConfirmedTotal, confirmPendingItems, fromOrder } from '../api/orders-api.js';
 import { getClientById }                                                       from '../api/clients-api.js';
@@ -678,6 +678,7 @@ if (userEl && session) userEl.textContent = session.full_name || session.role;
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 async function init() {
+  if (!await ensureAuth()) return;
   if (cardsEl) cardsEl.innerHTML = createProductSkeletons(3);
 
   try {

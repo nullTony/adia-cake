@@ -8,26 +8,13 @@ import { sbFetch }              from '../api/supabase-client.js';
 import { sendTelegramMessage }  from '../api/telegram-api.js';
 import { formatPrice }          from '../utils/format.js';
 
-const STAFF_TBL = 'staff_users';
-
 async function _getRecipients(branchId) {
-  const filter = branchId
-    ? `branch_id=eq.${encodeURIComponent(branchId)}&role=eq.manager&is_active=eq.true`
-    : 'role=eq.super_admin&is_active=eq.true';
-
-  const rows = await sbFetch(
-    `/${STAFF_TBL}?${filter}&telegram_chat_id=not.is.null&select=telegram_chat_id`
-  );
-  const managers = Array.isArray(rows) ? rows.filter(r => r.telegram_chat_id) : [];
-
-  // Fallback to super_admin when branch has no manager
-  if (!managers.length && branchId) {
-    const owners = await sbFetch(
-      `/${STAFF_TBL}?role=eq.super_admin&is_active=eq.true&telegram_chat_id=not.is.null&select=telegram_chat_id`
-    );
-    return Array.isArray(owners) ? owners.filter(r => r.telegram_chat_id) : [];
-  }
-  return managers;
+  const rows = await sbFetch(`/rpc/get_staff_telegram_targets`, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ p_branch_id: branchId || null }),
+  });
+  return Array.isArray(rows) ? rows.filter(r => r.telegram_chat_id) : [];
 }
 
 async function _send(chatId, text) {

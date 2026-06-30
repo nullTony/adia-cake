@@ -80,11 +80,16 @@ async function _pollAdmin() {
 
 async function _pollClient() {
   const readAt = _getReadAt(KEY_CLIENT(_userId));
-  const enc    = encodeURIComponent;
+  const user   = getCurrentUser();
 
-  const orders = await sbFetch(
-    `/${ORDERS_TBL}?user_id=eq.${enc(_userId)}&updated_at=gt.${enc(readAt)}&order=updated_at.desc`
-  ).catch(() => []);
+  const orders = await sbFetch('/rpc/poll_client_orders', {
+    method: 'POST',
+    body:   JSON.stringify({
+      p_user_id:  _userId || null,
+      p_phone:    user?.phone || null,
+      p_after:    readAt,
+    }),
+  }).catch(() => []);
 
   const items = (Array.isArray(orders) ? orders : [])
     .filter(o => CLIENT_NOTIFY.has(o.status));

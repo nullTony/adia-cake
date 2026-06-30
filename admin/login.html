@@ -28,19 +28,19 @@
         <div class="login-sub">Войдите в панель управления</div>
 
         <div class="login-error" id="loginError">
-            Неверный номер или пароль
+            Неверный email или пароль
         </div>
 
         <form id="loginForm" autocomplete="on">
             <div class="a-form-group" style="margin-bottom:16px">
-                <label class="a-label" for="phoneField">Номер телефона</label>
+                <label class="a-label" for="emailField">Email</label>
                 <input
                     class="a-input"
-                    type="tel"
-                    id="phoneField"
-                    name="phone"
-                    autocomplete="tel"
-                    placeholder="+998 90 000 00 00"
+                    type="email"
+                    id="emailField"
+                    name="email"
+                    autocomplete="email"
+                    placeholder="example@adia.app"
                     required
                 >
             </div>
@@ -65,35 +65,30 @@
 </div>
 
 <script type="module">
-import { login, isAuthenticated }              from '../js/admin/auth.js';
-import { initPhoneInput, handlePhoneInput, getPhoneValue } from '../js/utils/phone-input.js';
+import { login, isAuthenticated } from '../js/admin/auth.js';
 
 if (isAuthenticated()) {
     window.location.href = 'index.html';
 }
 
-const _phoneEl = document.getElementById('phoneField');
-initPhoneInput(_phoneEl, null);
-handlePhoneInput(_phoneEl);
-
 document.getElementById('loginForm').addEventListener('submit', async e => {
     e.preventDefault();
-    const phone   = getPhoneValue(document.getElementById('phoneField'));
-    const pass    = document.getElementById('passField').value;
-    const errEl   = document.getElementById('loginError');
-    const btn     = document.getElementById('loginBtn');
+    const email  = document.getElementById('emailField').value.trim();
+    const pass   = document.getElementById('passField').value;
+    const errEl  = document.getElementById('loginError');
+    const btn    = document.getElementById('loginBtn');
 
     errEl.classList.remove('visible');
     btn.disabled    = true;
     btn.textContent = 'Вход…';
 
     try {
-        await login(phone, pass);
+        await login(email, pass);
         // Redirect to Telegram binding page if chat_id not yet linked
         const session = JSON.parse(localStorage.getItem('adia_staff') || '{}');
         window.location.href = session.telegram_chat_id ? 'index.html' : 'telegram-bind.html';
     } catch (err) {
-        errEl.textContent = err.message || 'Неверный номер или пароль';
+        errEl.textContent = err.message || 'Неверный email или пароль';
         errEl.classList.add('visible');
         document.getElementById('passField').value = '';
         document.getElementById('passField').focus();

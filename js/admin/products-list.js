@@ -2,7 +2,7 @@
 //  ADMIN — PRODUCTS LIST
 // ================================
 
-import { logout, getSession }                       from './auth.js';
+import { logout, getSession, ensureAuth }            from './auth.js';
 import { initRbac }                                 from './rbac.js';
 import { getProducts, deleteProduct, updateProduct } from '../api/products-api.js';
 import { CATEGORIES }                               from '../modules/product-card.js';
@@ -254,6 +254,7 @@ async function loadCategoryFilter() {
 }
 
 async function init() {
+  if (!await ensureAuth()) return;
   if (tbody) tbody.innerHTML = createTableSkeletons(5, 6);
   try {
     [allProducts] = await Promise.all([getProducts(), loadCategoryFilter()]);

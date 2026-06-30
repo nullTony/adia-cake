@@ -2,10 +2,10 @@
 //  ADMIN — STAFF LIST
 // ================================
 
-import { getSession }                                        from './auth.js';
+import { getSession, ensureAuth }                            from './auth.js';
 import { initRbac, ROLE_PERMISSIONS,
          EXTRA_GRANTABLE, PERM_LABEL }                      from './rbac.js';
-import { getAllStaff, getStaffWithBranches, createStaff,
+import { getAllStaff, createStaff,
          updateStaff, checkStaffPhone,
          updateStaffTelegramChatId, copyChatIdFromClient }   from '../api/staff-api.js';
 import { getBranches }                                       from '../api/branches-api.js';
@@ -386,14 +386,7 @@ async function _handleSave() {
 // ── Data loading ──────────────────────────────────────────────────────────────
 
 async function _reload() {
-  // Try direct REST first (requires anon SELECT policy on staff_users).
-  // Falls back to the SECURITY DEFINER RPC which always bypasses RLS.
-  try {
-    _all = await getStaffWithBranches();
-    if (!_all.length) throw new Error('empty — try RPC');
-  } catch {
-    _all = await getAllStaff('');
-  }
+  _all         = await getAllStaff('');
   const phones = _all.map(s => s.phone).filter(Boolean);
   _tgLinked    = await _loadTelegramStatus(phones);
   _filtered    = [..._all];
@@ -403,6 +396,7 @@ async function _reload() {
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 async function init() {
+  if (!await ensureAuth()) return;
   const session = getSession();
   _myRole = session?.role || 'manager';
   _myId   = session?.id || null;

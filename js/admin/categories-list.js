@@ -2,7 +2,7 @@
 //  ADMIN — CATEGORIES LIST
 // ================================
 
-import { getSession, logout }              from './auth.js';
+import { getSession, logout, ensureAuth }  from './auth.js';
 import { initRbac, getStaffSession }      from './rbac.js';
 import {
   getCategories, createCategory, updateCategory,
@@ -275,6 +275,7 @@ function _initImageModal() {
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 async function init() {
+  if (!await ensureAuth()) return;
   // Only run for admin/manager — staff uses categories-staff.js
   const staffSession = getStaffSession();
   if (!['super_admin', 'admin', 'manager'].includes(staffSession?.role)) return;

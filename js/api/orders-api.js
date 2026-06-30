@@ -96,39 +96,48 @@ function toItem(i) {
   };
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-// Returns the next sequential order number.
-// Fetches the current maximum (nullslast so NULL values are ignored),
-// then increments by 1. Returns 1 if no numbered orders exist yet.
-async function getNextOrderNumber() {
-  const rows = await sbFetch(
-    `/${ORDERS_TBL}?select=order_number&order=order_number.desc.nullslast&limit=1`
-  );
-  if (!Array.isArray(rows) || !rows.length || rows[0].order_number == null) return 1;
-  return Number(rows[0].order_number) + 1;
-}
-
 // ── Public API ─────────────────────────────────────────────────────────────────
 
+// Client: create order via SECURITY DEFINER RPC.
+// order_number is generated atomically inside the function.
+// RETURNING * bypasses RLS so the inserted row comes back to anon.
 export async function createOrder(orderData) {
-  const orderNumber = await getNextOrderNumber();
-  const rows = await sbFetch(`/${ORDERS_TBL}`, {
-    method:  'POST',
-    headers: { 'Prefer': 'return=representation' },
-    body:    JSON.stringify({ ...toOrder(orderData), order_number: orderNumber }),
+  const b = toOrder(orderData);
+  const result = await sbFetch('/rpc/create_order', {
+    method: 'POST',
+    body:   JSON.stringify({
+      p_user_id:                b.user_id                || null,
+      p_customer_name:          b.customer_name,
+      p_phone:                  b.phone,
+      p_delivery_type:          b.delivery_type,
+      p_delivery_address:       b.delivery_address       || null,
+      p_delivery_lat:           b.delivery_lat           ?? null,
+      p_delivery_lng:           b.delivery_lng           ?? null,
+      p_branch_id:              b.branch_id              || null,
+      p_branch_name:            b.branch_name            || null,
+      p_comment:                b.comment                || null,
+      p_total_requested_amount: b.total_requested_amount || 0,
+    }),
   });
-  const row = Array.isArray(rows) ? rows[0] : rows;
+  const row = Array.isArray(result) ? result[0] : result;
   return row ? fromOrder(row) : null;
 }
 
+// Client: create order item via SECURITY DEFINER RPC.
 export async function createOrderItem(itemData) {
-  const rows = await sbFetch(`/${ITEMS_TBL}`, {
-    method:  'POST',
-    headers: { 'Prefer': 'return=representation' },
-    body:    JSON.stringify(toItem(itemData)),
+  const b = toItem(itemData);
+  const result = await sbFetch('/rpc/create_order_item', {
+    method: 'POST',
+    body:   JSON.stringify({
+      p_order_id:               b.order_id,
+      p_product_id:             b.product_id,
+      p_product_title_snapshot: b.product_title_snapshot,
+      p_product_price_snapshot: b.product_price_snapshot,
+      p_requested_qty:          b.requested_qty,
+      p_weight_grams:           b.weight_grams ?? null,
+    }),
   });
-  const row = Array.isArray(rows) ? rows[0] : rows;
+  const row = Array.isArray(result) ? result[0] : result;
   return row ? fromItem(row) : null;
 }
 
@@ -149,31 +158,32 @@ export async function getOrderById(id) {
   return fromOrder(rows[0]);
 }
 
-// Admin: items for one order
+// Admin: items for one order (requires JWT / staff context)
 export async function getOrderItems(orderId) {
   const rows = await sbFetch(`/${ITEMS_TBL}?order_id=eq.${encodeURIComponent(orderId)}`);
   if (!Array.isArray(rows)) return [];
   return rows.map(fromItem);
 }
 
-// User: orders by user_id; falls back to phone for guest/legacy orders with null user_id.
+// Client: items for one of the client's own orders via SECURITY DEFINER RPC.
+// p_phone is required so the function can verify ownership.
+export async function getMyOrderItems(orderId, phone) {
+  const rows = await sbFetch('/rpc/get_my_order_items', {
+    method: 'POST',
+    body:   JSON.stringify({ p_order_id: orderId, p_phone: phone }),
+  });
+  if (!Array.isArray(rows)) return [];
+  return rows.map(fromItem);
+}
+
+// User: orders by user_id + phone fallback via SECURITY DEFINER RPC.
 export async function getOrdersByUserId(userId, phone = null) {
-  if (userId) {
-    const rows = await sbFetch(
-      `/${ORDERS_TBL}?user_id=eq.${encodeURIComponent(userId)}&order=created_at.desc`
-    );
-    if (Array.isArray(rows) && rows.length) return rows.map(fromOrder);
-  }
-
-  // Fallback: match by phone (covers orders placed as guest or before user_id was saved)
-  if (phone) {
-    const rows = await sbFetch(
-      `/${ORDERS_TBL}?phone=eq.${encodeURIComponent(phone)}&order=created_at.desc`
-    );
-    if (Array.isArray(rows)) return rows.map(fromOrder);
-  }
-
-  return [];
+  const rows = await sbFetch('/rpc/get_my_orders', {
+    method: 'POST',
+    body:   JSON.stringify({ p_user_id: userId || null, p_phone: phone || null }),
+  });
+  if (!Array.isArray(rows)) return [];
+  return rows.map(fromOrder);
 }
 
 // Admin: update confirmed_qty + item_status for one item
@@ -211,30 +221,23 @@ export async function confirmPendingItems(orderId) {
   );
 }
 
-// Client: count in-progress orders (for mobile nav badge).
-// Searches by both userId and phone to catch orders saved with user_id=null
-// (can happen on first order before session was fully stored).
-const _ACTIVE_STATUSES = 'new,confirmed,preparing,ready,awaiting_client';
+// Client: count in-progress orders (for mobile nav badge) via SECURITY DEFINER RPC.
 export async function countActiveOrders(userId, phone = null) {
   if (!userId && !phone) return 0;
-  const filter = `status=in.(${_ACTIVE_STATUSES})&select=id`;
-  const seen   = new Set();
+  const result = await sbFetch('/rpc/count_active_orders', {
+    method: 'POST',
+    body:   JSON.stringify({ p_user_id: userId || null, p_phone: phone || null }),
+  }).catch(() => 0);
+  return Number(result) || 0;
+}
 
-  if (userId) {
-    const rows = await sbFetch(
-      `/${ORDERS_TBL}?user_id=eq.${encodeURIComponent(userId)}&${filter}`
-    ).catch(() => []);
-    (Array.isArray(rows) ? rows : []).forEach(r => seen.add(r.id));
-  }
-
-  if (phone) {
-    const rows = await sbFetch(
-      `/${ORDERS_TBL}?phone=eq.${encodeURIComponent(phone)}&${filter}`
-    ).catch(() => []);
-    (Array.isArray(rows) ? rows : []).forEach(r => seen.add(r.id));
-  }
-
-  return seen.size;
+// Client: update order status for own order (confirmed / cancelled_by_client only).
+// p_phone verifies ownership; RPC rejects any status not in the allowed client set.
+export async function clientUpdateOrderStatus(orderId, newStatus, phone) {
+  await sbFetch('/rpc/client_update_order_status', {
+    method: 'POST',
+    body:   JSON.stringify({ p_order_id: orderId, p_status: newStatus, p_phone: phone }),
+  });
 }
 
 // Admin: update order status (cancelReason only stored when status = 'cancelled')
