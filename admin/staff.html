@@ -153,6 +153,58 @@
         /* ── Staff modal form ───────────────────────────────── */
         .sm-modal { max-width: 480px; width: 100%; padding: 0; }
         .sm-body  { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+
+        /* ── Client search section ──────────────────────────── */
+        .sm-client-search { display: flex; flex-direction: column; gap: 6px; }
+        .sm-client-results {
+            border: 1.5px solid var(--a-border);
+            border-radius: var(--a-r);
+            background: var(--a-white);
+            max-height: 200px;
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,.08);
+        }
+        .sm-cr-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--a-border);
+            transition: background .12s;
+        }
+        .sm-cr-item:last-child { border-bottom: none; }
+        .sm-cr-item:hover { background: var(--a-bg); }
+        .sm-cr-name  { font-size: 13px; font-weight: 600; color: var(--a-text-dark); }
+        .sm-cr-phone { font-size: 12px; color: var(--a-text-light); }
+        .sm-cr-empty { padding: 12px 14px; font-size: 13px; color: var(--a-text-light); font-style: italic; }
+        .sm-client-selected { display: flex; flex-direction: column; gap: 0; }
+        .sm-client-pill {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: #e8f0fe;
+            border-radius: var(--a-r);
+            font-size: 13px;
+            font-weight: 600;
+            color: #1a56db;
+            gap: 8px;
+        }
+        .sm-cr-clear {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #1a56db;
+            font-size: 14px;
+            line-height: 1;
+            padding: 2px 4px;
+            border-radius: 4px;
+            flex-shrink: 0;
+            opacity: .7;
+            transition: opacity .12s;
+        }
+        .sm-cr-clear:hover { opacity: 1; }
         .sm-field { display: flex; flex-direction: column; gap: 6px; }
         .sm-label {
             font-size: 11px;
@@ -385,6 +437,13 @@
             <button class="as-close" id="smCloseBtn" aria-label="Закрыть">&times;</button>
         </div>
         <div class="sm-body">
+            <!-- Client search — shown only in "Add" mode, hidden in "Edit" mode -->
+            <div id="smClientSearch" class="sm-client-search">
+                <label class="sm-label">Поиск клиента (телефон или имя)</label>
+                <input id="smClientQ" type="text" class="sm-input" placeholder="Начните вводить…" autocomplete="off">
+                <div id="smClientResults" class="sm-client-results" hidden></div>
+                <div id="smClientSelected" class="sm-client-selected" hidden></div>
+            </div>
             <div class="sm-field">
                 <label class="sm-label">Полное имя *</label>
                 <input class="sm-input" type="text" id="smName" placeholder="Имя Фамилия" autocomplete="off">
@@ -394,6 +453,12 @@
                 <label class="sm-label">Телефон *</label>
                 <input class="sm-input" type="tel" id="smPhone" placeholder="+998 90 000 00 00">
                 <span class="sm-error" id="smPhoneErr">Введите телефон</span>
+            </div>
+            <!-- Email field — shown only in "Add" mode, hidden in "Edit" mode -->
+            <div class="sm-field" id="smEmailField">
+                <label class="sm-label" for="smEmail">Email (для входа) *</label>
+                <input id="smEmail" type="email" class="sm-input" placeholder="auto или введите вручную" autocomplete="off">
+                <span class="sm-error" id="smEmailErr">Введите email</span>
             </div>
             <div class="sm-field">
                 <label class="sm-label" id="smPasswordLabel">Пароль *</label>

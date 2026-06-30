@@ -8,6 +8,9 @@ import { initRbac, ROLE_PERMISSIONS,
 import { getAllStaff, createStaff,
          updateStaff, updateStaffActive, checkStaffPhone,
          updateStaffTelegramChatId, copyChatIdFromClient }   from '../api/staff-api.js';
+import { getAllClients }                                      from '../api/clients-api.js';
+import { getActiveSession }                                  from '../api/supabase-auth.js';
+import { API_CONFIG }                                        from '../config/api-config.js';
 import { getBranches }                                       from '../api/branches-api.js';
 import { sbFetch }                                           from '../api/supabase-client.js';
 import { initAdminNotifications }                            from '../services/notification-service.js';
@@ -41,13 +44,15 @@ function _needsBranch(role) {
 
 // ── State ─────────────────────────────────────────────────────────────────────
 
-let _all       = [];
-let _filtered  = [];
-let _branches  = [];
-let _myRole    = 'manager';
-let _myId      = null;
-let _editingId = null;
-let _tgLinked  = new Set();
+let _all               = [];
+let _filtered          = [];
+let _branches          = [];
+let _myRole            = 'manager';
+let _myId              = null;
+let _editingId         = null;
+let _tgLinked          = new Set();
+let _clientSearchTimer = null;
+let _selectedClient    = null;  // { id, name, phone } picked from client search
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -179,12 +184,18 @@ function applyFilter(query) {
 function openModal(staff = null) {
   _editingId = staff ? staff.id : null;
 
-  const nameEl   = document.getElementById('smName');
-  const phoneEl  = document.getElementById('smPhone');
-  const pwdEl    = document.getElementById('smPassword');
-  const pwdLabel = document.getElementById('smPasswordLabel');
-  const roleEl   = document.getElementById('smRole');
-  const branchEl = document.getElementById('smBranch');
+  const nameEl          = document.getElementById('smName');
+  const phoneEl         = document.getElementById('smPhone');
+  const pwdEl           = document.getElementById('smPassword');
+  const pwdLabel        = document.getElementById('smPasswordLabel');
+  const roleEl          = document.getElementById('smRole');
+  const branchEl        = document.getElementById('smBranch');
+  const clientSearch    = document.getElementById('smClientSearch');
+  const emailField      = document.getElementById('smEmailField');
+  const emailEl         = document.getElementById('smEmail');
+  const clientSelected  = document.getElementById('smClientSelected');
+  const clientQ         = document.getElementById('smClientQ');
+  const clientResults   = document.getElementById('smClientResults');
 
   branchEl.innerHTML = '<option value="">Выберите филиал</option>' +
     _branches.map(b => `<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');
@@ -198,6 +209,7 @@ function openModal(staff = null) {
   handlePhoneInput(phoneEl);
 
   if (staff) {
+    // ── Edit mode ──────────────────────────────────────────────────────────────
     document.getElementById('smTitle').textContent = 'Редактировать сотрудника';
     document.getElementById('smSub').textContent   = staff.name || '';
     nameEl.value         = staff.name || '';
@@ -207,9 +219,13 @@ function openModal(staff = null) {
     pwdLabel.textContent = 'Пароль';
     roleEl.value         = staff.role || 'operator';
     branchEl.value       = staff.branchId || '';
+    // Hide Add-mode-only fields
+    clientSearch.hidden = true;
+    emailField.hidden   = true;
     _updateBranchField();
     _updateExtraPermsField(staff.extraPermissions || []);
   } else {
+    // ── Add mode ───────────────────────────────────────────────────────────────
     document.getElementById('smTitle').textContent = 'Добавить сотрудника';
     document.getElementById('smSub').textContent   = 'Заполните данные нового сотрудника';
     nameEl.value         = '';
@@ -221,6 +237,22 @@ function openModal(staff = null) {
                          : assignable.includes('admin')       ? 'admin'
                          : assignable[0] || 'operator';
     branchEl.value       = '';
+    // Show Add-mode-only fields and reset their state
+    clientSearch.hidden    = false;
+    emailField.hidden      = false;
+    _selectedClient        = null;
+    clientQ.value          = '';
+    emailEl.value          = '';
+    clientResults.hidden   = true;
+    clientResults.innerHTML = '';
+    clientSelected.hidden  = true;
+    clientSelected.innerHTML = '';
+    // Auto-suggest email from phone when typed manually (no client selected)
+    phoneEl.addEventListener('input', () => {
+      if (_selectedClient) return;
+      const digits = getPhoneValue(phoneEl).replace(/\D/g, '');
+      if (digits.length >= 7) emailEl.value = `${digits}@adia.app`;
+    });
     _updateBranchField();
     _updateExtraPermsField([]);
   }
@@ -315,10 +347,10 @@ async function _handleSave() {
   ).map(el => el.value);
 
   let valid = true;
-  if (!name)                             { _fieldError('smName', 'smNameErr');       valid = false; }
-  if (!phone)                            { _fieldError('smPhone', 'smPhoneErr');      valid = false; }
+  if (!name)                             { _fieldError('smName', 'smNameErr');         valid = false; }
+  if (!phone)                            { _fieldError('smPhone', 'smPhoneErr');        valid = false; }
   if (!_editingId && !pwd.trim())        { _fieldError('smPassword', 'smPasswordErr'); valid = false; }
-  if (_needsBranch(role) && !branchId)  { _fieldError('smBranch', 'smBranchErr');   valid = false; }
+  if (_needsBranch(role) && !branchId)  { _fieldError('smBranch', 'smBranchErr');     valid = false; }
   if (!valid) return;
 
   const saveBtn = document.getElementById('smSaveBtn');
@@ -327,6 +359,7 @@ async function _handleSave() {
 
   try {
     if (_editingId) {
+      // ── Edit existing staff — unchanged ─────────────────────────────────────
       await updateStaff(_editingId, {
         name,
         phone,
@@ -335,44 +368,54 @@ async function _handleSave() {
         branchId:         _needsBranch(role) ? branchId : null,
         extraPermissions,
       });
-    } else {
-      const existing = await checkStaffPhone(phone);
-      if (existing) {
-        formErr.textContent = 'Сотрудник с таким телефоном уже существует';
-        formErr.classList.add('visible');
-        return;
-      }
-      const created = await createStaff({
-        name,
-        phone,
-        password:         pwd.trim(),
-        role,
-        branchId:         _needsBranch(role) ? branchId : null,
-        extraPermissions,
-      });
+      closeModal();
+      await _reload();
+      showToast('Сотрудник обновлён');
 
-      // Scenario 1: auto-copy Telegram chat_id from clients table if phone matches
+    } else {
+      // ── Add new staff via Edge Function (requires super_admin JWT) ───────────
+      const email = document.getElementById('smEmail').value.trim();
+      if (!email) { _fieldError('smEmail', 'smEmailErr'); return; }
+
+      const jwt = await getActiveSession();
+      if (!jwt) throw new Error('Сессия истекла. Перезайдите.');
+
+      const res = await fetch(
+        `${API_CONFIG.SUPABASE.URL}/functions/v1/create-staff`,
+        {
+          method:  'POST',
+          headers: {
+            'Content-Type':  'application/json',
+            'Authorization': `Bearer ${jwt}`,
+            'apikey':        API_CONFIG.SUPABASE.ANON_KEY,
+          },
+          body: JSON.stringify({
+            full_name: name,
+            phone,
+            role,
+            branch_id: _needsBranch(role) ? branchId : null,
+            email,
+            password:  pwd.trim(),
+          }),
+        }
+      );
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.error || 'Ошибка создания сотрудника');
+
+      // Auto-copy Telegram chat_id from clients table if phone matches
       let tgCopied = false;
-      if (created?.id) {
+      if (json.staff?.id) {
         try {
           const chatId = await copyChatIdFromClient(phone);
-          if (chatId) {
-            await updateStaffTelegramChatId(created.id, chatId);
-            tgCopied = true;
-          }
+          if (chatId) { await updateStaffTelegramChatId(json.staff.id, chatId); tgCopied = true; }
         } catch { /* non-critical */ }
       }
 
       closeModal();
       await _reload();
       const baseMsg = `${name} добавлен как ${ROLE_LABEL[role] || role}`;
-      showToast(tgCopied ? `${baseMsg} · Telegram привязан автоматически ✅` : baseMsg);
-      return;
+      showToast(tgCopied ? `${baseMsg} · Telegram привязан ✅` : baseMsg);
     }
-
-    closeModal();
-    await _reload();
-    showToast('Сотрудник обновлён');
 
   } catch (err) {
     formErr.textContent = err.message || 'Ошибка сохранения';
@@ -381,6 +424,64 @@ async function _handleSave() {
     saveBtn.disabled    = false;
     saveBtn.textContent = 'Сохранить';
   }
+}
+
+// ── Client search (Add mode only) ─────────────────────────────────────────────
+
+function _bindClientSearch() {
+  const q        = document.getElementById('smClientQ');
+  const results  = document.getElementById('smClientResults');
+  const selected = document.getElementById('smClientSelected');
+
+  q.addEventListener('input', () => {
+    clearTimeout(_clientSearchTimer);
+    const val = q.value.trim();
+    if (val.length < 2) { results.hidden = true; results.innerHTML = ''; return; }
+    _clientSearchTimer = setTimeout(async () => {
+      try {
+        const clients = await getAllClients(val);
+        if (!clients.length) {
+          results.innerHTML = '<div class="sm-cr-empty">Не найдено</div>';
+          results.hidden = false;
+          return;
+        }
+        results.innerHTML = clients.slice(0, 8).map(c => `
+          <div class="sm-cr-item" data-id="${esc(c.id)}" data-name="${esc(c.name)}" data-phone="${esc(c.phone)}">
+            <span class="sm-cr-name">${esc(c.name)}</span>
+            <span class="sm-cr-phone">${esc(c.phone)}</span>
+          </div>`).join('');
+        results.hidden = false;
+      } catch { results.hidden = true; }
+    }, 300);
+  });
+
+  results.addEventListener('click', e => {
+    const item = e.target.closest('.sm-cr-item');
+    if (!item) return;
+    _selectedClient = { id: item.dataset.id, name: item.dataset.name, phone: item.dataset.phone };
+    // Fill name + phone fields from the selected client
+    document.getElementById('smName').value = _selectedClient.name;
+    initPhoneInput(document.getElementById('smPhone'), _selectedClient.phone);
+    // Auto-suggest email: digits only + @adia.app
+    const digits = _selectedClient.phone.replace(/\D/g, '');
+    document.getElementById('smEmail').value = `${digits}@adia.app`;
+    // Show selected pill, hide dropdown and search input
+    selected.innerHTML = `
+      <div class="sm-client-pill">
+        <span>${esc(_selectedClient.name)} · ${esc(_selectedClient.phone)}</span>
+        <button type="button" id="smClearClient" class="sm-cr-clear">&#x2715;</button>
+      </div>`;
+    selected.hidden = false;
+    results.hidden  = true;
+    q.value = '';
+    document.getElementById('smClearClient').addEventListener('click', () => {
+      _selectedClient = null;
+      selected.hidden = true;
+      document.getElementById('smName').value = '';
+      initPhoneInput(document.getElementById('smPhone'), null);
+      document.getElementById('smEmail').value = '';
+    });
+  });
 }
 
 // ── Data loading ──────────────────────────────────────────────────────────────
@@ -501,6 +602,9 @@ async function init() {
     const s = _all.find(x => x.id === editBtn.dataset.id);
     if (s) openModal(s);
   });
+
+  // Bind client search (runs once; the handler tolerates modal open/close cycles)
+  _bindClientSearch();
 
   // Add staff button
   document.getElementById('addStaffBtn').addEventListener('click', () => openModal(null));
